@@ -1,10 +1,7 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.enums.Color;
-import org.mark.chess.model.Coordinates;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.King;
-import org.mark.chess.model.Piece;
+import org.mark.chess.model.*;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 
@@ -13,6 +10,8 @@ import java.awt.*;
 import java.util.List;
 
 public class FieldLogic {
+    private static final double RELATIVE_IMAGE_SIZE = .8;
+
     public Field initializeField(Board board, int row, int column, int numberOfColumns) {
         int id = createId(row, column, numberOfColumns);
 
@@ -37,8 +36,31 @@ public class FieldLogic {
     }
 
     public void addChessPieces(List<Field> grid) {
+        addChessPiece(grid, 0, new Rook(), Color.BLACK);
+        addChessPiece(grid, 1, new Knight(), Color.BLACK);
+        addChessPiece(grid, 2, new Bishop(), Color.BLACK);
+        addChessPiece(grid, 3, new Queen(), Color.BLACK);
         addChessPiece(grid, 4, new King(), Color.BLACK);
+        addChessPiece(grid, 5, new Bishop(), Color.BLACK);
+        addChessPiece(grid, 6, new Knight(), Color.BLACK);
+        addChessPiece(grid, 7, new Rook(), Color.BLACK);
+
+        for (int i = 8; i < 16; i++) {
+            addChessPiece(grid, i, new Pawn(), Color.BLACK);
+        }
+
+        for (int i = 48; i < 56; i++) {
+            addChessPiece(grid, i, new Pawn(), Color.WHITE);
+        }
+
+        addChessPiece(grid, 56, new Rook(), Color.WHITE);
+        addChessPiece(grid, 57, new Knight(), Color.WHITE);
+        addChessPiece(grid, 58, new Bishop(), Color.WHITE);
+        addChessPiece(grid, 59, new Queen(), Color.WHITE);
         addChessPiece(grid, 60, new King(), Color.WHITE);
+        addChessPiece(grid, 61, new Bishop(), Color.WHITE);
+        addChessPiece(grid, 62, new Knight(), Color.WHITE);
+        addChessPiece(grid, 63, new Rook(), Color.WHITE);
     }
 
     private void addChessPiece(List<Field> grid, int index, Piece piece, Color color) {
@@ -51,7 +73,10 @@ public class FieldLogic {
                 new ImageIcon(new ImageIcon("src/main/resources/images/" + color.getName() + "_" + piece.pieceType().getName() +
                         ".png")
                         .getImage()
-                        .getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH)));
+                        .getScaledInstance(
+                                (int) (button.getWidth() * RELATIVE_IMAGE_SIZE),
+                                (int) (button.getHeight() * RELATIVE_IMAGE_SIZE),
+                                Image.SCALE_SMOOTH)));
         button.setBorder(null);
 
         grid.set(index, grid.get(index)

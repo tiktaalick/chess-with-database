@@ -13,6 +13,16 @@ public class PieceLogicFactory {
         switch (pieceType) {
             case KING:
                 return kingLogic;
+            case QUEEN:
+                return kingLogic;
+            case ROOK:
+                return kingLogic;
+            case BISHOP:
+                return kingLogic;
+            case KNIGHT:
+                return kingLogic;
+            case PAWN:
+                return kingLogic;
             default:
                 return kingLogic;
         }
