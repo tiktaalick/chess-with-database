@@ -1,5 +1,6 @@
 package org.mark.chess.logic;
 
+import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Piece;
@@ -8,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface PieceLogic {
-    default List<Field> getValidMoves(List<Field> grid, Field from) {
+    default List<Field> getValidMoves(List<Field> grid, Field from, PieceLogicFactory opponentFactory) {
         return grid.stream().filter(to -> isCancelMove(from, to) ||
-                isValidMove(grid, from, to)).collect(Collectors.toList());
+                isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
 
 
@@ -58,6 +59,10 @@ public interface PieceLogic {
         coordinates.y(coordinates.y() + step.y());
     }
 
-    boolean isValidMove(List<Field> grid, Field from, Field to);
-
+    boolean isValidMove(List<Field> grid,
+                        Field from,
+                        Field to,
+                        PieceLogicFactory opponentFactory,
+                        boolean isOpponent
+    );
 }

@@ -73,7 +73,7 @@ public class BoardLogic {
         this.move.from(from);
         this.move.to(null);
         PieceLogic pieceLogic = pieceLogicFactory.getLogic(from.piece().pieceType());
-        List<Field> validMoves = pieceLogic.getValidMoves(game.grid(), from);
+        List<Field> validMoves = pieceLogic.getValidMoves(game.grid(), from, pieceLogicFactory);
         game.grid().forEach(field -> field.button().setEnabled(false));
         validMoves.forEach(to -> to.button().setEnabled(true));
     }
@@ -91,5 +91,4 @@ public class BoardLogic {
     private void resetValidMoves(Game game) {
         game.grid().forEach(field -> field.button().setEnabled(field.piece() != null));
     }
-
 }
