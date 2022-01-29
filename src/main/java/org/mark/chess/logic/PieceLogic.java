@@ -5,10 +5,22 @@ import org.mark.chess.model.Field;
 import org.mark.chess.model.Piece;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface PieceLogic {
+    default List<Field> getValidMoves(List<Field> grid, Field from) {
+        return grid.stream().filter(to -> isCancelMove(from, to) ||
+                isValidMove(grid, from, to)).collect(Collectors.toList());
+    }
+
+
+    default boolean isCancelMove(Field from, Field to) {
+        return from.coordinates().x() == to.coordinates().x() &&
+                from.coordinates().y() == to.coordinates().y();
+    }
+
     default boolean isFriendlyFire(Piece piece, Field to) {
-        return to.piece() != null || to.piece().color() == piece.color();
+        return to.piece() != null && to.piece().color() == piece.color();
     }
 
     default boolean isJumping(List<Field> grid, Field from, Field to) {
@@ -36,9 +48,9 @@ public interface PieceLogic {
                 .anyMatch(field -> field.piece() != null);
     }
 
-    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to,
-                                             Coordinates step) {
-        return (currentCoordinates.x() * step.x()) < to.x() && (currentCoordinates.y() * step.y()) < to.y();
+    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
+        return (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
+                (step.y() >= 0) == (currentCoordinates.y() <= to.y());
     }
 
     private void doNextStep(Coordinates coordinates, Coordinates step) {
@@ -46,5 +58,6 @@ public interface PieceLogic {
         coordinates.y(coordinates.y() + step.y());
     }
 
-    boolean isMoveAllowed(List<Field> grid, Field from, Field to);
+    boolean isValidMove(List<Field> grid, Field from, Field to);
+
 }

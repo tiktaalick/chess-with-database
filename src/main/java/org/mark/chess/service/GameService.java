@@ -24,6 +24,8 @@ public class GameService {
     }
 
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
-        boardlogic.handleButtonClick(game, board, buttonClick, button);
+        if (button.isEnabled()) {
+            boardlogic.handleButtonClick(game, board, buttonClick, button);
+        }
     }
 }

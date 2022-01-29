@@ -8,7 +8,7 @@ import java.util.List;
 public class KingLogic implements PieceLogic {
 
     @Override
-    public boolean isMoveAllowed(List<Field> grid, Field from, Field to) {
+    public boolean isValidMove(List<Field> grid, Field from, Field to) {
         return !this.isFriendlyFire(from.piece(), to) && !isJumping(grid, from, to) && isValidBasicMove(from, to);
     }
 

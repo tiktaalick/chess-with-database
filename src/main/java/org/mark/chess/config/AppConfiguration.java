@@ -1,5 +1,6 @@
 package org.mark.chess.config;
 
+import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.logic.*;
 import org.mark.chess.service.GameService;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,11 @@ public class AppConfiguration {
     @Bean
     public FieldLogic getFieldLogic() {
         return new FieldLogic();
+    }
+
+    @Bean
+    public PieceLogicFactory getPieceLogicFactory() {
+        return new PieceLogicFactory();
     }
 
     @Bean

@@ -26,6 +26,7 @@ public class FieldLogic {
                         String.valueOf(id),
                         board,
                         board));
+        field.button().setEnabled(false);
         board.add(field.button());
 
         return field;
@@ -42,6 +43,7 @@ public class FieldLogic {
 
     private void addChessPiece(List<Field> grid, int index, Piece piece, Color color) {
         JButton button = grid.get(index).button();
+        button.setEnabled(true);
         button.setToolTipText(color.getName() + " " + piece.pieceType().getName());
         button.setText(null);
 
