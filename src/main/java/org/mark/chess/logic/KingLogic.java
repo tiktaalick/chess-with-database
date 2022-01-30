@@ -21,9 +21,8 @@ public class KingLogic implements PieceLogic {
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
-        int x = Math.abs(to.coordinates().x() - from.coordinates().x());
-        int y = Math.abs(to.coordinates().y() - from.coordinates().y());
-        return Arrays.asList(0, 1).contains(x) && Arrays.asList(0, 1).contains(y);
+        return Arrays.asList(0, 1).contains(getAbsoluteHorizontalMove(from, to)) &&
+                Arrays.asList(0, 1).contains(getAbsoluteVerticalMove(from, to));
     }
 
     private boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent,

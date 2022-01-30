@@ -10,4 +10,5 @@ import org.mark.chess.enums.PieceType;
 @Accessors(fluent = true)
 public class Pawn extends Piece {
     private PieceType pieceType = PieceType.PAWN;
+    private boolean mayBeCapturedEnPassant;
 }

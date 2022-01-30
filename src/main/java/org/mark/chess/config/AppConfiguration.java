@@ -40,6 +40,31 @@ public class AppConfiguration {
     }
 
     @Bean
+    public QueenLogic getQueenLogic() {
+        return new QueenLogic();
+    }
+
+    @Bean
+    public RookLogic getRookLogic() {
+        return new RookLogic();
+    }
+
+    @Bean
+    public BishopLogic getBishopLogic() {
+        return new BishopLogic();
+    }
+
+    @Bean
+    public KnightLogic getKnightLogic() {
+        return new KnightLogic();
+    }
+
+    @Bean
+    public PawnLogic getPawnLogic() {
+        return new PawnLogic();
+    }
+
+    @Bean
     public GameService getGameService() {
         return new GameService();
     }

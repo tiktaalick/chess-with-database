@@ -21,7 +21,7 @@ public class FieldLogic {
                 .button(new Button(
                         column * Button.FIELD_WIDTH,
                         row * Button.FIELD_WIDTH,
-                        (id + row) % 2 == 0 ? Color.WHITE.getAwtColor() : Color.BLACK.getAwtColor(),
+                        (id + row) % 2 == 0 ? Color.LIGHT.getAwtColor() : Color.DARK.getAwtColor(),
                         String.valueOf(id),
                         board,
                         board));

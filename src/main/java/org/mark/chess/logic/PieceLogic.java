@@ -26,8 +26,8 @@ public interface PieceLogic {
 
     default boolean isJumping(List<Field> grid, Field from, Field to) {
         final Coordinates step = new Coordinates(
-                (int) Math.signum(to.coordinates().x() - from.coordinates().x()),
-                (int) Math.signum(to.coordinates().y() - from.coordinates().y()));
+                Integer.signum(to.coordinates().x() - from.coordinates().x()),
+                Integer.signum(to.coordinates().y() - from.coordinates().y()));
 
         Coordinates currentCoordinates = new Coordinates(from.coordinates().x(), from.coordinates().y());
 
@@ -41,6 +41,14 @@ public interface PieceLogic {
         }
 
         return mustIJump;
+    }
+
+    default int getAbsoluteHorizontalMove(Field from, Field to) {
+        return Math.abs(to.coordinates().x() - from.coordinates().x());
+    }
+
+    default int getAbsoluteVerticalMove(Field from, Field to) {
+        return Math.abs(to.coordinates().y() - from.coordinates().y());
     }
 
     private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {

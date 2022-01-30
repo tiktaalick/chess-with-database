@@ -1,28 +1,42 @@
 package org.mark.chess.factory;
 
 import org.mark.chess.enums.PieceType;
-import org.mark.chess.logic.KingLogic;
-import org.mark.chess.logic.PieceLogic;
+import org.mark.chess.logic.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PieceLogicFactory {
     @Autowired
     KingLogic kingLogic;
 
+    @Autowired
+    QueenLogic queenLogic;
+
+    @Autowired
+    RookLogic rookLogic;
+
+    @Autowired
+    BishopLogic bishopLogic;
+
+    @Autowired
+    KnightLogic knightLogic;
+
+    @Autowired
+    PawnLogic pawnLogic;
+
     public PieceLogic getLogic(PieceType pieceType) {
         switch (pieceType) {
             case KING:
                 return kingLogic;
             case QUEEN:
-                return kingLogic;
+                return queenLogic;
             case ROOK:
-                return kingLogic;
+                return rookLogic;
             case BISHOP:
-                return kingLogic;
+                return bishopLogic;
             case KNIGHT:
-                return kingLogic;
+                return knightLogic;
             case PAWN:
-                return kingLogic;
+                return pawnLogic;
             default:
                 return kingLogic;
         }
