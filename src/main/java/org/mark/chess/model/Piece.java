@@ -8,7 +8,7 @@ import org.mark.chess.enums.PieceType;
 @Data
 @Accessors(fluent = true)
 public abstract class Piece {
-    private PieceType pieceType = PieceType.PAWN;
+    private PieceType pieceType;
     private Color color;
     private boolean kickedOff;
 }

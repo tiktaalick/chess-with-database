@@ -5,6 +5,7 @@ import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Piece;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,6 @@ public interface PieceLogic {
         return grid.stream().filter(to -> isCancelMove(from, to) ||
                 isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
-
 
     default boolean isCancelMove(Field from, Field to) {
         return from.coordinates().x() == to.coordinates().x() &&
@@ -51,6 +51,33 @@ public interface PieceLogic {
         return Math.abs(to.coordinates().y() - from.coordinates().y());
     }
 
+    default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent,
+                              PieceLogicFactory opponentFactory, FieldLogic fieldLogic) {
+        if (isOpponent) {
+            return false;
+        }
+        Field kingField = fieldLogic.getKingField(grid, from.piece().color());
+
+        List<Field> futureList = grid.stream()
+                .filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id()))
+                .collect(Collectors.toList());
+
+        List<Field> movementList = grid.stream()
+                .filter(field -> Arrays.asList(from.id(), to.id()).contains(field.id()))
+                .map(field -> field.id() == from.id()
+                        ? new Field().coordinates(from.coordinates())
+                        : new Field().coordinates(to.coordinates()).piece(from.piece()))
+                .collect(Collectors.toList());
+
+        futureList.addAll(movementList);
+
+        return grid.stream()
+                .filter(opponentField -> opponentField.piece() != null)
+                .filter(opponentField -> opponentField.piece().color() != from.piece().color())
+                .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
+                        .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
+    }
+
     private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
         return grid.stream()
                 .filter(field -> field.coordinates().x() == currentCoordinates.x() && field.coordinates().y() == currentCoordinates.y())
@@ -71,6 +98,5 @@ public interface PieceLogic {
                         Field from,
                         Field to,
                         PieceLogicFactory opponentFactory,
-                        boolean isOpponent
-    );
+                        boolean isOpponent);
 }

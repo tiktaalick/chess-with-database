@@ -1,6 +1,7 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.enums.Color;
+import org.mark.chess.enums.PieceType;
 import org.mark.chess.model.*;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
@@ -11,6 +12,8 @@ import java.util.List;
 
 public class FieldLogic {
     private static final double RELATIVE_IMAGE_SIZE = .8;
+    private static final String IMAGES = "src/main/resources/images/";
+    private static final String UNDERSCORE = "_";
 
     public Field initializeField(Board board, int row, int column, int numberOfColumns) {
         int id = createId(row, column, numberOfColumns);
@@ -70,7 +73,7 @@ public class FieldLogic {
         button.setText(null);
 
         button.setIcon(
-                new ImageIcon(new ImageIcon("src/main/resources/images/" + color.getName() + "_" + piece.pieceType().getName() +
+                new ImageIcon(new ImageIcon(IMAGES + color.getName() + UNDERSCORE + piece.pieceType().getName() +
                         ".png")
                         .getImage()
                         .getScaledInstance(
@@ -82,5 +85,21 @@ public class FieldLogic {
         grid.set(index, grid.get(index)
                 .piece(piece.color(color).kickedOff(false))
                 .button(button));
+    }
+
+    public Field getField(Game game, JButton button) {
+        return game.grid().stream()
+                .filter(field -> field.button() == button)
+                .findFirst()
+                .orElse(new Field());
+    }
+
+    public Field getKingField(List<Field> grid, Color color) {
+        return grid.stream()
+                .filter(field -> field.piece() != null)
+                .filter(field -> field.piece().color() == color)
+                .filter(field -> field.piece().pieceType() == PieceType.KING)
+                .findFirst()
+                .orElse(new Field());
     }
 }

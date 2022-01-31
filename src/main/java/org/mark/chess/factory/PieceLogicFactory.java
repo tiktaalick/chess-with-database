@@ -38,7 +38,7 @@ public class PieceLogicFactory {
             case PAWN:
                 return pawnLogic;
             default:
-                return kingLogic;
+                return null;
         }
     }
 }

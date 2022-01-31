@@ -10,4 +10,5 @@ import org.mark.chess.enums.PieceType;
 @Accessors(fluent = true)
 public class Rook extends Piece {
     private PieceType pieceType = PieceType.ROOK;
+    private boolean hasMovedAtLeastOnce;
 }

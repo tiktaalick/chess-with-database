@@ -5,12 +5,15 @@ import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Pawn;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PawnLogic implements PieceLogic {
+    @Autowired
+    private FieldLogic fieldLogic;
 
     @Override
     public boolean isValidMove(List<Field> grid,
@@ -20,6 +23,7 @@ public class PawnLogic implements PieceLogic {
                                boolean isOpponent) {
         return !this.isFriendlyFire(from.piece(), to) &&
                 !isJumping(grid, from, to) &&
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, fieldLogic) &&
                 isValidDirection(from, to) &&
                 (isValidBasicMove(from, to) || isValidBaselineMove(from, to) ||
                         isValidCaptureMove(from, to) || isValidEnPassantMove(grid, from, to));
@@ -69,5 +73,4 @@ public class PawnLogic implements PieceLogic {
                 .filter(opponentField -> opponentField.piece().pieceType() == PieceType.PAWN)
                 .collect(Collectors.toList());
     }
-
 }

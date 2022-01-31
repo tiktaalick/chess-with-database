@@ -12,6 +12,4 @@ public class Field {
     private Coordinates coordinates;
     private JButton button;
     private Piece piece;
-
 }
-

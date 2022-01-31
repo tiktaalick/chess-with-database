@@ -10,5 +10,5 @@ import org.mark.chess.enums.PieceType;
 @Accessors(fluent = true)
 public class King extends Piece {
     private PieceType pieceType = PieceType.KING;
-    private boolean isCastling;
+    private boolean hasMovedAtLeastOnce;
 }

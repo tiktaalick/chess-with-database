@@ -13,7 +13,7 @@ public class GridLogic {
     private static final int ROWS = 8;
 
     @Autowired
-    FieldLogic fieldLogic;
+    private FieldLogic fieldLogic;
 
     public List<Field> initializeGrid(Board board) {
         List<Field> grid = new ArrayList<>();
@@ -32,5 +32,4 @@ public class GridLogic {
     public GridLayout createGridLayout() {
         return new GridLayout(ROWS, COLUMNS);
     }
-
 }

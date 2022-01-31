@@ -32,8 +32,8 @@ public class KingLogic implements PieceLogic {
         }
 
         return grid.stream()
-                .filter(field -> field.piece() != null)
-                .filter(field -> field.piece().color() != from.piece().color())
+                .filter(opponentField -> opponentField.piece() != null)
+                .filter(opponentField -> opponentField.piece().color() != from.piece().color())
                 .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
                         .isValidMove(grid, opponentField, to, opponentFactory, true));
     }

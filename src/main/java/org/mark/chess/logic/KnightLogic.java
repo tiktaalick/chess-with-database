@@ -2,10 +2,13 @@ package org.mark.chess.logic;
 
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class KnightLogic implements PieceLogic {
+    @Autowired
+    private FieldLogic fieldLogic;
 
     @Override
     public boolean isValidMove(List<Field> grid,
@@ -14,6 +17,7 @@ public class KnightLogic implements PieceLogic {
                                PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
         return !this.isFriendlyFire(from.piece(), to) &&
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, fieldLogic) &&
                 isValidBasicMove(from, to);
     }
 

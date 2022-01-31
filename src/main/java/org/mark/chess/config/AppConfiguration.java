@@ -65,6 +65,11 @@ public class AppConfiguration {
     }
 
     @Bean
+    public MoveLogic getMoveLogic() {
+        return new MoveLogic();
+    }
+
+    @Bean
     public GameService getGameService() {
         return new GameService();
     }
