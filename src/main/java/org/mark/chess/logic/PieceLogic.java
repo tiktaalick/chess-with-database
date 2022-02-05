@@ -52,11 +52,11 @@ public interface PieceLogic {
     }
 
     default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent,
-                              PieceLogicFactory opponentFactory, FieldLogic fieldLogic) {
+                              PieceLogicFactory opponentFactory, GridLogic gridLogic) {
         if (isOpponent) {
             return false;
         }
-        Field kingField = fieldLogic.getKingField(grid, from.piece().color());
+        Field kingField = gridLogic.getKingField(grid, from.piece().color());
 
         List<Field> futureList = grid.stream()
                 .filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id()))

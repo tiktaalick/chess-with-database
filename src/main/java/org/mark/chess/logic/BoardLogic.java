@@ -50,10 +50,10 @@ public class BoardLogic {
             moveLogic.setTo(move, fieldClick);
             moveLogic.setChessPieceSpecificFields(game.grid(), move.from(), fieldClick);
             moveLogic.moveRookWhenCastling(game.grid(), move.from(), fieldClick);
-            moveLogic.resetValidMoves(game);
+            moveLogic.resetValidMoves(game, move);
             moveLogic.resetFrom(move);
         } else if (buttonClick == RIGHT_CLICK) {
-            moveLogic.resetValidMoves(game);
+            moveLogic.resetValidMoves(game, move);
         }
     }
 }

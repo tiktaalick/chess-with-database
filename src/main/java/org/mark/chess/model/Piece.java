@@ -11,4 +11,5 @@ public abstract class Piece {
     private PieceType pieceType;
     private Color color;
     private boolean kickedOff;
+    private boolean isPawnBeingPromoted;
 }

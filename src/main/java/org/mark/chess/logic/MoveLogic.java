@@ -1,15 +1,20 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.enums.PieceType;
+import org.mark.chess.factory.PieceFactory;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MoveLogic {
     @Autowired
     private PieceLogicFactory pieceLogicFactory;
+
+    @Autowired
+    private PieceFactory pieceFactory;
 
     @Autowired
     private KingLogic kingLogic;
@@ -46,9 +51,13 @@ public class MoveLogic {
                 .forEach(to -> to.button().setEnabled(true));
     }
 
-    public void resetValidMoves(Game game) {
+    public void resetValidMoves(Game game, Move move) {
         game.grid().forEach(field -> {
             field.button().setEnabled(field.piece() != null);
+            if (move.from() != null && move.to() != null &&
+                    Arrays.asList(move.from().id(), move.to().id()).contains(field.id())) {
+                return;
+            }
             if (field.piece() != null && field.piece().pieceType() == PieceType.PAWN) {
                 ((Pawn) field.piece()).mayBeCapturedEnPassant(false);
             } else if (field.piece() != null && field.piece().pieceType() == PieceType.ROOK) {
@@ -60,10 +69,18 @@ public class MoveLogic {
     }
 
     public void setChessPieceSpecificFields(List<Field> grid, Field from, Field to) {
-        if (from.piece().pieceType() == PieceType.PAWN) {
-            ((Pawn) from.piece()).mayBeCapturedEnPassant(
-                    ((PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN))
-                            .mayBeCapturedEnPassant(grid, from, to));
+        if (from.piece() != null && from.piece().pieceType() == PieceType.PAWN) {
+            Pawn pawn = (Pawn) from.piece();
+            PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN);
+            pawn.mayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(grid, from, to));
+            pawn.isPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
+            if (pawn.isPawnBeingPromoted()) {
+                gridLogic.addChessPiece(
+                        grid,
+                        to.id(),
+                        pieceFactory.getPiece(from.piece().pieceType().getNextPawnPromotion()),
+                        from.piece().color());
+            }
         } else if (from.piece().pieceType() == PieceType.ROOK) {
             ((Rook) from.piece()).hasMovedAtLeastOnce(true);
         } else if (from.piece().pieceType() == PieceType.KING) {

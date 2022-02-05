@@ -2,11 +2,11 @@ package org.mark.chess.enums;
 
 public enum PieceType {
     KING("king"),
+    PAWN("pawn"),
     QUEEN("queen"),
     ROOK("rook"),
     BISHOP("bishop"),
-    KNIGHT("knight"),
-    PAWN("pawn");
+    KNIGHT("knight");
 
     private final String name;
 
@@ -16,5 +16,9 @@ public enum PieceType {
 
     public String getName() {
         return name;
+    }
+
+    public PieceType getNextPawnPromotion() {
+        return this != KNIGHT ? PieceType.values()[ordinal() + 1] : this;
     }
 }

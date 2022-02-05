@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class PawnLogic implements PieceLogic {
     @Autowired
-    private FieldLogic fieldLogic;
+    private GridLogic gridLogic;
 
     @Override
     public boolean isValidMove(List<Field> grid,
@@ -23,7 +23,7 @@ public class PawnLogic implements PieceLogic {
                                boolean isOpponent) {
         return !this.isFriendlyFire(from.piece(), to) &&
                 !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, fieldLogic) &&
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic) &&
                 isValidDirection(from, to) &&
                 (isValidBasicMove(from, to) || isValidBaselineMove(from, to) ||
                         isValidCaptureMove(from, to) || isValidEnPassantMove(grid, from, to));
@@ -72,5 +72,11 @@ public class PawnLogic implements PieceLogic {
                 .filter(opponentField -> opponentField.piece() != null && opponentField.piece().color() != color)
                 .filter(opponentField -> opponentField.piece().pieceType() == PieceType.PAWN)
                 .collect(Collectors.toList());
+    }
+
+    public boolean isPawnBeingPromoted(Field from, Field to) {
+        return from.piece().isPawnBeingPromoted() ||
+                from.coordinates().y() == from.piece().color().getOppositeBaselineY() ||
+                to.coordinates().y() == from.piece().color().getOppositeBaselineY();
     }
 }

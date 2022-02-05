@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BishopLogic implements PieceLogic {
     @Autowired
-    private FieldLogic fieldLogic;
+    private GridLogic gridLogic;
 
     @Override
     public boolean isValidMove(List<Field> grid,
@@ -18,7 +18,7 @@ public class BishopLogic implements PieceLogic {
                                boolean isOpponent) {
         return !this.isFriendlyFire(from.piece(), to) &&
                 !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, fieldLogic) &&
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic) &&
                 isValidBasicMove(from, to);
 
     }
