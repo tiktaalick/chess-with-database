@@ -87,13 +87,6 @@ public class FieldLogic {
                 .button(button));
     }
 
-    public Field getField(Game game, JButton button) {
-        return game.grid().stream()
-                .filter(field -> field.button() == button)
-                .findFirst()
-                .orElse(new Field());
-    }
-
     public Field getKingField(List<Field> grid, Color color) {
         return grid.stream()
                 .filter(field -> field.piece() != null)

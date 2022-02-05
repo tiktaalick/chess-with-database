@@ -24,9 +24,6 @@ public class BoardLogic {
     @Autowired
     private GridLogic gridLogic;
 
-    @Autowired
-    private FieldLogic fieldLogic;
-
     public void initializeBoard(Board board) {
         board.setSize(WIDTH, HEIGHT);
         board.setLayout(gridLogic.createGridLayout());
@@ -37,7 +34,7 @@ public class BoardLogic {
     }
 
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
-        Field fieldClick = fieldLogic.getField(game, button);
+        Field fieldClick = gridLogic.getField(game.grid(), button);
 
         if (game.gameStatus() == GameStatus.IN_PROGRESS && buttonClick == LEFT_CLICK && !button.isEnabled()) {
             return;
@@ -51,8 +48,9 @@ public class BoardLogic {
             moveLogic.enableValidMoves(game, fieldClick);
         } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(fieldClick)) {
             moveLogic.setTo(move, fieldClick);
+            moveLogic.setChessPieceSpecificFields(game.grid(), move.from(), fieldClick);
+            moveLogic.moveRookWhenCastling(game.grid(), move.from(), fieldClick);
             moveLogic.resetValidMoves(game);
-            moveLogic.setChessPieceSpecificFields(game, move, fieldClick);
             moveLogic.resetFrom(move);
         } else if (buttonClick == RIGHT_CLICK) {
             moveLogic.resetValidMoves(game);
