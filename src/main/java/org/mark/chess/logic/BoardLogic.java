@@ -1,28 +1,30 @@
 package org.mark.chess.logic;
 
-import org.mark.chess.Application;
 import org.mark.chess.enums.GameStatus;
+import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
-import org.mark.chess.model.Move;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 public class BoardLogic {
-    private static final int WIDTH = 414;
-    private static final int HEIGHT = 435;
-    private static final int LEFT_CLICK = 1;
+    private static final int WIDTH       = 414;
+    private static final int HEIGHT      = 435;
+    private static final int LEFT_CLICK  = 1;
     private static final int RIGHT_CLICK = 3;
-    private final Move move = new Move();
 
     @Autowired
     private MoveLogic moveLogic;
 
     @Autowired
     private GridLogic gridLogic;
+
+    @Autowired
+    private ApplicationFactory applicationFactory;
 
     public void initializeBoard(Board board) {
         board.setSize(WIDTH, HEIGHT);
@@ -34,26 +36,27 @@ public class BoardLogic {
     }
 
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
-        Field fieldClick = gridLogic.getField(game.grid(), button);
+        Field fieldClick = gridLogic.getField(game.getGrid(), button);
 
-        if (game.gameStatus() == GameStatus.IN_PROGRESS && buttonClick == LEFT_CLICK && !button.isEnabled()) {
+        if (game.getGameStatus() == GameStatus.IN_PROGRESS && buttonClick == LEFT_CLICK && !button.isEnabled()) {
             return;
         }
 
-        if (game.gameStatus() != GameStatus.IN_PROGRESS) {
+        if (game.getGameStatus() != GameStatus.IN_PROGRESS) {
             board.dispose();
-            Application.getInstance().startApplication();
-        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(fieldClick)) {
-            moveLogic.setFrom(move, fieldClick);
+            applicationFactory.getInstance().startApplication();
+        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(game, fieldClick)) {
+            moveLogic.setFrom(board.getMove(), fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
-        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(fieldClick)) {
-            moveLogic.setTo(move, fieldClick);
-            moveLogic.setChessPieceSpecificFields(game.grid(), move.from(), fieldClick);
-            moveLogic.moveRookWhenCastling(game.grid(), move.from(), fieldClick);
-            moveLogic.resetValidMoves(game, move);
-            moveLogic.resetFrom(move);
+        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(game, fieldClick)) {
+            moveLogic.setTo(board.getMove(), fieldClick);
+            moveLogic.setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
+            moveLogic.moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
+            moveLogic.changeTurn(game);
+            moveLogic.resetValidMoves(game, board.getMove());
+            moveLogic.resetFrom(board.getMove());
         } else if (buttonClick == RIGHT_CLICK) {
-            moveLogic.resetValidMoves(game, move);
+            moveLogic.resetValidMoves(game, board.getMove());
         }
     }
 }

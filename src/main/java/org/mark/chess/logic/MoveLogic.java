@@ -3,7 +3,13 @@ package org.mark.chess.logic;
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceFactory;
 import org.mark.chess.factory.PieceLogicFactory;
-import org.mark.chess.model.*;
+import org.mark.chess.model.Coordinates;
+import org.mark.chess.model.Field;
+import org.mark.chess.model.Game;
+import org.mark.chess.model.King;
+import org.mark.chess.model.Move;
+import org.mark.chess.model.Pawn;
+import org.mark.chess.model.Rook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -22,82 +28,78 @@ public class MoveLogic {
     @Autowired
     private GridLogic gridLogic;
 
-    public boolean isFrom(Field fieldClick) {
-        return fieldClick.piece() != null;
-    }
+    @Autowired
+    private FieldLogic fieldLogic;
 
-    public void setFrom(Move move, Field from) {
-        move.piece(from.piece());
-        move.from(from);
-        move.to(null);
-    }
+    @Autowired
+    private ButtonLogic buttonLogic;
 
-    public void setTo(Move move, Field to) {
-        move.to(to);
-        move.to().piece(move.from().piece());
-        move.to().button().setText(null);
-        move.to().button().setIcon(move.from().button().getIcon());
-    }
-
-    public void resetFrom(Move move) {
-        move.from().piece(null);
-        move.from().button().setIcon(null);
+    public boolean isFrom(Game game, Field fieldClick) {
+        return fieldClick.getPiece() != null && fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
     }
 
     public void enableValidMoves(Game game, Field from) {
-        game.grid().forEach(field -> field.button().setEnabled(false));
-        pieceLogicFactory.getLogic(from.piece().pieceType())
-                .getValidMoves(game.grid(), from, pieceLogicFactory)
-                .forEach(to -> to.button().setEnabled(true));
+        game.getGrid().forEach(field -> field.getButton().setEnabled(false));
+        pieceLogicFactory
+                .getLogic(from.getPiece().getPieceType())
+                .getValidMoves(game.getGrid(), from, pieceLogicFactory)
+                .forEach(to -> to.getButton().setEnabled(true));
     }
 
     public void resetValidMoves(Game game, Move move) {
-        game.grid().forEach(field -> {
-            field.button().setEnabled(field.piece() != null);
-            if (move.from() != null && move.to() != null &&
-                    Arrays.asList(move.from().id(), move.to().id()).contains(field.id())) {
+        game.getGrid().forEach(field -> {
+            field.getButton().setEnabled(buttonLogic.setEnabledButton(game, field));
+
+            if (duringAMove(move, field)) {
                 return;
             }
-            if (field.piece() != null && field.piece().pieceType() == PieceType.PAWN) {
-                ((Pawn) field.piece()).mayBeCapturedEnPassant(false);
-            } else if (field.piece() != null && field.piece().pieceType() == PieceType.ROOK) {
-                ((Rook) field.piece()).hasMovedAtLeastOnce(false);
-            } else if (field.piece() != null && field.piece().pieceType() == PieceType.KING) {
-                ((King) field.piece()).hasMovedAtLeastOnce(false);
+
+            if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.PAWN) {
+                ((Pawn) field.getPiece()).setMayBeCapturedEnPassant(false);
+            } else if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.ROOK) {
+                ((Rook) field.getPiece()).setHasMovedAtLeastOnce(false);
+            } else if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.KING) {
+                ((King) field.getPiece()).setHasMovedAtLeastOnce(false);
             }
         });
     }
 
-    public void setChessPieceSpecificFields(List<Field> grid, Field from, Field to) {
-        if (from.piece() != null && from.piece().pieceType() == PieceType.PAWN) {
-            Pawn pawn = (Pawn) from.piece();
+    private boolean duringAMove(Move move, Field field) {
+        return move.getFrom() != null &&
+               move.getTo() != null &&
+               Arrays.asList(move.getFrom().getCode(), move.getTo().getCode()).contains(field.getCode());
+    }
+
+    public void setChessPieceSpecificFields(Game game, Field from, Field to) {
+        if (from.getPiece().getPieceType() == PieceType.PAWN) {
+            Pawn pawn = (Pawn) from.getPiece();
             PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN);
-            pawn.mayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(grid, from, to));
-            pawn.isPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
+            pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
+            pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
+
             if (pawn.isPawnBeingPromoted()) {
-                gridLogic.addChessPiece(
-                        grid,
-                        to.id(),
-                        pieceFactory.getPiece(from.piece().pieceType().getNextPawnPromotion()),
-                        from.piece().color());
+                fieldLogic.addChessPiece(game,
+                        to,
+                        pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()).setColor(from.getPiece().getColor()));
             }
-        } else if (from.piece().pieceType() == PieceType.ROOK) {
-            ((Rook) from.piece()).hasMovedAtLeastOnce(true);
-        } else if (from.piece().pieceType() == PieceType.KING) {
-            ((King) from.piece()).hasMovedAtLeastOnce(true);
+        } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
+            ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
+        } else if (from.getPiece().getPieceType() == PieceType.KING) {
+            ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
     }
 
     public void moveRookWhenCastling(List<Field> grid, Field from, Field to) {
-        if (from.piece().pieceType() == PieceType.KING &&
-                kingLogic.isValidCastling(grid, from, to, to.coordinates().x(), pieceLogicFactory, true)) {
+        if (from.getPiece().getPieceType() == PieceType.KING &&
+            kingLogic.isValidCastling(grid, from, to, to.getCoordinates().getX(), pieceLogicFactory, false, true)) {
 
-            Coordinates rookCoordinates = new Coordinates((to.coordinates().x() == KingLogic.LEFT ?
-                    KingLogic.ROOK_X_LEFT_FROM : KingLogic.ROOK_X_RIGHT_FROM), from.piece().color().getBaselineY());
+            Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
+                    ? KingLogic.ROOK_X_LEFT_FROM
+                    : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
             Field rookFromField = gridLogic.getField(grid, rookCoordinates);
-            Field rookToField = gridLogic.getField(grid, rookCoordinates.x(
-                    to.coordinates().x() == KingLogic.LEFT
+            Field rookToField = gridLogic.getField(grid,
+                    rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                             ? KingLogic.ROOK_X_LEFT_TO
                             : KingLogic.ROOK_X_RIGHT_TO));
 
@@ -110,5 +112,28 @@ public class MoveLogic {
         setFrom(rookMove, from);
         setTo(rookMove, to);
         resetFrom(rookMove);
+    }
+
+    public void setFrom(Move move, Field from) {
+        move.setPiece(from.getPiece());
+        move.setFrom(from);
+        move.setTo(null);
+    }
+
+    public void setTo(Move move, Field to) {
+        move.setTo(to);
+        move.getTo().setPiece(move.getFrom().getPiece());
+        move.getTo().getButton().setText(null);
+        move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
+    }
+
+    public void resetFrom(Move move) {
+        move.getFrom().setPiece(null);
+        move.getFrom().getButton().setText(move.getFrom().getCode());
+        move.getFrom().getButton().setIcon(null);
+    }
+
+    public void changeTurn(Game game) {
+        game.setCurrentPlayerId(1 - game.getCurrentPlayerId());
     }
 }

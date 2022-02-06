@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Move {
     private Piece piece;
     private Field from;

@@ -1,10 +1,10 @@
 package org.mark.chess;
 
+import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
@@ -15,14 +15,7 @@ public class Application {
     private GameService gameService;
 
     public static void main(String[] args) {
-        getInstance().startApplication();
-    }
-
-    public static Application getInstance() {
-        return new SpringApplicationBuilder(Application.class)
-                .headless(false)
-                .run()
-                .getBean(Application.class);
+        new ApplicationFactory().getInstance().startApplication();
     }
 
     public void startApplication() {

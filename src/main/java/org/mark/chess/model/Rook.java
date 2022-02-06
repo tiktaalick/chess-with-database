@@ -7,8 +7,8 @@ import org.mark.chess.enums.PieceType;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Rook extends Piece {
     private PieceType pieceType = PieceType.ROOK;
-    private boolean hasMovedAtLeastOnce;
+    private boolean   hasMovedAtLeastOnce;
 }
