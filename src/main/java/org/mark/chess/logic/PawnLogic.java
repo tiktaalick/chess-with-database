@@ -21,12 +21,12 @@ public class PawnLogic implements PieceLogic {
                                Field to,
                                PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
-        return !this.isFriendlyFire(from.piece(), to) &&
-                !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic) &&
+        return (isValidBasicMove(from, to) || isValidBaselineMove(from, to) ||
+                isValidCaptureMove(from, to) || isValidEnPassantMove(grid, from, to)) &&
                 isValidDirection(from, to) &&
-                (isValidBasicMove(from, to) || isValidBaselineMove(from, to) ||
-                        isValidCaptureMove(from, to) || isValidEnPassantMove(grid, from, to));
+                !this.isFriendlyFire(from.piece(), to) &&
+                !isJumping(grid, from, to) &&
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidDirection(Field from, Field to) {
@@ -76,7 +76,7 @@ public class PawnLogic implements PieceLogic {
 
     public boolean isPawnBeingPromoted(Field from, Field to) {
         return from.piece().isPawnBeingPromoted() ||
-                from.coordinates().y() == from.piece().color().getOppositeBaselineY() ||
-                to.coordinates().y() == from.piece().color().getOppositeBaselineY();
+                from.coordinates().y() == from.piece().color().getOpposite().getBaselineY() ||
+                to.coordinates().y() == from.piece().color().getOpposite().getBaselineY();
     }
 }

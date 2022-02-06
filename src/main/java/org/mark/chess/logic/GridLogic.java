@@ -14,14 +14,11 @@ import java.util.List;
 public class GridLogic {
     private static final int COLUMNS = 8;
     private static final int ROWS = 8;
-    private static final double RELATIVE_IMAGE_SIZE = .8;
-    private static final String IMAGES = "src/main/resources/images/";
-    private static final String UNDERSCORE = "_";
 
     @Autowired
     private FieldLogic fieldLogic;
 
-    public List<Field> initializeGrid(Board board) {
+    public List<Field> initializeGrid(Game game, Board board) {
         List<Field> grid = new ArrayList<>();
 
         for (int row = 0; row < ROWS; row++) {
@@ -30,7 +27,7 @@ public class GridLogic {
             }
         }
 
-        addChessPieces(grid);
+        addChessPieces(game.grid(grid));
 
         return grid;
     }
@@ -54,53 +51,38 @@ public class GridLogic {
                 .orElse(new Field());
     }
 
-    public void addChessPieces(List<Field> grid) {
-        addChessPiece(grid, 0, new Rook(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 1, new Knight(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 2, new Bishop(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 3, new Queen(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 4, new King(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 5, new Bishop(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 6, new Knight(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(grid, 7, new Rook(), org.mark.chess.enums.Color.BLACK);
+    public void addChessPieces(Game game) {
+        addChessPiece(game, 0, new Rook(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 1, new Knight(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 2, new Bishop(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 3, new Queen(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 4, new King(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 5, new Bishop(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 6, new Knight(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 7, new Rook(), org.mark.chess.enums.Color.BLACK);
 
         for (int i = 8; i < 16; i++) {
-            addChessPiece(grid, i, new Pawn(), org.mark.chess.enums.Color.BLACK);
+            addChessPiece(game, i, new Pawn(), org.mark.chess.enums.Color.BLACK);
         }
 
         for (int i = 48; i < 56; i++) {
-            addChessPiece(grid, i, new Pawn(), org.mark.chess.enums.Color.WHITE);
+            addChessPiece(game, i, new Pawn(), org.mark.chess.enums.Color.WHITE);
         }
 
-        addChessPiece(grid, 56, new Rook(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 57, new Knight(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 58, new Bishop(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 59, new Queen(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 60, new King(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 61, new Bishop(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 62, new Knight(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(grid, 63, new Rook(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 56, new Rook(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 57, new Knight(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 58, new Bishop(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 59, new Queen(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 60, new King(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 61, new Bishop(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 62, new Knight(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 63, new Rook(), org.mark.chess.enums.Color.WHITE);
     }
 
-    public void addChessPiece(List<Field> grid, int index, Piece piece, org.mark.chess.enums.Color color) {
-        JButton button = grid.get(index).button();
-        button.setEnabled(true);
-        button.setToolTipText(color.getName() + " " + piece.pieceType().getName());
-        button.setText(null);
-
-        button.setIcon(
-                new ImageIcon(new ImageIcon(IMAGES + color.getName() + UNDERSCORE + piece.pieceType().getName() +
-                        ".png")
-                        .getImage()
-                        .getScaledInstance(
-                                (int) (button.getWidth() * RELATIVE_IMAGE_SIZE),
-                                (int) (button.getHeight() * RELATIVE_IMAGE_SIZE),
-                                Image.SCALE_SMOOTH)));
-        button.setBorder(null);
-
-        grid.set(index, grid.get(index)
-                .piece(piece.color(color).kickedOff(false))
-                .button(button));
+    public void addChessPiece(Game game, int index, Piece piece, Color color) {
+        game.grid().set(index, game.grid().get(index)
+                .piece(piece.color(color))
+                .button(fieldLogic.initializeButton(game, index, piece, color)));
     }
 
     public Field getKingField(List<Field> grid, Color color) {

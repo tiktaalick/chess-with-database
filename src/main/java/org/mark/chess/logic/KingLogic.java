@@ -29,12 +29,12 @@ public class KingLogic implements PieceLogic {
                                Field to,
                                PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
-        return !this.isFriendlyFire(from.piece(), to) &&
+        return (isValidBasicMove(from, to) ||
+                isValidCastling(grid, from, to, LEFT, opponentFactory, isOpponent, false) ||
+                isValidCastling(grid, from, to, RIGHT, opponentFactory, isOpponent, false)) &&
+                !this.isFriendlyFire(from.piece(), to) &&
                 !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, opponentFactory, isOpponent) &&
-                (isValidBasicMove(from, to) ||
-                        isValidCastling(grid, from, to, LEFT, opponentFactory, false) ||
-                        isValidCastling(grid, from, to, RIGHT, opponentFactory, false));
+                !isInCheck(grid, from, to, opponentFactory, isOpponent);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
@@ -43,7 +43,11 @@ public class KingLogic implements PieceLogic {
     }
 
     public boolean isValidCastling(List<Field> grid, Field from, Field to, int direction,
-                                   PieceLogicFactory opponentFactory, boolean isNowCastling) {
+                                   PieceLogicFactory opponentFactory, boolean isOpponent, boolean isNowCastling) {
+        if (isOpponent) {
+            return false;
+        }
+
         Field rookField = gridLogic.getField(grid, new Coordinates(
                 (direction == LEFT ? ROOK_X_LEFT_FROM : ROOK_X_RIGHT_FROM),
                 from.piece().color().getBaselineY()));

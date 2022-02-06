@@ -43,13 +43,14 @@ public class BoardLogic {
         if (game.gameStatus() != GameStatus.IN_PROGRESS) {
             board.dispose();
             Application.getInstance().startApplication();
-        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(fieldClick)) {
+        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setFrom(move, fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
-        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(fieldClick)) {
+        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setTo(move, fieldClick);
-            moveLogic.setChessPieceSpecificFields(game.grid(), move.from(), fieldClick);
+            moveLogic.setChessPieceSpecificFields(game, move.from(), fieldClick);
             moveLogic.moveRookWhenCastling(game.grid(), move.from(), fieldClick);
+            moveLogic.changeTurn(game);
             moveLogic.resetValidMoves(game, move);
             moveLogic.resetFrom(move);
         } else if (buttonClick == RIGHT_CLICK) {

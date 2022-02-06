@@ -9,6 +9,8 @@ import java.util.List;
 @Data
 @Accessors(fluent = true)
 public class Game {
+    private List<Player> players;
+    private int currentPlayerIndex;
     private List<Field> grid;
     private GameStatus gameStatus;
 

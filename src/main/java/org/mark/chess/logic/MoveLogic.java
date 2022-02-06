@@ -22,8 +22,11 @@ public class MoveLogic {
     @Autowired
     private GridLogic gridLogic;
 
-    public boolean isFrom(Field fieldClick) {
-        return fieldClick.piece() != null;
+    @Autowired
+    private FieldLogic fieldLogic;
+
+    public boolean isFrom(Game game, Field fieldClick) {
+        return fieldClick.piece() != null && fieldClick.piece().color() == game.players().get(game.currentPlayerIndex()).color();
     }
 
     public void setFrom(Move move, Field from) {
@@ -53,7 +56,7 @@ public class MoveLogic {
 
     public void resetValidMoves(Game game, Move move) {
         game.grid().forEach(field -> {
-            field.button().setEnabled(field.piece() != null);
+            field.button().setEnabled(fieldLogic.setEnabledButton(game, field));
             if (move.from() != null && move.to() != null &&
                     Arrays.asList(move.from().id(), move.to().id()).contains(field.id())) {
                 return;
@@ -68,15 +71,15 @@ public class MoveLogic {
         });
     }
 
-    public void setChessPieceSpecificFields(List<Field> grid, Field from, Field to) {
+    public void setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.piece() != null && from.piece().pieceType() == PieceType.PAWN) {
             Pawn pawn = (Pawn) from.piece();
             PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN);
-            pawn.mayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(grid, from, to));
+            pawn.mayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.grid(), from, to));
             pawn.isPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
             if (pawn.isPawnBeingPromoted()) {
                 gridLogic.addChessPiece(
-                        grid,
+                        game,
                         to.id(),
                         pieceFactory.getPiece(from.piece().pieceType().getNextPawnPromotion()),
                         from.piece().color());
@@ -90,7 +93,7 @@ public class MoveLogic {
 
     public void moveRookWhenCastling(List<Field> grid, Field from, Field to) {
         if (from.piece().pieceType() == PieceType.KING &&
-                kingLogic.isValidCastling(grid, from, to, to.coordinates().x(), pieceLogicFactory, true)) {
+                kingLogic.isValidCastling(grid, from, to, to.coordinates().x(), pieceLogicFactory, false, true)) {
 
             Coordinates rookCoordinates = new Coordinates((to.coordinates().x() == KingLogic.LEFT ?
                     KingLogic.ROOK_X_LEFT_FROM : KingLogic.ROOK_X_RIGHT_FROM), from.piece().color().getBaselineY());
@@ -110,5 +113,9 @@ public class MoveLogic {
         setFrom(rookMove, from);
         setTo(rookMove, to);
         resetFrom(rookMove);
+    }
+
+    public void changeTurn(Game game) {
+        game.currentPlayerIndex(1 - game.currentPlayerIndex());
     }
 }

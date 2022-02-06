@@ -43,6 +43,11 @@ public interface PieceLogic {
         return mustIJump;
     }
 
+    private void doNextStep(Coordinates coordinates, Coordinates step) {
+        coordinates.x(coordinates.x() + step.x());
+        coordinates.y(coordinates.y() + step.y());
+    }
+
     default int getAbsoluteHorizontalMove(Field from, Field to) {
         return Math.abs(to.coordinates().x() - from.coordinates().x());
     }
@@ -85,13 +90,9 @@ public interface PieceLogic {
     }
 
     private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
-        return (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
+        return !(currentCoordinates.x() == to.x() && currentCoordinates.y() == to.y()) &&
+                (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
                 (step.y() >= 0) == (currentCoordinates.y() <= to.y());
-    }
-
-    private void doNextStep(Coordinates coordinates, Coordinates step) {
-        coordinates.x(coordinates.x() + step.x());
-        coordinates.y(coordinates.y() + step.y());
     }
 
     boolean isValidMove(List<Field> grid,

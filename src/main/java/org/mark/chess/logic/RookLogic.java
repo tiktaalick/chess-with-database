@@ -16,10 +16,10 @@ public class RookLogic implements PieceLogic {
                                Field to,
                                PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
-        return !this.isFriendlyFire(from.piece(), to) &&
+        return isValidBasicMove(from, to) &&
+                !this.isFriendlyFire(from.piece(), to) &&
                 !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic) &&
-                isValidBasicMove(from, to);
+                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
