@@ -16,10 +16,14 @@ public class BishopLogic implements PieceLogic {
                                Field to,
                                PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
+
+        if (grid == null || from == null || to == null || opponentFactory == null) {
+            return false;
+        }
         return isValidBasicMove(from, to) &&
-                !this.isFriendlyFire(from.piece(), to) &&
-                !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !this.isFriendlyFire(from.piece(), to) &&
+               !isJumping(grid, from, to) &&
+               !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
 
     }
 

@@ -12,13 +12,19 @@ import java.util.stream.Collectors;
 public interface PieceLogic {
     default List<Field> getValidMoves(List<Field> grid, Field from, PieceLogicFactory opponentFactory) {
         return grid.stream().filter(to -> isCancelMove(from, to) ||
-                isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
+                                          isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
 
     default boolean isCancelMove(Field from, Field to) {
         return from.coordinates().x() == to.coordinates().x() &&
-                from.coordinates().y() == to.coordinates().y();
+               from.coordinates().y() == to.coordinates().y();
     }
+
+    boolean isValidMove(List<Field> grid,
+                        Field from,
+                        Field to,
+                        PieceLogicFactory opponentFactory,
+                        boolean isOpponent);
 
     default boolean isFriendlyFire(Piece piece, Field to) {
         return to.piece() != null && to.piece().color() == piece.color();
@@ -48,6 +54,18 @@ public interface PieceLogic {
         coordinates.y(coordinates.y() + step.y());
     }
 
+    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
+        return !(currentCoordinates.x() == to.x() && currentCoordinates.y() == to.y()) &&
+               (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
+               (step.y() >= 0) == (currentCoordinates.y() <= to.y());
+    }
+
+    private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
+        return grid.stream()
+                   .filter(field -> field.coordinates().x() == currentCoordinates.x() && field.coordinates().y() == currentCoordinates.y())
+                   .anyMatch(field -> field.piece() != null);
+    }
+
     default int getAbsoluteHorizontalMove(Field from, Field to) {
         return Math.abs(to.coordinates().x() - from.coordinates().x());
     }
@@ -64,40 +82,22 @@ public interface PieceLogic {
         Field kingField = gridLogic.getKingField(grid, from.piece().color());
 
         List<Field> futureList = grid.stream()
-                .filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id()))
-                .collect(Collectors.toList());
+                                     .filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id()))
+                                     .collect(Collectors.toList());
 
         List<Field> movementList = grid.stream()
-                .filter(field -> Arrays.asList(from.id(), to.id()).contains(field.id()))
-                .map(field -> field.id() == from.id()
-                        ? new Field().coordinates(from.coordinates())
-                        : new Field().coordinates(to.coordinates()).piece(from.piece()))
-                .collect(Collectors.toList());
+                                       .filter(field -> Arrays.asList(from.id(), to.id()).contains(field.id()))
+                                       .map(field -> field.id() == from.id()
+                                                     ? new Field().coordinates(from.coordinates())
+                                                     : new Field().coordinates(to.coordinates()).piece(from.piece()))
+                                       .collect(Collectors.toList());
 
         futureList.addAll(movementList);
 
         return grid.stream()
-                .filter(opponentField -> opponentField.piece() != null)
-                .filter(opponentField -> opponentField.piece().color() != from.piece().color())
-                .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
-                        .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
+                   .filter(opponentField -> opponentField.piece() != null)
+                   .filter(opponentField -> opponentField.piece().color() != from.piece().color())
+                   .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
+                                                             .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
     }
-
-    private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
-        return grid.stream()
-                .filter(field -> field.coordinates().x() == currentCoordinates.x() && field.coordinates().y() == currentCoordinates.y())
-                .anyMatch(field -> field.piece() != null);
-    }
-
-    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
-        return !(currentCoordinates.x() == to.x() && currentCoordinates.y() == to.y()) &&
-                (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
-                (step.y() >= 0) == (currentCoordinates.y() <= to.y());
-    }
-
-    boolean isValidMove(List<Field> grid,
-                        Field from,
-                        Field to,
-                        PieceLogicFactory opponentFactory,
-                        boolean isOpponent);
 }
