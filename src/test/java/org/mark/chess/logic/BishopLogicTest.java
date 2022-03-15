@@ -31,9 +31,6 @@ public class BishopLogicTest {
     private BishopLogic bishopLogic;
 
     @Mock
-    private Bishop bishop;
-
-    @Mock
     private PieceLogicFactory opponentFactory;
 
     @Mock
@@ -46,7 +43,7 @@ public class BishopLogicTest {
 
     @Test
     public void testIsValidMove_WhenInCheck_ThenReturnFalse() {
-        Field from = new Field().piece(bishop.color(Color.WHITE)).coordinates(new Coordinates(3, 3));
+        Field from = new Field().piece(new Bishop().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
         Field to = new Field().coordinates(new Coordinates(5, 5));
         List<Field> grid = new ArrayList<>();
 
@@ -57,7 +54,7 @@ public class BishopLogicTest {
 
     @Test
     public void testIsValidMove_WhenJumping_ThenReturnFalse() {
-        Field from = new Field().piece(bishop.color(Color.WHITE)).coordinates(new Coordinates(3, 3));
+        Field from = new Field().piece(new Bishop().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
         Field to = new Field().coordinates(new Coordinates(5, 5));
         List<Field> grid = new ArrayList<>();
 
@@ -69,7 +66,7 @@ public class BishopLogicTest {
 
     @Test
     public void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().piece(bishop.color(Color.WHITE)).coordinates(new Coordinates(3, 3));
+        Field from = new Field().piece(new Bishop().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
         Field to = new Field().coordinates(new Coordinates(5, 5));
         List<Field> grid = new ArrayList<>();
 
@@ -90,7 +87,7 @@ public class BishopLogicTest {
                         "3;3;6;0;true",
                         "3;3;1;5;true"}, delimiter = ';')
     public void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
-        Field from = new Field().piece(bishop.color(Color.WHITE)).coordinates(new Coordinates(fromX, fromY));
+        Field from = new Field().piece(new Bishop().color(Color.WHITE)).coordinates(new Coordinates(fromX, fromY));
         Field to = new Field().coordinates(new Coordinates(toX, toY));
         List<Field> grid = new ArrayList<>();
 

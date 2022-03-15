@@ -2,14 +2,12 @@ package org.mark.chess.logic;
 
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
-import org.mark.chess.model.Coordinates;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.King;
-import org.mark.chess.model.Rook;
+import org.mark.chess.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class KingLogic implements PieceLogic {
     public static final int LEFT = 2;
@@ -24,22 +22,20 @@ public class KingLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid,
-                               Field from,
-                               Field to,
-                               PieceLogicFactory opponentFactory,
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
-        return (isValidBasicMove(from, to) ||
+        return !hasEmptyParameters(grid, from, to, opponentFactory) &&
+               (isValidBasicMove(from, to) ||
                 isValidCastling(grid, from, to, LEFT, opponentFactory, isOpponent, false) ||
                 isValidCastling(grid, from, to, RIGHT, opponentFactory, isOpponent, false)) &&
-                !this.isFriendlyFire(from.piece(), to) &&
-                !isJumping(grid, from, to) &&
-                !isInCheck(grid, from, to, opponentFactory, isOpponent);
+               !this.isFriendlyFire(from.piece(), to) &&
+               !isJumping(grid, from, to) &&
+               !isInCheck(grid, from, to, opponentFactory, isOpponent);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
         return Arrays.asList(0, 1).contains(getAbsoluteHorizontalMove(from, to)) &&
-                Arrays.asList(0, 1).contains(getAbsoluteVerticalMove(from, to));
+               Arrays.asList(0, 1).contains(getAbsoluteVerticalMove(from, to));
     }
 
     public boolean isValidCastling(List<Field> grid, Field from, Field to, int direction,
@@ -48,19 +44,20 @@ public class KingLogic implements PieceLogic {
             return false;
         }
 
-        Field rookField = gridLogic.getField(grid, new Coordinates(
-                (direction == LEFT ? ROOK_X_LEFT_FROM : ROOK_X_RIGHT_FROM),
-                from.piece().color().getBaselineY()));
+        Field rookField = gridLogic.getField(grid,
+                                             new Coordinates((direction == LEFT
+                                                              ? ROOK_X_LEFT_FROM
+                                                              : ROOK_X_RIGHT_FROM), from.piece().color().getBaselineY())
+                                            );
 
         boolean isValidFrom = from.coordinates().x() == KING_INITIAL_X &&
-                from.coordinates().y() == from.piece().color().getBaselineY();
+                              from.coordinates().y() == from.piece().color().getBaselineY();
         boolean isValidTo = Arrays.asList(LEFT, RIGHT).contains(direction) &&
-                to.coordinates().x() == direction &&
-                to.coordinates().y() == from.piece().color().getBaselineY();
+                            to.coordinates().x() == direction &&
+                            to.coordinates().y() == from.piece().color().getBaselineY();
         boolean isKingValid = isNowCastling || !((King) from.piece()).hasMovedAtLeastOnce();
-        boolean isRookValid = rookField.piece() != null &&
-                rookField.piece().pieceType() == PieceType.ROOK &&
-                !((Rook) rookField.piece()).hasMovedAtLeastOnce();
+        boolean isRookValid = Optional.ofNullable(rookField).map(Field::piece).map(Piece::pieceType).orElse(null) ==
+                              PieceType.ROOK && !((Rook) rookField.piece()).hasMovedAtLeastOnce();
         boolean isInCheck = isInCheck(grid, from, from, opponentFactory, false);
 
         return isValidFrom && isValidTo && isKingValid && isRookValid && !isInCheck;
@@ -72,10 +69,12 @@ public class KingLogic implements PieceLogic {
             return false;
         }
 
-        return grid.stream()
+        return grid
+                .stream()
                 .filter(opponentField -> opponentField.piece() != null)
                 .filter(opponentField -> opponentField.piece().color() != from.piece().color())
-                .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
+                .anyMatch(opponentField -> opponentFactory
+                        .getLogic(opponentField.piece().pieceType())
                         .isValidMove(grid, opponentField, to, opponentFactory, true));
     }
 }

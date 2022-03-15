@@ -11,29 +11,23 @@ import java.util.stream.Collectors;
 
 public interface PieceLogic {
     default List<Field> getValidMoves(List<Field> grid, Field from, PieceLogicFactory opponentFactory) {
-        return grid.stream().filter(to -> isCancelMove(from, to) ||
-                                          isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
+        return grid.stream().filter(to -> isCancelMove(from, to) || isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
 
     default boolean isCancelMove(Field from, Field to) {
-        return from.coordinates().x() == to.coordinates().x() &&
-               from.coordinates().y() == to.coordinates().y();
+        return from.coordinates().x() == to.coordinates().x() && from.coordinates().y() == to.coordinates().y();
     }
 
-    boolean isValidMove(List<Field> grid,
-                        Field from,
-                        Field to,
-                        PieceLogicFactory opponentFactory,
-                        boolean isOpponent);
+    boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent);
 
     default boolean isFriendlyFire(Piece piece, Field to) {
         return to.piece() != null && to.piece().color() == piece.color();
     }
 
     default boolean isJumping(List<Field> grid, Field from, Field to) {
-        final Coordinates step = new Coordinates(
-                Integer.signum(to.coordinates().x() - from.coordinates().x()),
-                Integer.signum(to.coordinates().y() - from.coordinates().y()));
+        final Coordinates step = new Coordinates(Integer.signum(to.coordinates().x() - from.coordinates().x()),
+                                                 Integer.signum(to.coordinates().y() - from.coordinates().y())
+        );
 
         Coordinates currentCoordinates = new Coordinates(from.coordinates().x(), from.coordinates().y());
 
@@ -74,16 +68,13 @@ public interface PieceLogic {
         return Math.abs(to.coordinates().y() - from.coordinates().y());
     }
 
-    default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent,
-                              PieceLogicFactory opponentFactory, GridLogic gridLogic) {
+    default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent, PieceLogicFactory opponentFactory, GridLogic gridLogic) {
         if (isOpponent) {
             return false;
         }
         Field kingField = gridLogic.getKingField(grid, from.piece().color());
 
-        List<Field> futureList = grid.stream()
-                                     .filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id()))
-                                     .collect(Collectors.toList());
+        List<Field> futureList = grid.stream().filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id())).collect(Collectors.toList());
 
         List<Field> movementList = grid.stream()
                                        .filter(field -> Arrays.asList(from.id(), to.id()).contains(field.id()))
@@ -99,5 +90,9 @@ public interface PieceLogic {
                    .filter(opponentField -> opponentField.piece().color() != from.piece().color())
                    .anyMatch(opponentField -> opponentFactory.getLogic(opponentField.piece().pieceType())
                                                              .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
+    }
+
+    default boolean hasEmptyParameters(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory) {
+        return grid == null || from == null || to == null || opponentFactory == null;
     }
 }
