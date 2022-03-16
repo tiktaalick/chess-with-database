@@ -11,21 +11,20 @@ public class KnightLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid,
-                               Field from,
-                               Field to,
-                               PieceLogicFactory opponentFactory,
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
                                boolean isOpponent) {
-        return isValidBasicMove(from, to) &&
-                !this.isFriendlyFire(from.piece(), to) &&
-                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+        return !hasEmptyParameters(grid, from, to, opponentFactory) &&
+               isValidBasicMove(from, to) &&
+               !this.isFriendlyFire(from.piece(), to) &&
+               !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
         int horizontalMove = getAbsoluteHorizontalMove(from, to);
         int verticalMove = getAbsoluteVerticalMove(from, to);
         return (horizontalMove == 1 && verticalMove == 2) ||
-                (horizontalMove == 2 && verticalMove == 1);
+               (horizontalMove == 2 && verticalMove == 1) ||
+               (horizontalMove == 0 && verticalMove == 0);
     }
 
 }

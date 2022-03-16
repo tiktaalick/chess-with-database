@@ -11,7 +11,8 @@ public class BishopLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
+                               boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                isValidBasicMove(from, to) &&
                !this.isFriendlyFire(from.piece(), to) &&
