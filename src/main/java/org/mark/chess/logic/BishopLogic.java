@@ -22,7 +22,9 @@ public class BishopLogic implements PieceLogic {
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
-        return getAbsoluteHorizontalMove(from, to) == getAbsoluteVerticalMove(from, to);
+        int horizontalMove = getAbsoluteHorizontalMove(from, to);
+        int verticalMove = getAbsoluteVerticalMove(from, to);
+        return horizontalMove == verticalMove && !(horizontalMove == 0);
     }
 
 }

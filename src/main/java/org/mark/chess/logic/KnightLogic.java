@@ -23,8 +23,7 @@ public class KnightLogic implements PieceLogic {
         int horizontalMove = getAbsoluteHorizontalMove(from, to);
         int verticalMove = getAbsoluteVerticalMove(from, to);
         return (horizontalMove == 1 && verticalMove == 2) ||
-               (horizontalMove == 2 && verticalMove == 1) ||
-               (horizontalMove == 0 && verticalMove == 0);
+               (horizontalMove == 2 && verticalMove == 1);
     }
 
 }

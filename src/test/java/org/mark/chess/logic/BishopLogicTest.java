@@ -77,7 +77,7 @@ public class BishopLogicTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"3;3;3;3;true",
+    @CsvSource(value = {"3;3;3;3;false",
                         "3;3;3;4;false",
                         "3;3;4;4;true",
                         "3;3;3;2;false",

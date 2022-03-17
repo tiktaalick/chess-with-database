@@ -77,7 +77,7 @@ public class KnightLogicTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"3;3;3;3;true",
+    @CsvSource(value = {"3;3;3;3;false",
                         "3;3;4;5;true",
                         "3;3;4;1;true",
                         "3;3;2;5;true",
