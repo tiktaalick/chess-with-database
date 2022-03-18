@@ -7,10 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
-import org.mark.chess.model.Coordinates;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.King;
-import org.mark.chess.model.Rook;
+import org.mark.chess.model.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -27,6 +24,9 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class KingLogicTest {
+    private static final Coordinates VALID_MOVE_COORDINATES_FROM = new Coordinates(3, 3);
+    private static final Coordinates VALID_MOVE_COORDINATES_TO = new Coordinates(3, 4);
+
     @Spy
     @InjectMocks
     private KingLogic kingLogic;
@@ -40,6 +40,9 @@ public class KingLogicTest {
     @Mock
     private RookLogic rookLogic;
 
+    @Mock
+    private QueenLogic queenLogic;
+
     @Test
     public void testIsValidMove_WhenNullValues_ThenReturnFalse() {
         assertFalse(kingLogic.isValidMove(null, null, null, null, false));
@@ -47,19 +50,22 @@ public class KingLogicTest {
 
     @Test
     public void testIsValidMove_WhenInCheck_ThenReturnFalse() {
-        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
+        Field opponentField = new Field().piece(new Queen().color(Color.BLACK)).coordinates(new Coordinates(4, 4));
+        grid.add(opponentField);
 
-        doReturn(true).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(queenLogic).when(opponentFactory).getLogic(PieceType.QUEEN);
+        doReturn(true).when(queenLogic).isValidMove(grid, opponentField, to, opponentFactory, true);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
 
     @Test
     public void testIsValidMove_WhenJumping_ThenReturnFalse() {
-        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
         doReturn(false).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
@@ -70,8 +76,8 @@ public class KingLogicTest {
 
     @Test
     public void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new King().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
         doReturn(false).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);

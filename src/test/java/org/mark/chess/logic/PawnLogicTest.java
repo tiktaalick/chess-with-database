@@ -25,6 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class PawnLogicTest {
+    private static final Coordinates VALID_MOVE_COORDINATES_FROM = new Coordinates(3, 3);
+    private static final Coordinates VALID_MOVE_COORDINATES_TO = new Coordinates(3, 2);
+
     @Spy
     @InjectMocks
     private PawnLogic pawnLogic;
@@ -42,8 +45,8 @@ public class PawnLogicTest {
 
     @Test
     public void testIsValidMove_WhenInCheck_ThenReturnFalse() {
-        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
         Mockito.doReturn(true).when(pawnLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
@@ -53,8 +56,8 @@ public class PawnLogicTest {
 
     @Test
     public void testIsValidMove_WhenJumping_ThenReturnFalse() {
-        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
         Mockito.doReturn(false).when(pawnLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
@@ -65,8 +68,8 @@ public class PawnLogicTest {
 
     @Test
     public void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(new Coordinates(3, 3));
-        Field to = new Field().coordinates(new Coordinates(5, 5));
+        Field from = new Field().piece(new Pawn().color(Color.WHITE)).coordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().coordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
         Mockito.doReturn(false).when(pawnLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
