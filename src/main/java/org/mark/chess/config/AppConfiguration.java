@@ -1,5 +1,6 @@
 package org.mark.chess.config;
 
+import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.factory.PieceFactory;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.logic.*;
@@ -38,6 +39,11 @@ public class AppConfiguration {
     @Bean
     public PieceFactory getPieceFactory() {
         return new PieceFactory();
+    }
+
+    @Bean
+    public ApplicationFactory getApplicationFactory() {
+        return new ApplicationFactory();
     }
 
     @Bean
