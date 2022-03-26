@@ -82,7 +82,7 @@ public class GridLogic {
     public void addChessPiece(Game game, int index, Piece piece, Color color) {
         game.grid().set(index, game.grid().get(index)
                 .piece(piece.color(color))
-                .button(fieldLogic.initializeButton(game, index, piece, color)));
+                .button(fieldLogic.initializeButton(game, index)));
     }
 
     public Field getKingField(List<Field> grid, Color color) {

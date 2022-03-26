@@ -10,9 +10,9 @@ import java.util.List;
 @Accessors(fluent = true)
 public class Game {
     private List<Player> players;
-    private int currentPlayerIndex;
-    private List<Field> grid;
-    private GameStatus gameStatus;
+    private int          currentPlayerIndex;
+    private List<Field>  grid;
+    private GameStatus   gameStatus;
 
     public void setLost() {
         gameStatus = GameStatus.HAS_LOST;

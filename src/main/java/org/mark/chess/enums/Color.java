@@ -1,10 +1,10 @@
 package org.mark.chess.enums;
 
 public enum Color {
-    BLACK("black", new java.awt.Color(0, 0, 0), 0),
     WHITE("white", new java.awt.Color(255, 255, 255), 7),
-    DARK("dark", new java.awt.Color(150, 100, 0)),
-    LIGHT("light", new java.awt.Color(250, 250, 200));
+    BLACK("black", new java.awt.Color(0, 0, 0), 0),
+    LIGHT("light", new java.awt.Color(250, 250, 200)),
+    DARK("dark", new java.awt.Color(150, 100, 0));
 
     static {
         BLACK.opposite = WHITE;

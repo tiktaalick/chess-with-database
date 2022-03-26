@@ -1,10 +1,17 @@
 package org.mark.chess.swing;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
 public class Button extends JButton {
     public static final int FIELD_WIDTH = 50;
 
