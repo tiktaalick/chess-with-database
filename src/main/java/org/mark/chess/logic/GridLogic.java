@@ -15,8 +15,8 @@ import org.mark.chess.model.Rook;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,36 +42,37 @@ public class GridLogic {
     }
 
     public void addChessPieces(Game game) {
-        addChessPiece(game, 0, new Rook(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 1, new Knight(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 2, new Bishop(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 3, new Queen(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 4, new King(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 5, new Bishop(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 6, new Knight(), org.mark.chess.enums.Color.BLACK);
-        addChessPiece(game, 7, new Rook(), org.mark.chess.enums.Color.BLACK);
+        addChessPiece(game, 0, new Rook(), Color.BLACK);
+        addChessPiece(game, 1, new Knight(), Color.BLACK);
+        addChessPiece(game, 2, new Bishop(), Color.BLACK);
+        addChessPiece(game, 3, new Queen(), Color.BLACK);
+        addChessPiece(game, 4, new King(), Color.BLACK);
+        addChessPiece(game, 5, new Bishop(), Color.BLACK);
+        addChessPiece(game, 6, new Knight(), Color.BLACK);
+        addChessPiece(game, 7, new Rook(), Color.BLACK);
 
         for (int i = 8; i < 16; i++) {
-            addChessPiece(game, i, new Pawn(), org.mark.chess.enums.Color.BLACK);
+            addChessPiece(game, i, new Pawn(), Color.BLACK);
         }
 
         for (int i = 48; i < 56; i++) {
-            addChessPiece(game, i, new Pawn(), org.mark.chess.enums.Color.WHITE);
+            addChessPiece(game, i, new Pawn(), Color.WHITE);
         }
 
-        addChessPiece(game, 56, new Rook(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 57, new Knight(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 58, new Bishop(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 59, new Queen(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 60, new King(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 61, new Bishop(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 62, new Knight(), org.mark.chess.enums.Color.WHITE);
-        addChessPiece(game, 63, new Rook(), org.mark.chess.enums.Color.WHITE);
+        addChessPiece(game, 56, new Rook(), Color.WHITE);
+        addChessPiece(game, 57, new Knight(), Color.WHITE);
+        addChessPiece(game, 58, new Bishop(), Color.WHITE);
+        addChessPiece(game, 59, new Queen(), Color.WHITE);
+        addChessPiece(game, 60, new King(), Color.WHITE);
+        addChessPiece(game, 61, new Bishop(), Color.WHITE);
+        addChessPiece(game, 62, new Knight(), Color.WHITE);
+        addChessPiece(game, 63, new Rook(), Color.WHITE);
     }
 
     public void addChessPiece(Game game, int index, Piece piece, Color color) {
-        game.grid().set(index,
-                game.grid().get(index).piece(piece.color(color)).button(fieldLogic.initializeButton(game, index)));
+        game.grid()
+            .set(index,
+                 game.grid().get(index).piece(piece.color(color)).button(fieldLogic.initializeButton(game, index)));
     }
 
     public GridLayout createGridLayout() {
@@ -83,17 +84,19 @@ public class GridLogic {
     }
 
     public Field getField(List<Field> grid, Coordinates coordinates) {
-        return grid.stream().filter(field -> field.coordinates().x() == coordinates.x()).filter(field ->
-                field.coordinates().y() == coordinates.y()).findFirst().orElse(new Field());
+        return grid.stream()
+                   .filter(field -> field.coordinates().x() == coordinates.x())
+                   .filter(field -> field.coordinates().y() == coordinates.y())
+                   .findFirst()
+                   .orElse(new Field());
     }
 
     public Field getKingField(List<Field> grid, Color color) {
-        return grid
-                .stream()
-                .filter(field -> field.piece() != null)
-                .filter(field -> field.piece().color() == color)
-                .filter(field -> field.piece().pieceType() == PieceType.KING)
-                .findFirst()
-                .orElse(new Field());
+        return grid.stream()
+                   .filter(field -> field.piece() != null)
+                   .filter(field -> field.piece().color() == color)
+                   .filter(field -> field.piece().pieceType() == PieceType.KING)
+                   .findFirst()
+                   .orElse(new Field());
     }
 }

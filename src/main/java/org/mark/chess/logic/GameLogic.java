@@ -15,8 +15,8 @@ public class GameLogic {
 
     public Game initializeGame(Board board) {
         Game game = new Game().gameStatus(GameStatus.IN_PROGRESS)
-                .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK)))
-                .currentPlayerIndex(Color.WHITE.ordinal());
+                              .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK)))
+                              .currentPlayerIndex(Color.WHITE.ordinal());
         return game.grid(gridLogic.initializeGrid(game, board));
     }
 
@@ -27,5 +27,4 @@ public class GameLogic {
             game.setLost();
         }
     }
-
 }
