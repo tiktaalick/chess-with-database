@@ -1,6 +1,5 @@
 package org.mark.chess.logic;
 
-import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.Color;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Data
 @ExtendWith(MockitoExtension.class)
 class FieldLogicTest {
     private static final int NUMBER_OF_COLUMNS = 8;
@@ -40,9 +38,6 @@ class FieldLogicTest {
 
     @Mock
     private Board board;
-
-    @Mock
-    private Game game;
 
     @Mock
     private ButtonLogic buttonLogic;

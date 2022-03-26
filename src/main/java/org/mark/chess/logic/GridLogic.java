@@ -2,7 +2,16 @@ package org.mark.chess.logic;
 
 import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
-import org.mark.chess.model.*;
+import org.mark.chess.model.Bishop;
+import org.mark.chess.model.Coordinates;
+import org.mark.chess.model.Field;
+import org.mark.chess.model.Game;
+import org.mark.chess.model.King;
+import org.mark.chess.model.Knight;
+import org.mark.chess.model.Pawn;
+import org.mark.chess.model.Piece;
+import org.mark.chess.model.Queen;
+import org.mark.chess.model.Rook;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +22,7 @@ import java.util.List;
 
 public class GridLogic {
     private static final int COLUMNS = 8;
-    private static final int ROWS = 8;
+    private static final int ROWS    = 8;
 
     @Autowired
     private FieldLogic fieldLogic;
@@ -30,25 +39,6 @@ public class GridLogic {
         addChessPieces(game.grid(grid));
 
         return grid;
-    }
-
-    public GridLayout createGridLayout() {
-        return new GridLayout(ROWS, COLUMNS);
-    }
-
-    public Field getField(List<Field> grid, JButton button) {
-        return grid.stream()
-                .filter(field -> field.button() == button)
-                .findFirst()
-                .orElse(new Field());
-    }
-
-    public Field getField(List<Field> grid, Coordinates coordinates) {
-        return grid.stream()
-                .filter(field -> field.coordinates().x() == coordinates.x())
-                .filter(field -> field.coordinates().y() == coordinates.y())
-                .findFirst()
-                .orElse(new Field());
     }
 
     public void addChessPieces(Game game) {
@@ -80,13 +70,26 @@ public class GridLogic {
     }
 
     public void addChessPiece(Game game, int index, Piece piece, Color color) {
-        game.grid().set(index, game.grid().get(index)
-                .piece(piece.color(color))
-                .button(fieldLogic.initializeButton(game, index)));
+        game.grid().set(index,
+                game.grid().get(index).piece(piece.color(color)).button(fieldLogic.initializeButton(game, index)));
+    }
+
+    public GridLayout createGridLayout() {
+        return new GridLayout(ROWS, COLUMNS);
+    }
+
+    public Field getField(List<Field> grid, JButton button) {
+        return grid.stream().filter(field -> field.button() == button).findFirst().orElse(new Field());
+    }
+
+    public Field getField(List<Field> grid, Coordinates coordinates) {
+        return grid.stream().filter(field -> field.coordinates().x() == coordinates.x()).filter(field ->
+                field.coordinates().y() == coordinates.y()).findFirst().orElse(new Field());
     }
 
     public Field getKingField(List<Field> grid, Color color) {
-        return grid.stream()
+        return grid
+                .stream()
                 .filter(field -> field.piece() != null)
                 .filter(field -> field.piece().color() == color)
                 .filter(field -> field.piece().pieceType() == PieceType.KING)

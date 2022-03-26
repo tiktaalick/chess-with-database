@@ -11,9 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BoardLogic {
-    private static final int WIDTH = 414;
-    private static final int HEIGHT = 435;
-    private static final int LEFT_CLICK = 1;
+    private static final int WIDTH       = 414;
+    private static final int HEIGHT      = 435;
+    private static final int LEFT_CLICK  = 1;
     private static final int RIGHT_CLICK = 3;
 
     @Autowired
@@ -44,20 +44,17 @@ public class BoardLogic {
         if (game.gameStatus() != GameStatus.IN_PROGRESS) {
             board.dispose();
             applicationFactory.getInstance().startApplication();
-        }
-        else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(game, fieldClick)) {
+        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setFrom(board.move(), fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
-        }
-        else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(game, fieldClick)) {
+        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setTo(board.move(), fieldClick);
             moveLogic.setChessPieceSpecificFields(game, board.move().from(), fieldClick);
             moveLogic.moveRookWhenCastling(game.grid(), board.move().from(), fieldClick);
             moveLogic.changeTurn(game);
             moveLogic.resetValidMoves(game, board.move());
             moveLogic.resetFrom(board.move());
-        }
-        else if (buttonClick == RIGHT_CLICK) {
+        } else if (buttonClick == RIGHT_CLICK) {
             moveLogic.resetValidMoves(game, board.move());
         }
     }

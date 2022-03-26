@@ -19,14 +19,13 @@ public class FieldLogic {
     public Field initializeField(Board board, int row, int column, int numberOfColumns) {
         int id = createId(row, column, numberOfColumns);
 
-        Field field = new Field().id(id)
-                .coordinates(new Coordinates(column, row))
-                .button(new Button(column * Button.FIELD_WIDTH,
-                        row * Button.FIELD_WIDTH,
-                        (id + row) % 2 == 0 ? Color.LIGHT.getAwtColor() : Color.DARK.getAwtColor(),
-                        String.valueOf(id),
-                        board,
-                        board));
+        Field field = new Field().id(id).coordinates(new Coordinates(column, row)).button(new Button(
+                column * Button.FIELD_WIDTH,
+                row * Button.FIELD_WIDTH,
+                (id + row) % 2 == 0 ? Color.LIGHT.getAwtColor() : Color.DARK.getAwtColor(),
+                String.valueOf(id),
+                board,
+                board));
         field.button().setEnabled(false);
         board.add(field.button());
 
@@ -46,7 +45,8 @@ public class FieldLogic {
         button.setEnabled(setEnabledButton(game, field));
         button.setToolTipText(color.getName() + " " + piece.pieceType().getName());
         button.setText(null);
-        button.setIcon(new ImageIcon(new ImageIcon(buttonLogic.getIconPath(piece, color)).getImage()
+        button.setIcon(new ImageIcon(new ImageIcon(buttonLogic.getIconPath(piece, color))
+                .getImage()
                 .getScaledInstance(buttonLogic.getIconWidth(button),
                         buttonLogic.getIconWidth(button),
                         Image.SCALE_SMOOTH)));
@@ -57,5 +57,4 @@ public class FieldLogic {
     public boolean setEnabledButton(Game game, Field field) {
         return field.piece() != null && field.piece().color() == game.players().get(game.currentPlayerIndex()).color();
     }
-
 }
