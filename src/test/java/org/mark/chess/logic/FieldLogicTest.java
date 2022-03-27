@@ -3,6 +3,7 @@ package org.mark.chess.logic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.Color;
+import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Human;
@@ -14,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.*;
+import javax.swing.JButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +45,7 @@ class FieldLogicTest {
 
     @Test
     void testInitializeField_WhenDark_ThenReturnDarkField() {
-        Field field = fieldLogic.initializeField(board, 3, 4, NUMBER_OF_COLUMNS);
+        Field field = fieldLogic.initializeField(board, 3, 4);
 
         assertEquals(3 * NUMBER_OF_COLUMNS + 4, field.id());
         assertEquals(4, field.coordinates().x());
@@ -57,7 +58,7 @@ class FieldLogicTest {
 
     @Test
     void testInitializeField_WhenLight_ThenReturnLightField() {
-        Field field = fieldLogic.initializeField(board, 3, 5, NUMBER_OF_COLUMNS);
+        Field field = fieldLogic.initializeField(board, 3, 5);
 
         assertEquals(3 * NUMBER_OF_COLUMNS + 5, field.id());
         assertEquals(5, field.coordinates().x());
@@ -70,15 +71,17 @@ class FieldLogicTest {
 
     @Test
     void testInitializeButton_WhenCurrentPlayer_ThenEnabled() {
-        Button button = new Button(3, 4, Color.DARK.getAwtColor(), "", board, board);
+        Field field = new Field().coordinates(new Coordinates(3, 4));
+        Button button = new Button(board, field);
         Piece piece = new Pawn().color(Color.WHITE);
 
         List<Field> grid = new ArrayList<>();
-        grid.add(new Field().button(button).piece(piece));
+        grid.add(field.button(button).piece(piece));
 
         when(buttonLogic.getIconWidth(button)).thenReturn(50);
 
-        JButton actual = fieldLogic.initializeButton(new Game().grid(grid)
+        JButton actual = fieldLogic.initializeButton(new Game()
+                .grid(grid)
                 .currentPlayerIndex(Color.WHITE.ordinal())
                 .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK))), 0);
 
@@ -93,15 +96,17 @@ class FieldLogicTest {
 
     @Test
     void testInitializeButton_WhenNotCurrentPlayer_ThenNotEnabled() {
-        Button button = new Button(3, 4, Color.DARK.getAwtColor(), "", board, board);
+        Field field = new Field().coordinates(new Coordinates(3, 4));
+        Button button = new Button(board, field);
         Piece piece = new Pawn().color(Color.WHITE);
 
         List<Field> grid = new ArrayList<>();
-        grid.add(new Field().button(button).piece(piece));
+        grid.add(field.button(button).piece(piece));
 
         when(buttonLogic.getIconWidth(button)).thenReturn(50);
 
-        JButton actual = fieldLogic.initializeButton(new Game().grid(grid)
+        JButton actual = fieldLogic.initializeButton(new Game()
+                .grid(grid)
                 .currentPlayerIndex(Color.BLACK.ordinal())
                 .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK))), 0);
 

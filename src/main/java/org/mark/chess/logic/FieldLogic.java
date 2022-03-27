@@ -9,30 +9,28 @@ import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.Image;
+
+import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 
 public class FieldLogic {
     @Autowired
     private ButtonLogic buttonLogic;
 
-    public Field initializeField(Board board, int row, int column, int numberOfColumns) {
-        int id = createId(row, column, numberOfColumns);
+    public Field initializeField(Board board, int row, int column) {
+        int id = createId(row, column, NUMBER_OF_COLUMNS_AND_ROWS);
 
-        Field field = new Field().id(id).coordinates(new Coordinates(column, row)).button(new Button(
-                column * Button.FIELD_WIDTH,
-                row * Button.FIELD_WIDTH,
-                (id + row) % 2 == 0 ? Color.LIGHT.getAwtColor() : Color.DARK.getAwtColor(),
-                String.valueOf(id),
-                board,
-                board));
+        Field field = new Field().id(id).coordinates(new Coordinates(column, row));
+        field.button(new Button(board, field));
         field.button().setEnabled(false);
         board.add(field.button());
 
         return field;
     }
 
-    private int createId(int row, int column, int numberOfColumns) {
+    public int createId(int row, int column, int numberOfColumns) {
         return row * numberOfColumns + column;
     }
 
@@ -47,9 +45,7 @@ public class FieldLogic {
         button.setText(null);
         button.setIcon(new ImageIcon(new ImageIcon(buttonLogic.getIconPath(piece, color))
                 .getImage()
-                .getScaledInstance(buttonLogic.getIconWidth(button),
-                        buttonLogic.getIconWidth(button),
-                        Image.SCALE_SMOOTH)));
+                .getScaledInstance(buttonLogic.getIconWidth(button), buttonLogic.getIconWidth(button), Image.SCALE_SMOOTH)));
 
         return button;
     }

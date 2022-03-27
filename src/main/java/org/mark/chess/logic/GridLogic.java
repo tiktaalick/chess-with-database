@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GridLogic {
-    private static final int COLUMNS = 8;
-    private static final int ROWS    = 8;
+    public static final int NUMBER_OF_COLUMNS_AND_ROWS = 8;
 
     @Autowired
     private FieldLogic fieldLogic;
@@ -30,9 +29,9 @@ public class GridLogic {
     public List<Field> initializeGrid(Game game, Board board) {
         List<Field> grid = new ArrayList<>();
 
-        for (int row = 0; row < ROWS; row++) {
-            for (int column = 0; column < COLUMNS; column++) {
-                grid.add(fieldLogic.initializeField(board, row, column, COLUMNS));
+        for (int row = 0; row < NUMBER_OF_COLUMNS_AND_ROWS; row++) {
+            for (int column = 0; column < NUMBER_OF_COLUMNS_AND_ROWS; column++) {
+                grid.add(fieldLogic.initializeField(board, row, column));
             }
         }
 
@@ -70,13 +69,11 @@ public class GridLogic {
     }
 
     public void addChessPiece(Game game, int index, Piece piece, Color color) {
-        game.grid()
-            .set(index,
-                 game.grid().get(index).piece(piece.color(color)).button(fieldLogic.initializeButton(game, index)));
+        game.grid().set(index, game.grid().get(index).piece(piece.color(color)).button(fieldLogic.initializeButton(game, index)));
     }
 
     public GridLayout createGridLayout() {
-        return new GridLayout(ROWS, COLUMNS);
+        return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
     public Field getField(List<Field> grid, JButton button) {
@@ -84,19 +81,21 @@ public class GridLogic {
     }
 
     public Field getField(List<Field> grid, Coordinates coordinates) {
-        return grid.stream()
-                   .filter(field -> field.coordinates().x() == coordinates.x())
-                   .filter(field -> field.coordinates().y() == coordinates.y())
-                   .findFirst()
-                   .orElse(new Field());
+        return grid
+                .stream()
+                .filter(field -> field.coordinates().x() == coordinates.x())
+                .filter(field -> field.coordinates().y() == coordinates.y())
+                .findFirst()
+                .orElse(new Field());
     }
 
     public Field getKingField(List<Field> grid, Color color) {
-        return grid.stream()
-                   .filter(field -> field.piece() != null)
-                   .filter(field -> field.piece().color() == color)
-                   .filter(field -> field.piece().pieceType() == PieceType.KING)
-                   .findFirst()
-                   .orElse(new Field());
+        return grid
+                .stream()
+                .filter(field -> field.piece() != null)
+                .filter(field -> field.piece().color() == color)
+                .filter(field -> field.piece().pieceType() == PieceType.KING)
+                .findFirst()
+                .orElse(new Field());
     }
 }
