@@ -6,7 +6,7 @@ import org.mark.chess.model.Game;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
+import javax.swing.JButton;
 
 public class GameService {
     @Autowired

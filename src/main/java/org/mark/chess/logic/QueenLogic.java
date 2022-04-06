@@ -11,11 +11,10 @@ public class QueenLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
-                               boolean isOpponent) {
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                isValidBasicMove(from, to) &&
-               !this.isFriendlyFire(from.piece(), to) &&
+               !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
@@ -23,9 +22,7 @@ public class QueenLogic implements PieceLogic {
     private boolean isValidBasicMove(Field from, Field to) {
         int horizontalMove = getAbsoluteHorizontalMove(from, to);
         int verticalMove = getAbsoluteVerticalMove(from, to);
-        return ((horizontalMove != 0 && verticalMove == 0) ||
-                (horizontalMove == 0 && verticalMove != 0) ||
-                horizontalMove == verticalMove) && !(horizontalMove == 0 && verticalMove == 0);
+        return ((horizontalMove != 0 && verticalMove == 0) || (horizontalMove == 0 && verticalMove != 0) || horizontalMove == verticalMove) &&
+               !(horizontalMove == 0 && verticalMove == 0);
     }
-
 }

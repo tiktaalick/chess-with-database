@@ -7,7 +7,7 @@ import org.mark.chess.enums.PlayerType;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Human extends Player {
     private PlayerType playerType = PlayerType.HUMAN;
 }

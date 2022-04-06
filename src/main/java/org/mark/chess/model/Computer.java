@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 import org.mark.chess.enums.PlayerType;
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Computer extends Player {
     private PlayerType playerType = PlayerType.COMPUTER;
 }

@@ -14,10 +14,15 @@ public class GameLogic {
     private GridLogic gridLogic;
 
     public Game initializeGame(Board board) {
-        Game game = new Game().gameStatus(GameStatus.IN_PROGRESS)
-                              .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK)))
-                              .currentPlayerIndex(Color.WHITE.ordinal());
-        return game.grid(gridLogic.initializeGrid(game, board));
+        Game game = new Game()
+                .setGameStatus(GameStatus.IN_PROGRESS)
+                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK)))
+                .setCurrentPlayerId(Color.WHITE.ordinal())
+                .setGrid(gridLogic.initializeGrid(board));
+
+        gridLogic.addChessPieces(game);
+
+        return game;
     }
 
     public void endGame(Game game, boolean hasWon) {

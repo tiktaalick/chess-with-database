@@ -2,7 +2,11 @@ package org.mark.chess.logic;
 
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
-import org.mark.chess.model.*;
+import org.mark.chess.model.Coordinates;
+import org.mark.chess.model.Field;
+import org.mark.chess.model.King;
+import org.mark.chess.model.Piece;
+import org.mark.chess.model.Rook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -10,25 +14,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class KingLogic implements PieceLogic {
-    public static final int LEFT = 2;
-    public static final int RIGHT = 6;
-    public static final int ROOK_X_LEFT_FROM = 0;
-    public static final int ROOK_X_LEFT_TO = 3;
-    public static final int ROOK_X_RIGHT_FROM = 7;
-    public static final int ROOK_X_RIGHT_TO = 5;
-    private static final int KING_INITIAL_X = 4;
+    public static final  int LEFT              = 2;
+    public static final  int RIGHT             = 6;
+    public static final  int ROOK_X_LEFT_FROM  = 0;
+    public static final  int ROOK_X_LEFT_TO    = 3;
+    public static final  int ROOK_X_RIGHT_FROM = 7;
+    public static final  int ROOK_X_RIGHT_TO   = 5;
+    private static final int KING_INITIAL_X    = 4;
 
     @Autowired
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
-                               boolean isOpponent) {
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                (isValidBasicMove(from, to) ||
                 isValidCastling(grid, from, to, LEFT, opponentFactory, isOpponent, false) ||
                 isValidCastling(grid, from, to, RIGHT, opponentFactory, isOpponent, false)) &&
-               !this.isFriendlyFire(from.piece(), to) &&
+               !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
                !isInCheck(grid, from, to, opponentFactory, isOpponent);
     }
@@ -41,43 +44,45 @@ public class KingLogic implements PieceLogic {
                !(horizontalMove == 0 && verticalMove == 0);
     }
 
-    public boolean isValidCastling(List<Field> grid, Field from, Field to, int direction,
-                                   PieceLogicFactory opponentFactory, boolean isOpponent, boolean isNowCastling) {
+    public boolean isValidCastling(List<Field> grid,
+            Field from,
+            Field to,
+            int direction,
+            PieceLogicFactory opponentFactory,
+            boolean isOpponent,
+            boolean isNowCastling) {
         if (isOpponent) {
             return false;
         }
 
-        Field rookField = gridLogic.getField(grid,
-                                             new Coordinates((direction == LEFT
-                                                              ? ROOK_X_LEFT_FROM
-                                                              : ROOK_X_RIGHT_FROM), from.piece().color().getBaselineY())
-                                            );
+        Field rookField = gridLogic.getField(grid, new Coordinates((direction == LEFT
+                ? ROOK_X_LEFT_FROM
+                : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaselineY()));
 
-        boolean isValidFrom = from.coordinates().x() == KING_INITIAL_X &&
-                              from.coordinates().y() == from.piece().color().getBaselineY();
+        boolean isValidFrom = from.getCoordinates().getX() == KING_INITIAL_X &&
+                              from.getCoordinates().getY() == from.getPiece().getColor().getBaselineY();
         boolean isValidTo = Arrays.asList(LEFT, RIGHT).contains(direction) &&
-                            to.coordinates().x() == direction &&
-                            to.coordinates().y() == from.piece().color().getBaselineY();
-        boolean isKingValid = isNowCastling || !((King) from.piece()).hasMovedAtLeastOnce();
-        boolean isRookValid = Optional.ofNullable(rookField).map(Field::piece).map(Piece::pieceType).orElse(null) ==
-                              PieceType.ROOK && !((Rook) rookField.piece()).hasMovedAtLeastOnce();
+                            to.getCoordinates().getX() == direction &&
+                            to.getCoordinates().getY() == from.getPiece().getColor().getBaselineY();
+        boolean isKingValid = isNowCastling || !((King) from.getPiece()).isHasMovedAtLeastOnce();
+        boolean isRookValid = Optional.ofNullable(rookField).map(Field::getPiece).map(Piece::getPieceType).orElse(null) == PieceType.ROOK &&
+                              !((Rook) rookField.getPiece()).isHasMovedAtLeastOnce();
         boolean isInCheck = isInCheck(grid, from, from, opponentFactory, false);
 
         return isValidFrom && isValidTo && isKingValid && isRookValid && !isInCheck;
     }
 
-    private boolean isInCheck(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
-                              boolean isOpponent) {
+    private boolean isInCheck(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }
 
         return grid
                 .stream()
-                .filter(opponentField -> opponentField.piece() != null)
-                .filter(opponentField -> opponentField.piece().color() != from.piece().color())
+                .filter(opponentField -> opponentField.getPiece() != null)
+                .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
                 .anyMatch(opponentField -> opponentFactory
-                        .getLogic(opponentField.piece().pieceType())
+                        .getLogic(opponentField.getPiece().getPieceType())
                         .isValidMove(grid, opponentField, to, opponentFactory, true));
     }
 }

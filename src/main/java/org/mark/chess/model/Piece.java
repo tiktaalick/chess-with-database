@@ -6,10 +6,10 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public abstract class Piece {
     private PieceType pieceType;
-    private Color color;
-    private boolean kickedOff;
-    private boolean isPawnBeingPromoted;
+    private Color     color;
+    private boolean   kickedOff;
+    private boolean   isPawnBeingPromoted;
 }

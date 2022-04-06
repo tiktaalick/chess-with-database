@@ -9,10 +9,6 @@ import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.Image;
-
 import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 
 public class FieldLogic {
@@ -20,37 +16,28 @@ public class FieldLogic {
     private ButtonLogic buttonLogic;
 
     public Field initializeField(Board board, int row, int column) {
-        int id = createId(row, column, NUMBER_OF_COLUMNS_AND_ROWS);
-
-        Field field = new Field().id(id).coordinates(new Coordinates(column, row));
-        field.button(new Button(board, field));
-        field.button().setEnabled(false);
-        board.add(field.button());
+        Field field = new Field().setCode(createCode(row, column)).setCoordinates(new Coordinates(column, row));
+        field.setButton(new Button(board, field));
+        field.getButton().setEnabled(false);
+        board.add(field.getButton());
 
         return field;
     }
 
-    public int createId(int row, int column, int numberOfColumns) {
-        return row * numberOfColumns + column;
+    public void addChessPiece(Game game, String code, Piece piece, Color color) {
+        int id = createId(code);
+        game.getGrid().set(id, game.getGrid().get(id).setPiece(piece.setColor(color)).setButton(buttonLogic.initializeButton(game, id)));
     }
 
-    public JButton initializeButton(Game game, int index) {
-        Field field = game.grid().get(index);
-        Piece piece = field.piece();
-        Color color = piece.color();
-        JButton button = field.button();
-
-        button.setEnabled(setEnabledButton(game, field));
-        button.setToolTipText(color.getName() + " " + piece.pieceType().getName());
-        button.setText(null);
-        button.setIcon(new ImageIcon(new ImageIcon(buttonLogic.getIconPath(piece, color))
-                .getImage()
-                .getScaledInstance(buttonLogic.getIconWidth(button), buttonLogic.getIconWidth(button), Image.SCALE_SMOOTH)));
-
-        return button;
+    public int createId(String code) {
+        return (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS + (code.charAt(0) - 'a');
     }
 
-    public boolean setEnabledButton(Game game, Field field) {
-        return field.piece() != null && field.piece().color() == game.players().get(game.currentPlayerIndex()).color();
+    public String createCode(int id) {
+        return createCode(id / NUMBER_OF_COLUMNS_AND_ROWS, id % NUMBER_OF_COLUMNS_AND_ROWS);
+    }
+
+    public String createCode(int row, int column) {
+        return ((char) ('a' + column)) + String.valueOf(8 - row);
     }
 }

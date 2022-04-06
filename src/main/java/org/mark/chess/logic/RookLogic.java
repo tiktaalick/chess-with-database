@@ -11,11 +11,10 @@ public class RookLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory,
-                               boolean isOpponent) {
+    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                isValidBasicMove(from, to) &&
-               !this.isFriendlyFire(from.piece(), to) &&
+               !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
                !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
@@ -25,5 +24,4 @@ public class RookLogic implements PieceLogic {
         int verticalMove = getAbsoluteVerticalMove(from, to);
         return (horizontalMove != 0 && verticalMove == 0) || (horizontalMove == 0 && verticalMove != 0);
     }
-
 }

@@ -101,5 +101,4 @@ public class AppConfiguration {
     public GameService getGameService() {
         return new GameService();
     }
-
 }

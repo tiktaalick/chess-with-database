@@ -15,7 +15,7 @@ import java.awt.event.MouseListener;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Board extends JFrame implements ActionListener, MouseListener {
     private final Game game;
     private Move move;

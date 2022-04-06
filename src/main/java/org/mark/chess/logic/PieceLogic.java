@@ -15,26 +15,26 @@ public interface PieceLogic {
     }
 
     default boolean isCancelMove(Field from, Field to) {
-        return from.coordinates().x() == to.coordinates().x() && from.coordinates().y() == to.coordinates().y();
+        return from.getCoordinates().getX() == to.getCoordinates().getX() && from.getCoordinates().getY() == to.getCoordinates().getY();
     }
 
     boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent);
 
     default boolean isFriendlyFire(Piece piece, Field to) {
-        return to.piece() != null && to.piece().color() == piece.color();
+        return to.getPiece() != null && to.getPiece().getColor() == piece.getColor();
     }
 
     default boolean isJumping(List<Field> grid, Field from, Field to) {
-        final Coordinates step = new Coordinates(Integer.signum(to.coordinates().x() - from.coordinates().x()),
-                Integer.signum(to.coordinates().y() - from.coordinates().y()));
+        final Coordinates step = new Coordinates(Integer.signum(to.getCoordinates().getX() - from.getCoordinates().getX()),
+                Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()));
 
-        Coordinates currentCoordinates = new Coordinates(from.coordinates().x(), from.coordinates().y());
+        Coordinates currentCoordinates = new Coordinates(from.getCoordinates().getX(), from.getCoordinates().getY());
 
         doNextStep(currentCoordinates, step);
 
         boolean mustIJump = false;
 
-        while (!mustIJump && movingTowardsDestination(currentCoordinates, to.coordinates(), step)) {
+        while (!mustIJump && movingTowardsDestination(currentCoordinates, to.getCoordinates(), step)) {
             mustIJump = isFieldOccupied(grid, currentCoordinates);
             doNextStep(currentCoordinates, step);
         }
@@ -43,54 +43,59 @@ public interface PieceLogic {
     }
 
     private void doNextStep(Coordinates coordinates, Coordinates step) {
-        coordinates.x(coordinates.x() + step.x());
-        coordinates.y(coordinates.y() + step.y());
+        coordinates.setX(coordinates.getX() + step.getX());
+        coordinates.setY(coordinates.getY() + step.getY());
     }
 
     private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
-        return !(currentCoordinates.x() == to.x() && currentCoordinates.y() == to.y()) && (step.x() >= 0) == (currentCoordinates.x() <= to.x()) &&
-               (step.y() >= 0) == (currentCoordinates.y() <= to.y());
+        return !(currentCoordinates.getX() == to.getX() && currentCoordinates.getY() == to.getY()) &&
+               (step.getX() >= 0) == (currentCoordinates.getX() <= to.getX()) &&
+               (step.getY() >= 0) == (currentCoordinates.getY() <= to.getY());
     }
 
     private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
         return grid
                 .stream()
-                .filter(field -> field.coordinates().x() == currentCoordinates.x() && field.coordinates().y() == currentCoordinates.y())
-                .anyMatch(field -> field.piece() != null);
+                .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
+                                 field.getCoordinates().getY() == currentCoordinates.getY())
+                .anyMatch(field -> field.getPiece() != null);
     }
 
     default int getAbsoluteHorizontalMove(Field from, Field to) {
-        return Math.abs(to.coordinates().x() - from.coordinates().x());
+        return Math.abs(to.getCoordinates().getX() - from.getCoordinates().getX());
     }
 
     default int getAbsoluteVerticalMove(Field from, Field to) {
-        return Math.abs(to.coordinates().y() - from.coordinates().y());
+        return Math.abs(to.getCoordinates().getY() - from.getCoordinates().getY());
     }
 
     default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent, PieceLogicFactory opponentFactory, GridLogic gridLogic) {
         if (isOpponent) {
             return false;
         }
-        Field kingField = gridLogic.getKingField(grid, from.piece().color());
+        Field kingField = gridLogic.getKingField(grid, from.getPiece().getColor());
 
-        List<Field> futureList = grid.stream().filter(field -> !Arrays.asList(from.id(), to.id()).contains(field.id())).collect(Collectors.toList());
+        List<Field> futureList = grid
+                .stream()
+                .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
+                .collect(Collectors.toList());
 
         List<Field> movementList = grid
                 .stream()
-                .filter(field -> Arrays.asList(from.id(), to.id()).contains(field.id()))
-                .map(field -> field.id() == from.id()
-                              ? new Field().coordinates(from.coordinates())
-                              : new Field().coordinates(to.coordinates()).piece(from.piece()))
+                .filter(field -> Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
+                .map(field -> field.getCode() == from.getCode()
+                        ? new Field().setCoordinates(from.getCoordinates())
+                        : new Field().setCoordinates(to.getCoordinates()).setPiece(from.getPiece()))
                 .collect(Collectors.toList());
 
         futureList.addAll(movementList);
 
         return grid
                 .stream()
-                .filter(opponentField -> opponentField.piece() != null)
-                .filter(opponentField -> opponentField.piece().color() != from.piece().color())
+                .filter(opponentField -> opponentField.getPiece() != null)
+                .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
                 .anyMatch(opponentField -> opponentFactory
-                        .getLogic(opponentField.piece().pieceType())
+                        .getLogic(opponentField.getPiece().getPieceType())
                         .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
     }
 

@@ -1,27 +1,33 @@
 package org.mark.chess.factory;
 
 import org.mark.chess.enums.PieceType;
-import org.mark.chess.logic.*;
+import org.mark.chess.logic.BishopLogic;
+import org.mark.chess.logic.KingLogic;
+import org.mark.chess.logic.KnightLogic;
+import org.mark.chess.logic.PawnLogic;
+import org.mark.chess.logic.PieceLogic;
+import org.mark.chess.logic.QueenLogic;
+import org.mark.chess.logic.RookLogic;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PieceLogicFactory {
     @Autowired
-    KingLogic kingLogic;
+    private KingLogic kingLogic;
 
     @Autowired
-    QueenLogic queenLogic;
+    private QueenLogic queenLogic;
 
     @Autowired
-    RookLogic rookLogic;
+    private RookLogic rookLogic;
 
     @Autowired
-    BishopLogic bishopLogic;
+    private BishopLogic bishopLogic;
 
     @Autowired
-    KnightLogic knightLogic;
+    private KnightLogic knightLogic;
 
     @Autowired
-    PawnLogic pawnLogic;
+    private PawnLogic pawnLogic;
 
     public PieceLogic getLogic(PieceType pieceType) {
         switch (pieceType) {

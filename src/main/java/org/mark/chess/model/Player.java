@@ -6,8 +6,8 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PlayerType;
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public abstract class Player {
-    private Color color;
+    private Color      color;
     private PlayerType playerType;
 }

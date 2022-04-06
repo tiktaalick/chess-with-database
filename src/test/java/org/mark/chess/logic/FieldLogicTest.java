@@ -3,11 +3,10 @@ package org.mark.chess.logic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.Color;
+import org.mark.chess.model.Bishop;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
-import org.mark.chess.model.Human;
-import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
@@ -15,25 +14,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.JButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 import static org.mark.chess.swing.Button.FIELD_WIDTH;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FieldLogicTest {
-    private static final int NUMBER_OF_COLUMNS = 8;
-
     @InjectMocks
     private FieldLogic fieldLogic;
 
@@ -47,75 +39,45 @@ class FieldLogicTest {
     void testInitializeField_WhenDark_ThenReturnDarkField() {
         Field field = fieldLogic.initializeField(board, 3, 4);
 
-        assertEquals(3 * NUMBER_OF_COLUMNS + 4, field.id());
-        assertEquals(4, field.coordinates().x());
-        assertEquals(3, field.coordinates().y());
-        assertEquals(4 * FIELD_WIDTH, field.button().getX());
-        assertEquals(3 * FIELD_WIDTH, field.button().getY());
-        assertEquals(Color.DARK.getAwtColor(), field.button().getBackground());
-        assertFalse(field.button().isEnabled());
+        assertEquals("e5", field.getCode());
+        assertEquals(3 * NUMBER_OF_COLUMNS_AND_ROWS + 4, field.getId());
+        assertEquals(4, field.getCoordinates().getX());
+        assertEquals(3, field.getCoordinates().getY());
+        assertEquals(4 * FIELD_WIDTH, field.getButton().getX());
+        assertEquals(3 * FIELD_WIDTH, field.getButton().getY());
+        assertEquals(Color.DARK.getAwtColor(), field.getButton().getBackground());
+        assertFalse(field.getButton().isEnabled());
     }
 
     @Test
     void testInitializeField_WhenLight_ThenReturnLightField() {
         Field field = fieldLogic.initializeField(board, 3, 5);
 
-        assertEquals(3 * NUMBER_OF_COLUMNS + 5, field.id());
-        assertEquals(5, field.coordinates().x());
-        assertEquals(3, field.coordinates().y());
-        assertEquals(5 * FIELD_WIDTH, field.button().getX());
-        assertEquals(3 * FIELD_WIDTH, field.button().getY());
-        assertEquals(Color.LIGHT.getAwtColor(), field.button().getBackground());
-        assertFalse(field.button().isEnabled());
+        assertEquals("f5", field.getCode());
+        assertEquals(3 * NUMBER_OF_COLUMNS_AND_ROWS + 5, field.getId());
+        assertEquals(5, field.getCoordinates().getX());
+        assertEquals(3, field.getCoordinates().getY());
+        assertEquals(5 * FIELD_WIDTH, field.getButton().getX());
+        assertEquals(3 * FIELD_WIDTH, field.getButton().getY());
+        assertEquals(Color.LIGHT.getAwtColor(), field.getButton().getBackground());
+        assertFalse(field.getButton().isEnabled());
     }
 
     @Test
-    void testInitializeButton_WhenCurrentPlayer_ThenEnabled() {
-        Field field = new Field().coordinates(new Coordinates(3, 4));
-        Button button = new Button(board, field);
-        Piece piece = new Pawn().color(Color.WHITE);
+    void testAddChessPiece() {
+        List<Field> grid = new ArrayList<>(Arrays.asList(new Field().setId(0).setCoordinates(new Coordinates(0, 0)),
+                new Field().setId(1).setCoordinates(new Coordinates(1, 0)),
+                new Field().setId(2).setCoordinates(new Coordinates(2, 0)),
+                new Field().setId(3).setCoordinates(new Coordinates(3, 0))));
 
-        List<Field> grid = new ArrayList<>();
-        grid.add(field.button(button).piece(piece));
+        Game game = new Game().setGrid(grid);
+        Piece bishop = new Bishop();
 
-        when(buttonLogic.getIconWidth(button)).thenReturn(50);
+        when(buttonLogic.initializeButton(game, 2)).thenReturn(new Button(board, grid.get(2)));
 
-        JButton actual = fieldLogic.initializeButton(new Game()
-                .grid(grid)
-                .currentPlayerIndex(Color.WHITE.ordinal())
-                .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK))), 0);
+        fieldLogic.addChessPiece(game, "c8", bishop, Color.BLACK);
 
-        assertTrue(actual.isEnabled());
-        assertEquals("white pawn", actual.getToolTipText());
-        assertNull(actual.getText());
-        assertNotNull(actual.getIcon());
-
-        verify(buttonLogic, times(2)).getIconWidth(button);
-        verify(buttonLogic).getIconPath(piece, piece.color());
-    }
-
-    @Test
-    void testInitializeButton_WhenNotCurrentPlayer_ThenNotEnabled() {
-        Field field = new Field().coordinates(new Coordinates(3, 4));
-        Button button = new Button(board, field);
-        Piece piece = new Pawn().color(Color.WHITE);
-
-        List<Field> grid = new ArrayList<>();
-        grid.add(field.button(button).piece(piece));
-
-        when(buttonLogic.getIconWidth(button)).thenReturn(50);
-
-        JButton actual = fieldLogic.initializeButton(new Game()
-                .grid(grid)
-                .currentPlayerIndex(Color.BLACK.ordinal())
-                .players(Arrays.asList(new Human().color(Color.WHITE), new Human().color(Color.BLACK))), 0);
-
-        assertFalse(actual.isEnabled());
-        assertEquals("white pawn", actual.getToolTipText());
-        assertNull(actual.getText());
-        assertNotNull(actual.getIcon());
-
-        verify(buttonLogic, times(2)).getIconWidth(button);
-        verify(buttonLogic).getIconPath(piece, piece.color());
+        assertEquals(Color.BLACK, game.getGrid().get(2).getPiece().getColor());
+        assertEquals(bishop, game.getGrid().get(2).getPiece());
     }
 }

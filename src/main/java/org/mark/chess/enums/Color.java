@@ -11,10 +11,10 @@ public enum Color {
         WHITE.opposite = BLACK;
     }
 
-    private final String name;
+    private final String         name;
     private final java.awt.Color awtColor;
-    private int baselineY;
-    private Color opposite;
+    private       int            baselineY;
+    private       Color          opposite;
 
     Color(String name, java.awt.Color awtColor) {
         this.name = name;

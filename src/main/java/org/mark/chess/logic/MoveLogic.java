@@ -31,68 +31,78 @@ public class MoveLogic {
     @Autowired
     private FieldLogic fieldLogic;
 
+    @Autowired
+    private ButtonLogic buttonLogic;
+
     public boolean isFrom(Game game, Field fieldClick) {
-        return fieldClick.piece() != null && fieldClick.piece().color() == game.players().get(game.currentPlayerIndex()).color();
+        return fieldClick.getPiece() != null && fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
     }
 
     public void enableValidMoves(Game game, Field from) {
-        game.grid().forEach(field -> field.button().setEnabled(false));
+        game.getGrid().forEach(field -> field.getButton().setEnabled(false));
         pieceLogicFactory
-                .getLogic(from.piece().pieceType())
-                .getValidMoves(game.grid(), from, pieceLogicFactory)
-                .forEach(to -> to.button().setEnabled(true));
+                .getLogic(from.getPiece().getPieceType())
+                .getValidMoves(game.getGrid(), from, pieceLogicFactory)
+                .forEach(to -> to.getButton().setEnabled(true));
     }
 
     public void resetValidMoves(Game game, Move move) {
-        game.grid().forEach(field -> {
-            field.button().setEnabled(fieldLogic.setEnabledButton(game, field));
+        game.getGrid().forEach(field -> {
+            field.getButton().setEnabled(buttonLogic.setEnabledButton(game, field));
 
             if (duringAMove(move, field)) {
                 return;
             }
 
-            if (field.piece() != null && field.piece().pieceType() == PieceType.PAWN) {
-                ((Pawn) field.piece()).mayBeCapturedEnPassant(false);
-            } else if (field.piece() != null && field.piece().pieceType() == PieceType.ROOK) {
-                ((Rook) field.piece()).hasMovedAtLeastOnce(false);
-            } else if (field.piece() != null && field.piece().pieceType() == PieceType.KING) {
-                ((King) field.piece()).hasMovedAtLeastOnce(false);
+            if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.PAWN) {
+                ((Pawn) field.getPiece()).setMayBeCapturedEnPassant(false);
+            } else if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.ROOK) {
+                ((Rook) field.getPiece()).setHasMovedAtLeastOnce(false);
+            } else if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.KING) {
+                ((King) field.getPiece()).setHasMovedAtLeastOnce(false);
             }
         });
     }
 
     private boolean duringAMove(Move move, Field field) {
-        return move.from() != null && move.to() != null && Arrays.asList(move.from().id(), move.to().id()).contains(field.id());
+        return move.getFrom() != null &&
+               move.getTo() != null &&
+               Arrays.asList(move.getFrom().getCode(), move.getTo().getCode()).contains(field.getCode());
     }
 
     public void setChessPieceSpecificFields(Game game, Field from, Field to) {
-        if (from.piece().pieceType() == PieceType.PAWN) {
-            Pawn pawn = (Pawn) from.piece();
+        if (from.getPiece().getPieceType() == PieceType.PAWN) {
+            Pawn pawn = (Pawn) from.getPiece();
             PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN);
-            pawn.mayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.grid(), from, to));
-            pawn.isPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
+            pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
+            pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
-                gridLogic.addChessPiece(game, to.id(), pieceFactory.getPiece(from.piece().pieceType().getNextPawnPromotion()), from.piece().color());
+                fieldLogic.addChessPiece(game,
+                        to.getCode(),
+                        pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()),
+                        from.getPiece().getColor());
             }
-        } else if (from.piece().pieceType() == PieceType.ROOK) {
-            ((Rook) from.piece()).hasMovedAtLeastOnce(true);
-        } else if (from.piece().pieceType() == PieceType.KING) {
-            ((King) from.piece()).hasMovedAtLeastOnce(true);
+        } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
+            ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
+        } else if (from.getPiece().getPieceType() == PieceType.KING) {
+            ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
     }
 
     public void moveRookWhenCastling(List<Field> grid, Field from, Field to) {
-        if (from.piece().pieceType() == PieceType.KING &&
-            kingLogic.isValidCastling(grid, from, to, to.coordinates().x(), pieceLogicFactory, false, true)) {
+        if (from.getPiece().getPieceType() == PieceType.KING &&
+            kingLogic.isValidCastling(grid, from, to, to.getCoordinates().getX(), pieceLogicFactory, false, true)) {
 
-            Coordinates rookCoordinates = new Coordinates(
-                    (to.coordinates().x() == KingLogic.LEFT ? KingLogic.ROOK_X_LEFT_FROM : KingLogic.ROOK_X_RIGHT_FROM),
-                    from.piece().color().getBaselineY());
+            Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.LEFT
+                    ? KingLogic.ROOK_X_LEFT_FROM
+                    : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaselineY());
 
             Field rookFromField = gridLogic.getField(grid, rookCoordinates);
             Field rookToField = gridLogic.getField(grid,
-                    rookCoordinates.x(to.coordinates().x() == KingLogic.LEFT ? KingLogic.ROOK_X_LEFT_TO : KingLogic.ROOK_X_RIGHT_TO));
+                    rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.LEFT
+                            ? KingLogic.ROOK_X_LEFT_TO
+                            : KingLogic.ROOK_X_RIGHT_TO));
 
             moveRock(rookFromField, rookToField);
         }
@@ -106,24 +116,24 @@ public class MoveLogic {
     }
 
     public void setFrom(Move move, Field from) {
-        move.piece(from.piece());
-        move.from(from);
-        move.to(null);
+        move.setPiece(from.getPiece());
+        move.setFrom(from);
+        move.setTo(null);
     }
 
     public void setTo(Move move, Field to) {
-        move.to(to);
-        move.to().piece(move.from().piece());
-        move.to().button().setText(null);
-        move.to().button().setIcon(move.from().button().getIcon());
+        move.setTo(to);
+        move.getTo().setPiece(move.getFrom().getPiece());
+        move.getTo().getButton().setText(null);
+        move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
     }
 
     public void resetFrom(Move move) {
-        move.from().piece(null);
-        move.from().button().setIcon(null);
+        move.getFrom().setPiece(null);
+        move.getFrom().getButton().setIcon(null);
     }
 
     public void changeTurn(Game game) {
-        game.currentPlayerIndex(1 - game.currentPlayerIndex());
+        game.setCurrentPlayerId(1 - game.getCurrentPlayerId());
     }
 }

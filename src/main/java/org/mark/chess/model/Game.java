@@ -7,10 +7,10 @@ import org.mark.chess.enums.GameStatus;
 import java.util.List;
 
 @Data
-@Accessors(fluent = true)
+@Accessors(chain = true)
 public class Game {
     private List<Player> players;
-    private int          currentPlayerIndex;
+    private int          currentPlayerId;
     private List<Field>  grid;
     private GameStatus   gameStatus;
 
