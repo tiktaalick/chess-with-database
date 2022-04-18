@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class KingLogic implements PieceLogic {
-    public static final  int LEFT              = 2;
-    public static final  int RIGHT             = 6;
-    public static final  int ROOK_X_LEFT_FROM  = 0;
-    public static final  int ROOK_X_LEFT_TO    = 3;
-    public static final  int ROOK_X_RIGHT_FROM = 7;
-    public static final  int ROOK_X_RIGHT_TO   = 5;
-    private static final int KING_INITIAL_X    = 4;
+    public static final  int KING_X_LEFT       = 3;
+    public static final  int KING_X_RIGHT      = 7;
+    public static final  int ROOK_X_LEFT_FROM  = 1;
+    public static final  int ROOK_X_LEFT_TO    = 4;
+    public static final  int ROOK_X_RIGHT_FROM = 8;
+    public static final  int ROOK_X_RIGHT_TO   = 6;
+    private static final int KING_INITIAL_X    = 5;
 
     @Autowired
     private GridLogic gridLogic;
@@ -29,11 +29,11 @@ public class KingLogic implements PieceLogic {
     public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                (isValidBasicMove(from, to) ||
-                isValidCastling(grid, from, to, LEFT, opponentFactory, isOpponent, false) ||
-                isValidCastling(grid, from, to, RIGHT, opponentFactory, isOpponent, false)) &&
+                isValidCastling(grid, from, to, KING_X_LEFT, opponentFactory, isOpponent, false) ||
+                isValidCastling(grid, from, to, KING_X_RIGHT, opponentFactory, isOpponent, false)) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isInCheck(grid, from, to, opponentFactory, isOpponent);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
@@ -55,24 +55,25 @@ public class KingLogic implements PieceLogic {
             return false;
         }
 
-        Field rookField = gridLogic.getField(grid, new Coordinates((direction == LEFT
-                ? ROOK_X_LEFT_FROM
-                : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaselineY()));
+        Field rookField = gridLogic.getField(grid,
+                new Coordinates((direction == KING_X_LEFT
+                        ? ROOK_X_LEFT_FROM
+                        : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline()));
 
         boolean isValidFrom = from.getCoordinates().getX() == KING_INITIAL_X &&
-                              from.getCoordinates().getY() == from.getPiece().getColor().getBaselineY();
-        boolean isValidTo = Arrays.asList(LEFT, RIGHT).contains(direction) &&
+                              from.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
+        boolean isValidTo = Arrays.asList(KING_X_LEFT, KING_X_RIGHT).contains(direction) &&
                             to.getCoordinates().getX() == direction &&
-                            to.getCoordinates().getY() == from.getPiece().getColor().getBaselineY();
+                            to.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
         boolean isKingValid = isNowCastling || !((King) from.getPiece()).isHasMovedAtLeastOnce();
         boolean isRookValid = Optional.ofNullable(rookField).map(Field::getPiece).map(Piece::getPieceType).orElse(null) == PieceType.ROOK &&
                               !((Rook) rookField.getPiece()).isHasMovedAtLeastOnce();
-        boolean isInCheck = isInCheck(grid, from, from, opponentFactory, false);
+        boolean isInCheck = isInCheckNow(grid, from, from, opponentFactory, false);
 
         return isValidFrom && isValidTo && isKingValid && isRookValid && !isInCheck;
     }
 
-    private boolean isInCheck(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+    private boolean isInCheckNow(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }

@@ -50,7 +50,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(true).when(bishopLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
@@ -61,7 +61,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(bishopLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(bishopLogic).isJumping(grid, from, to);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -73,7 +73,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(bishopLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(bishopLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -95,7 +95,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(bishopLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
         boolean actual = bishopLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);

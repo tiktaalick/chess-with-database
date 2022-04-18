@@ -7,15 +7,12 @@ import org.mark.chess.model.Piece;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface PieceLogic {
     default List<Field> getValidMoves(List<Field> grid, Field from, PieceLogicFactory opponentFactory) {
-        return grid.stream().filter(to -> isCancelMove(from, to) || isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
-    }
-
-    default boolean isCancelMove(Field from, Field to) {
-        return from.getCoordinates().getX() == to.getCoordinates().getX() && from.getCoordinates().getY() == to.getCoordinates().getY();
+        return grid.stream().filter(to -> isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
 
     boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent);
@@ -69,11 +66,15 @@ public interface PieceLogic {
         return Math.abs(to.getCoordinates().getY() - from.getCoordinates().getY());
     }
 
-    default boolean isInCheck(List<Field> grid, Field from, Field to, boolean isOpponent, PieceLogicFactory opponentFactory, GridLogic gridLogic) {
+    default boolean isMovingIntoCheck(List<Field> grid,
+            Field from,
+            Field to,
+            boolean isOpponent,
+            PieceLogicFactory opponentFactory,
+            GridLogic gridLogic) {
         if (isOpponent) {
             return false;
         }
-        Field kingField = gridLogic.getKingField(grid, from.getPiece().getColor());
 
         List<Field> futureList = grid
                 .stream()
@@ -83,20 +84,25 @@ public interface PieceLogic {
         List<Field> movementList = grid
                 .stream()
                 .filter(field -> Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
-                .map(field -> field.getCode() == from.getCode()
+                .map(field -> Objects.equals(field.getCode(), from.getCode())
                         ? new Field().setCoordinates(from.getCoordinates())
                         : new Field().setCoordinates(to.getCoordinates()).setPiece(from.getPiece()))
                 .collect(Collectors.toList());
 
         futureList.addAll(movementList);
 
-        return grid
+        Field kingField = gridLogic.getKingField(futureList, from.getPiece().getColor());
+
+        List<Field> attackers = futureList
                 .stream()
                 .filter(opponentField -> opponentField.getPiece() != null)
                 .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
-                .anyMatch(opponentField -> opponentFactory
+                .filter(opponentField -> opponentFactory
                         .getLogic(opponentField.getPiece().getPieceType())
-                        .isValidMove(futureList, opponentField, kingField, opponentFactory, true));
+                        .isValidMove(futureList, opponentField, kingField, opponentFactory, true))
+                .collect(Collectors.toList());
+
+        return !attackers.isEmpty();
     }
 
     default boolean hasEmptyParameters(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory) {

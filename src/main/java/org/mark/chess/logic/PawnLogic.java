@@ -7,7 +7,6 @@ import org.mark.chess.model.Field;
 import org.mark.chess.model.Pawn;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,7 @@ public class PawnLogic implements PieceLogic {
                isValidDirection(from, to) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
@@ -34,7 +33,7 @@ public class PawnLogic implements PieceLogic {
 
     private boolean isValidBaselineMove(Field from, Field to) {
         return !isCaptureMove(from, to) &&
-               Arrays.asList(1, 6).contains(from.getCoordinates().getY()) &&
+               from.getPiece().getColor().getBaselinePawn() == from.getCoordinates().getY() &&
                getAbsoluteHorizontalMove(from, to) == 0 &&
                getAbsoluteVerticalMove(from, to) == 2;
     }
@@ -53,7 +52,7 @@ public class PawnLogic implements PieceLogic {
 
     private boolean isValidDirection(Field from, Field to) {
         return Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()) ==
-               (from.getPiece().getColor() == Color.BLACK
+               (from.getPiece().getColor() == Color.WHITE
                        ? 1
                        : -1);
     }
@@ -79,7 +78,7 @@ public class PawnLogic implements PieceLogic {
 
     public boolean isPawnBeingPromoted(Field from, Field to) {
         return from.getPiece().isPawnBeingPromoted() ||
-               from.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaselineY() ||
-               to.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaselineY();
+               from.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline() ||
+               to.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline();
     }
 }

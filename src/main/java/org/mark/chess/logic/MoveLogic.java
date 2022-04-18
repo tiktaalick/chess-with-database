@@ -79,9 +79,8 @@ public class MoveLogic {
 
             if (pawn.isPawnBeingPromoted()) {
                 fieldLogic.addChessPiece(game,
-                        to.getCode(),
-                        pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()),
-                        from.getPiece().getColor());
+                        to,
+                        pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()).setColor(from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
             ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
@@ -94,13 +93,13 @@ public class MoveLogic {
         if (from.getPiece().getPieceType() == PieceType.KING &&
             kingLogic.isValidCastling(grid, from, to, to.getCoordinates().getX(), pieceLogicFactory, false, true)) {
 
-            Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.LEFT
+            Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                     ? KingLogic.ROOK_X_LEFT_FROM
-                    : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaselineY());
+                    : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
             Field rookFromField = gridLogic.getField(grid, rookCoordinates);
             Field rookToField = gridLogic.getField(grid,
-                    rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.LEFT
+                    rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                             ? KingLogic.ROOK_X_LEFT_TO
                             : KingLogic.ROOK_X_RIGHT_TO));
 
@@ -130,6 +129,7 @@ public class MoveLogic {
 
     public void resetFrom(Move move) {
         move.getFrom().setPiece(null);
+        move.getFrom().getButton().setText(move.getFrom().getCode());
         move.getFrom().getButton().setIcon(null);
     }
 

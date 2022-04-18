@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -62,8 +63,9 @@ class KingLogicTest {
         Field opponentField = new Field().setPiece(new Queen().setColor(Color.BLACK)).setCoordinates(new Coordinates(4, 4));
         grid.add(opponentField);
 
-        doReturn(queenLogic).when(opponentFactory).getLogic(PieceType.QUEEN);
-        doReturn(true).when(queenLogic).isValidMove(grid, opponentField, to, opponentFactory, true);
+        when(opponentFactory.getLogic(PieceType.QUEEN)).thenReturn(queenLogic);
+        when(queenLogic.isValidMove(grid, opponentField, to, opponentFactory, true)).thenReturn(true);
+        when(kingLogic.isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic)).thenReturn(true);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
@@ -74,7 +76,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        doReturn(false).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         doReturn(true).when(kingLogic).isJumping(grid, from, to);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -86,7 +88,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        doReturn(false).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         doReturn(true).when(kingLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -111,7 +113,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         List<Field> grid = new ArrayList<>();
 
-        doReturn(false).when(kingLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
         boolean actual = kingLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);
@@ -119,10 +121,10 @@ class KingLogicTest {
 
     @Test
     void isValidCastling_CastlingLeft_Valid() {
-        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(2, 7));
+        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(3, 1));
 
-        Coordinates rookCoordinates = new Coordinates(0, 7);
+        Coordinates rookCoordinates = new Coordinates(1, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -130,15 +132,15 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.LEFT, opponentFactory, false, false));
+        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_LEFT, opponentFactory, false, false));
     }
 
     @Test
     void isValidCastling_CastlingRight_Valid() {
-        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -146,15 +148,15 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, false, false));
+        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, false, false));
     }
 
     @Test
     void isValidCastling_KingHasAlreadyMoved_Invalid() {
-        Field from = new Field().setPiece(new King().setHasMovedAtLeastOnce(true).setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setHasMovedAtLeastOnce(true).setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -162,15 +164,15 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, false, false));
+        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, false, false));
     }
 
     @Test
     void isValidCastling_KingHasMovedDuringCastling_Valid() {
-        Field from = new Field().setPiece(new King().setHasMovedAtLeastOnce(true).setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setHasMovedAtLeastOnce(true).setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -178,15 +180,15 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, false, true));
+        assertTrue(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, false, true));
     }
 
     @Test
     void isValidCastling_RookHasAlreadyMoved_Invalid() {
-        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setHasMovedAtLeastOnce(true).setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -194,17 +196,17 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, false, false));
+        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, false, false));
     }
 
     @Test
     void isValidCastling_KingInCheck_Invalid() {
-        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
-        Field opponentField = new Field().setPiece(new Rook().setColor(Color.BLACK)).setCoordinates(new Coordinates(4, 0));
+        Field opponentField = new Field().setPiece(new Rook().setColor(Color.BLACK)).setCoordinates(new Coordinates(5, 8));
 
         List<Field> grid = new ArrayList<>();
         grid.add(rookField);
@@ -214,15 +216,15 @@ class KingLogicTest {
         doReturn(rookLogic).when(opponentFactory).getLogic(PieceType.ROOK);
         doReturn(true).when(rookLogic).isValidMove(grid, opponentField, from, opponentFactory, true);
 
-        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, false, false));
+        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, false, false));
     }
 
     @Test
     void isValidCastling_IsOppoment_Invalid() {
-        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(4, 7));
-        Field to = new Field().setCoordinates(new Coordinates(6, 7));
+        Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
+        Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
-        Coordinates rookCoordinates = new Coordinates(7, 7);
+        Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
 
         List<Field> grid = new ArrayList<>();
@@ -230,6 +232,6 @@ class KingLogicTest {
 
         doReturn(rookField).when(gridLogic).getField(grid, rookCoordinates);
 
-        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.RIGHT, opponentFactory, true, false));
+        assertFalse(kingLogic.isValidCastling(grid, from, to, KingLogic.KING_X_RIGHT, opponentFactory, true, false));
     }
 }

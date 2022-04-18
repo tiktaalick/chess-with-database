@@ -50,7 +50,7 @@ class RookLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(true).when(rookLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
         assertFalse(rookLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
@@ -61,7 +61,7 @@ class RookLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(rookLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(rookLogic).isJumping(grid, from, to);
 
         assertFalse(rookLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -73,7 +73,7 @@ class RookLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(rookLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(rookLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(rookLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -99,7 +99,7 @@ class RookLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         List<Field> grid = new ArrayList<>();
 
-        Mockito.doReturn(false).when(rookLogic).isInCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
         boolean actual = rookLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);

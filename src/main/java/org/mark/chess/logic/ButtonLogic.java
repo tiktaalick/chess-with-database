@@ -23,16 +23,16 @@ public class ButtonLogic {
         return (int) (button.getWidth() * RELATIVE_IMAGE_SIZE);
     }
 
-    public JButton initializeButton(Game game, int id) {
-        Field field = game.getGrid().get(id);
-        Piece piece = field.getPiece();
-        Color color = piece.getColor();
+    public JButton initializeButton(Game game, Field field) {
         JButton button = field.getButton();
 
+        if (field.getPiece() == null) {
+            return button;
+        }
+
         button.setEnabled(setEnabledButton(game, field));
-        button.setToolTipText(color.getName() + " " + piece.getPieceType().getName());
         button.setText(null);
-        button.setIcon(new ImageIcon(new ImageIcon(getIconPath(piece, color))
+        button.setIcon(new ImageIcon(new ImageIcon(getIconPath(field.getPiece(), field.getPiece().getColor()))
                 .getImage()
                 .getScaledInstance(getIconWidth(button), getIconWidth(button), Image.SCALE_SMOOTH)));
 

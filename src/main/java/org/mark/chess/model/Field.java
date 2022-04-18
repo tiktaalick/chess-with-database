@@ -20,6 +20,7 @@ public class Field {
     public Field setId(int id) {
         this.id = id;
         this.code = fieldLogic.createCode(id);
+        this.coordinates = fieldLogic.createCoordinates(id);
 
         return this;
     }
@@ -29,8 +30,9 @@ public class Field {
     }
 
     public Field setCode(String code) {
-        this.code = code;
         this.id = fieldLogic.createId(code);
+        this.code = code;
+        this.coordinates = fieldLogic.createCoordinates(code);
 
         return this;
     }
@@ -40,6 +42,8 @@ public class Field {
     }
 
     public Field setCoordinates(Coordinates coordinates) {
+        this.id = fieldLogic.createId(coordinates);
+        this.code = fieldLogic.createCode(coordinates);
         this.coordinates = coordinates;
         return this;
     }

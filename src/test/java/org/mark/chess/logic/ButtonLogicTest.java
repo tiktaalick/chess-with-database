@@ -64,10 +64,9 @@ class ButtonLogicTest {
         JButton actual = buttonLogic.initializeButton(new Game()
                 .setGrid(grid)
                 .setCurrentPlayerId(Color.WHITE.ordinal())
-                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), 0);
+                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), field);
 
         assertTrue(actual.isEnabled());
-        assertEquals("white pawn", actual.getToolTipText());
         assertNull(actual.getText());
         assertNotNull(actual.getIcon());
         assertEquals(50, actual.getWidth());
@@ -86,10 +85,9 @@ class ButtonLogicTest {
         JButton actual = buttonLogic.initializeButton(new Game()
                 .setGrid(grid)
                 .setCurrentPlayerId(Color.BLACK.ordinal())
-                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), 0);
+                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), field);
 
         assertFalse(actual.isEnabled());
-        assertEquals("white pawn", actual.getToolTipText());
         assertNull(actual.getText());
         assertNotNull(actual.getIcon());
         assertEquals(50, actual.getWidth());

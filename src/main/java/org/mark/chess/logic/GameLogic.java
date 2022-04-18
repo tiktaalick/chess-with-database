@@ -17,12 +17,9 @@ public class GameLogic {
         Game game = new Game()
                 .setGameStatus(GameStatus.IN_PROGRESS)
                 .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(Color.WHITE.ordinal())
-                .setGrid(gridLogic.initializeGrid(board));
+                .setCurrentPlayerId(Color.WHITE.ordinal());
 
-        gridLogic.addChessPieces(game);
-
-        return game;
+        return game.setGrid(gridLogic.initializeGrid(game, board));
     }
 
     public void endGame(Game game, boolean hasWon) {

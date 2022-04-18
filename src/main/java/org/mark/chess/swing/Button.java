@@ -19,7 +19,7 @@ public class Button extends JButton {
         setBounds(field.getCoordinates().getX() * FIELD_WIDTH, field.getCoordinates().getY() * FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH);
         addActionListener(board);
         addMouseListener(board);
-        this.setBackground((field.getId() + 1) % 2 == 0
+        this.setBackground((field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0
                 ? Color.LIGHT.getAwtColor()
                 : Color.DARK.getAwtColor());
     }

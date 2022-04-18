@@ -16,7 +16,7 @@ public class BishopLogic implements PieceLogic {
                isValidBasicMove(from, to) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {

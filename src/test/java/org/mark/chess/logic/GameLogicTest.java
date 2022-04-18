@@ -43,8 +43,7 @@ class GameLogicTest {
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> color == Color.WHITE));
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> color == Color.BLACK));
 
-        verify(gridLogic).initializeGrid(board);
-        verify(gridLogic).addChessPieces(game);
+        verify(gridLogic).initializeGrid(game, board);
     }
 
     @Test

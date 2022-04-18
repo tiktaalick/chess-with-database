@@ -1,8 +1,8 @@
 package org.mark.chess.enums;
 
 public enum Color {
-    WHITE("white", new java.awt.Color(255, 255, 255), 7),
-    BLACK("black", new java.awt.Color(0, 0, 0), 0),
+    WHITE("white", new java.awt.Color(255, 255, 255), 1, 2),
+    BLACK("black", new java.awt.Color(0, 0, 0), 8, 7),
     LIGHT("light", new java.awt.Color(250, 250, 200)),
     DARK("dark", new java.awt.Color(150, 100, 0));
 
@@ -13,7 +13,8 @@ public enum Color {
 
     private final String         name;
     private final java.awt.Color awtColor;
-    private       int            baselineY;
+    private       int            baseline;
+    private       int            baselinePawn;
     private       Color          opposite;
 
     Color(String name, java.awt.Color awtColor) {
@@ -21,10 +22,11 @@ public enum Color {
         this.awtColor = awtColor;
     }
 
-    Color(String name, java.awt.Color awtColor, int baselineY) {
+    Color(String name, java.awt.Color awtColor, int baseline, int baselinePawn) {
         this.name = name;
         this.awtColor = awtColor;
-        this.baselineY = baselineY;
+        this.baseline = baseline;
+        this.baselinePawn = baselinePawn;
     }
 
     public String getName() {
@@ -35,8 +37,12 @@ public enum Color {
         return awtColor;
     }
 
-    public int getBaselineY() {
-        return baselineY;
+    public int getBaseline() {
+        return baseline;
+    }
+
+    public int getBaselinePawn() {
+        return baselinePawn;
     }
 
     public Color getOpposite() {

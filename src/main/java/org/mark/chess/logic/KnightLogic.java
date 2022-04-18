@@ -15,7 +15,7 @@ public class KnightLogic implements PieceLogic {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                isValidBasicMove(from, to) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
-               !isInCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
