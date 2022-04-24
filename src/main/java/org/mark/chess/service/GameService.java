@@ -15,15 +15,15 @@ public class GameService {
     @Autowired
     private GameLogic gameLogic;
 
-    public void initializeBoard(Board board) {
-        boardlogic.initializeBoard(board);
+    public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
+        boardlogic.handleButtonClick(game, board, buttonClick, button);
+    }
+
+    public void initializeBoard(Game game, Board board) {
+        boardlogic.initializeBoard(game, board);
     }
 
     public Game initializeGame(Board board) {
         return gameLogic.initializeGame(board);
-    }
-
-    public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
-        boardlogic.handleButtonClick(game, board, buttonClick, button);
     }
 }

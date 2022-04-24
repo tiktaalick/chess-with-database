@@ -4,7 +4,8 @@ public enum Color {
     WHITE("white", new java.awt.Color(255, 255, 255), 1, 2),
     BLACK("black", new java.awt.Color(0, 0, 0), 8, 7),
     LIGHT("light", new java.awt.Color(250, 250, 200)),
-    DARK("dark", new java.awt.Color(150, 100, 0));
+    DARK("dark", new java.awt.Color(150, 100, 0)),
+    VALID_MOVE("valid move", new java.awt.Color(255, 255, 0));
 
     static {
         BLACK.opposite = WHITE;
@@ -29,10 +30,6 @@ public enum Color {
         this.baselinePawn = baselinePawn;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public java.awt.Color getAwtColor() {
         return awtColor;
     }
@@ -43,6 +40,10 @@ public enum Color {
 
     public int getBaselinePawn() {
         return baselinePawn;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Color getOpposite() {

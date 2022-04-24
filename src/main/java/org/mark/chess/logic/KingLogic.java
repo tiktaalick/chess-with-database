@@ -36,14 +36,6 @@ public class KingLogic implements PieceLogic {
                !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
-    private boolean isValidBasicMove(Field from, Field to) {
-        int horizontalMove = getAbsoluteHorizontalMove(from, to);
-        int verticalMove = getAbsoluteVerticalMove(from, to);
-        return Arrays.asList(0, 1).contains(horizontalMove) &&
-               Arrays.asList(0, 1).contains(verticalMove) &&
-               !(horizontalMove == 0 && verticalMove == 0);
-    }
-
     public boolean isValidCastling(List<Field> grid,
             Field from,
             Field to,
@@ -85,5 +77,13 @@ public class KingLogic implements PieceLogic {
                 .anyMatch(opponentField -> opponentFactory
                         .getLogic(opponentField.getPiece().getPieceType())
                         .isValidMove(grid, opponentField, to, opponentFactory, true));
+    }
+
+    private boolean isValidBasicMove(Field from, Field to) {
+        int horizontalMove = getAbsoluteHorizontalMove(from, to);
+        int verticalMove = getAbsoluteVerticalMove(from, to);
+        return Arrays.asList(0, 1).contains(horizontalMove) &&
+               Arrays.asList(0, 1).contains(verticalMove) &&
+               !(horizontalMove == 0 && verticalMove == 0);
     }
 }

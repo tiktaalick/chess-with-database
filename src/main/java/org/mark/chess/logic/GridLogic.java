@@ -24,13 +24,6 @@ public class GridLogic {
     @Autowired
     private InitialPieceFactory initialPieceFactory;
 
-    public List<Field> initializeGrid(Game game, Board board) {
-        return IntStream
-                .rangeClosed(0, 63)
-                .mapToObj(id -> fieldLogic.addChessPiece(game, fieldLogic.initializeField(board, id), initialPieceFactory.getInitialPiece(id)))
-                .collect(Collectors.toList());
-    }
-
     public GridLayout createGridLayout() {
         return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
     }
@@ -56,5 +49,12 @@ public class GridLogic {
                 .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<Field> initializeGrid(Game game, Board board) {
+        return IntStream
+                .rangeClosed(0, 63)
+                .mapToObj(id -> fieldLogic.addChessPiece(game, fieldLogic.initializeField(board, id), initialPieceFactory.getInitialPiece(id)))
+                .collect(Collectors.toList());
     }
 }

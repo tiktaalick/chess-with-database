@@ -59,20 +59,6 @@ class BoardLogicTest {
     private ApplicationFactory applicationFactory;
 
     @Test
-    void testInitializeBoard() {
-        Board board = new Board(gameService);
-
-        boardLogic.initializeBoard(board);
-
-        assertEquals(414, board.getSize().getWidth());
-        assertEquals(435, board.getSize().getHeight());
-        assertEquals(753, board.getLocation().getX());
-        assertEquals(323, board.getLocation().getY());
-        assertTrue(board.isVisible());
-        assertFalse(board.isResizable());
-    }
-
-    @Test
     void testHandleButtonClick_WhenClickOnDisabledButton_ThenDoNothing() {
         JButton button = new JButton();
         button.setEnabled(false);
@@ -89,11 +75,11 @@ class BoardLogicTest {
     }
 
     @Test
-    void testHandleButtonClick_WhenHasWon_ThenRestartGame() {
+    void testHandleButtonClick_WhenHasLost_ThenRestartGame() {
         JButton button = new JButton();
         button.setEnabled(true);
 
-        Game game = new Game().setGameStatus(GameStatus.HAS_WON);
+        Game game = new Game().setGameStatus(GameStatus.HAS_LOST);
 
         doReturn(application).when(applicationFactory).getInstance();
 
@@ -107,11 +93,11 @@ class BoardLogicTest {
     }
 
     @Test
-    void testHandleButtonClick_WhenHasLost_ThenRestartGame() {
+    void testHandleButtonClick_WhenHasWon_ThenRestartGame() {
         JButton button = new JButton();
         button.setEnabled(true);
 
-        Game game = new Game().setGameStatus(GameStatus.HAS_LOST);
+        Game game = new Game().setGameStatus(GameStatus.HAS_WON);
 
         doReturn(application).when(applicationFactory).getInstance();
 
@@ -197,5 +183,19 @@ class BoardLogicTest {
         verify(moveLogic, never()).changeTurn(game);
         verify(moveLogic).resetValidMoves(game, board.getMove());
         verify(moveLogic, never()).resetFrom(board.getMove());
+    }
+
+    @Test
+    void testInitializeBoard() {
+        Board board = new Board(gameService);
+
+        boardLogic.initializeBoard(game, board);
+
+        assertEquals(414, board.getSize().getWidth());
+        assertEquals(435, board.getSize().getHeight());
+        assertEquals(753, board.getLocation().getX());
+        assertEquals(323, board.getLocation().getY());
+        assertTrue(board.isVisible());
+        assertFalse(board.isResizable());
     }
 }

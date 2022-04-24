@@ -30,16 +30,11 @@ public class ButtonLogic {
             return button;
         }
 
-        button.setEnabled(setEnabledButton(game, field));
         button.setText(null);
         button.setIcon(new ImageIcon(new ImageIcon(getIconPath(field.getPiece(), field.getPiece().getColor()))
                 .getImage()
                 .getScaledInstance(getIconWidth(button), getIconWidth(button), Image.SCALE_SMOOTH)));
 
         return button;
-    }
-
-    public boolean setEnabledButton(Game game, Field field) {
-        return field.getPiece() != null && field.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
     }
 }

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,7 +86,6 @@ class ButtonLogicTest {
                 .setCurrentPlayerId(Color.BLACK.ordinal())
                 .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), field);
 
-        assertFalse(actual.isEnabled());
         assertNull(actual.getText());
         assertNotNull(actual.getIcon());
         assertEquals(50, actual.getWidth());

@@ -12,22 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PieceLogicFactory {
     @Autowired
-    private KingLogic kingLogic;
-
-    @Autowired
-    private QueenLogic queenLogic;
-
-    @Autowired
-    private RookLogic rookLogic;
-
-    @Autowired
     private BishopLogic bishopLogic;
+
+    @Autowired
+    private KingLogic kingLogic;
 
     @Autowired
     private KnightLogic knightLogic;
 
     @Autowired
     private PawnLogic pawnLogic;
+
+    @Autowired
+    private QueenLogic queenLogic;
+
+    @Autowired
+    private RookLogic rookLogic;
 
     public PieceLogic getLogic(PieceType pieceType) {
         switch (pieceType) {

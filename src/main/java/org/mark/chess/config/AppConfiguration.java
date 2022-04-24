@@ -1,6 +1,7 @@
 package org.mark.chess.config;
 
 import org.mark.chess.factory.ApplicationFactory;
+import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.factory.InitialPieceFactory;
 import org.mark.chess.factory.PieceFactory;
 import org.mark.chess.factory.PieceLogicFactory;
@@ -24,6 +25,21 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfiguration {
 
     @Bean
+    public ApplicationFactory getApplicationFactory() {
+        return new ApplicationFactory();
+    }
+
+    @Bean
+    public BackgroundColorFactory getBackgroundColorFactory() {
+        return new BackgroundColorFactory();
+    }
+
+    @Bean
+    public BishopLogic getBishopLogic() {
+        return new BishopLogic();
+    }
+
+    @Bean
     public BoardLogic getBoardLogic() {
         return new BoardLogic();
     }
@@ -34,8 +50,18 @@ public class AppConfiguration {
     }
 
     @Bean
+    public FieldLogic getFieldLogic() {
+        return new FieldLogic();
+    }
+
+    @Bean
     public GameLogic getGameLogic() {
         return new GameLogic();
+    }
+
+    @Bean
+    public GameService getGameService() {
+        return new GameService();
     }
 
     @Bean
@@ -44,13 +70,28 @@ public class AppConfiguration {
     }
 
     @Bean
-    public FieldLogic getFieldLogic() {
-        return new FieldLogic();
+    public InitialPieceFactory getInitialPieceFactory() {
+        return new InitialPieceFactory();
     }
 
     @Bean
-    public PieceLogicFactory getPieceLogicFactory() {
-        return new PieceLogicFactory();
+    public KingLogic getKingLogic() {
+        return new KingLogic();
+    }
+
+    @Bean
+    public KnightLogic getKnightLogic() {
+        return new KnightLogic();
+    }
+
+    @Bean
+    public MoveLogic getMoveLogic() {
+        return new MoveLogic();
+    }
+
+    @Bean
+    public PawnLogic getPawnLogic() {
+        return new PawnLogic();
     }
 
     @Bean
@@ -59,18 +100,8 @@ public class AppConfiguration {
     }
 
     @Bean
-    public InitialPieceFactory getInitialPieceFactory() {
-        return new InitialPieceFactory();
-    }
-
-    @Bean
-    public ApplicationFactory getApplicationFactory() {
-        return new ApplicationFactory();
-    }
-
-    @Bean
-    public KingLogic getKingLogic() {
-        return new KingLogic();
+    public PieceLogicFactory getPieceLogicFactory() {
+        return new PieceLogicFactory();
     }
 
     @Bean
@@ -81,30 +112,5 @@ public class AppConfiguration {
     @Bean
     public RookLogic getRookLogic() {
         return new RookLogic();
-    }
-
-    @Bean
-    public BishopLogic getBishopLogic() {
-        return new BishopLogic();
-    }
-
-    @Bean
-    public KnightLogic getKnightLogic() {
-        return new KnightLogic();
-    }
-
-    @Bean
-    public PawnLogic getPawnLogic() {
-        return new PawnLogic();
-    }
-
-    @Bean
-    public MoveLogic getMoveLogic() {
-        return new MoveLogic();
-    }
-
-    @Bean
-    public GameService getGameService() {
-        return new GameService();
     }
 }
