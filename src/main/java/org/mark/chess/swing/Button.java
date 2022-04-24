@@ -3,7 +3,7 @@ package org.mark.chess.swing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.mark.chess.enums.Color;
+import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.model.Field;
 
 import javax.swing.JButton;
@@ -14,13 +14,13 @@ import javax.swing.JButton;
 public class Button extends JButton {
     public static final int FIELD_WIDTH = 50;
 
+    private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
+
     public Button(Board board, Field field) {
         setText(String.valueOf(field.getCode()));
         setBounds(field.getCoordinates().getX() * FIELD_WIDTH, field.getCoordinates().getY() * FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH);
         addActionListener(board);
         addMouseListener(board);
-        this.setBackground((field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0
-                ? Color.LIGHT.getAwtColor()
-                : Color.DARK.getAwtColor());
+        this.setBackground(backgroundColorFactory.getBackgroundColor(field));
     }
 }

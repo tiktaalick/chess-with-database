@@ -11,11 +11,21 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface PieceLogic {
+    default int getAbsoluteHorizontalMove(Field from, Field to) {
+        return Math.abs(to.getCoordinates().getX() - from.getCoordinates().getX());
+    }
+
+    default int getAbsoluteVerticalMove(Field from, Field to) {
+        return Math.abs(to.getCoordinates().getY() - from.getCoordinates().getY());
+    }
+
     default List<Field> getValidMoves(List<Field> grid, Field from, PieceLogicFactory opponentFactory) {
         return grid.stream().filter(to -> isValidMove(grid, from, to, opponentFactory, false)).collect(Collectors.toList());
     }
 
-    boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent);
+    default boolean hasEmptyParameters(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory) {
+        return grid == null || from == null || to == null || opponentFactory == null;
+    }
 
     default boolean isFriendlyFire(Piece piece, Field to) {
         return to.getPiece() != null && to.getPiece().getColor() == piece.getColor();
@@ -37,33 +47,6 @@ public interface PieceLogic {
         }
 
         return mustIJump;
-    }
-
-    private void doNextStep(Coordinates coordinates, Coordinates step) {
-        coordinates.setX(coordinates.getX() + step.getX());
-        coordinates.setY(coordinates.getY() + step.getY());
-    }
-
-    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
-        return !(currentCoordinates.getX() == to.getX() && currentCoordinates.getY() == to.getY()) &&
-               (step.getX() >= 0) == (currentCoordinates.getX() <= to.getX()) &&
-               (step.getY() >= 0) == (currentCoordinates.getY() <= to.getY());
-    }
-
-    private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
-        return grid
-                .stream()
-                .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
-                                 field.getCoordinates().getY() == currentCoordinates.getY())
-                .anyMatch(field -> field.getPiece() != null);
-    }
-
-    default int getAbsoluteHorizontalMove(Field from, Field to) {
-        return Math.abs(to.getCoordinates().getX() - from.getCoordinates().getX());
-    }
-
-    default int getAbsoluteVerticalMove(Field from, Field to) {
-        return Math.abs(to.getCoordinates().getY() - from.getCoordinates().getY());
     }
 
     default boolean isMovingIntoCheck(List<Field> grid,
@@ -105,7 +88,24 @@ public interface PieceLogic {
         return !attackers.isEmpty();
     }
 
-    default boolean hasEmptyParameters(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory) {
-        return grid == null || from == null || to == null || opponentFactory == null;
+    boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent);
+
+    private void doNextStep(Coordinates coordinates, Coordinates step) {
+        coordinates.setX(coordinates.getX() + step.getX());
+        coordinates.setY(coordinates.getY() + step.getY());
+    }
+
+    private boolean isFieldOccupied(List<Field> grid, Coordinates currentCoordinates) {
+        return grid
+                .stream()
+                .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
+                                 field.getCoordinates().getY() == currentCoordinates.getY())
+                .anyMatch(field -> field.getPiece() != null);
+    }
+
+    private boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
+        return !(currentCoordinates.getX() == to.getX() && currentCoordinates.getY() == to.getY()) &&
+               (step.getX() >= 0) == (currentCoordinates.getX() <= to.getX()) &&
+               (step.getY() >= 0) == (currentCoordinates.getY() <= to.getY());
     }
 }

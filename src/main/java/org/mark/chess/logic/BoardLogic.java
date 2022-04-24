@@ -26,15 +26,6 @@ public class BoardLogic {
     @Autowired
     private ApplicationFactory applicationFactory;
 
-    public void initializeBoard(Board board) {
-        board.setSize(WIDTH, HEIGHT);
-        board.setLayout(gridLogic.createGridLayout());
-        board.setVisible(true);
-        board.setResizable(false);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        board.setLocation(dim.width / 2 - board.getSize().width / 2, dim.height / 2 - board.getSize().height / 2);
-    }
-
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
         Field fieldClick = gridLogic.getField(game.getGrid(), button);
 
@@ -58,5 +49,15 @@ public class BoardLogic {
         } else if (buttonClick == RIGHT_CLICK) {
             moveLogic.resetValidMoves(game, board.getMove());
         }
+    }
+
+    public void initializeBoard(Game game, Board board) {
+        board.setSize(WIDTH, HEIGHT);
+        board.setLayout(gridLogic.createGridLayout());
+        board.setVisible(true);
+        board.setResizable(false);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        board.setLocation(dim.width / 2 - board.getSize().width / 2, dim.height / 2 - board.getSize().height / 2);
+        moveLogic.resetValidMoves(game, board.getMove());
     }
 }

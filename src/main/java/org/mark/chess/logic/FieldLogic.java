@@ -14,25 +14,8 @@ public class FieldLogic {
     @Autowired
     private ButtonLogic buttonLogic;
 
-    public Field initializeField(Board board, int id) {
-        Field field = new Field().setId(id);
-        field.setButton(new Button(board, field));
-        field.getButton().setEnabled(false);
-        board.add(field.getButton());
-
-        return field;
-    }
-
     public Field addChessPiece(Game game, Field field, Piece piece) {
         return field.setPiece(piece).setButton(buttonLogic.initializeButton(game, field));
-    }
-
-    public int createId(String code) {
-        return (code.charAt(0) - 'a') + (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
-    }
-
-    public int createId(Coordinates coordinates) {
-        return coordinates.getX() + coordinates.getY() * NUMBER_OF_COLUMNS_AND_ROWS;
     }
 
     public String createCode(int id) {
@@ -54,4 +37,25 @@ public class FieldLogic {
     public Coordinates createCoordinates(String code) {
         return createCoordinates(createId(code));
     }
+
+    public int createId(Coordinates coordinates) {
+        return coordinates.getX() + coordinates.getY() * NUMBER_OF_COLUMNS_AND_ROWS;
+    }
+
+    public int createId(String code) {
+        return (code.charAt(0) - 'a') + (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
+    }
+
+    public Field initializeField(Board board, int id) {
+        Field field = new Field().setId(id);
+        field.setButton(new Button(board, field));
+        board.add(field.getButton());
+
+        return field;
+    }
+
+    public boolean isActivePlayerField(Game game, Field field) {
+        return field.getPiece() != null && field.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
+    }
 }
+

@@ -1,27 +1,27 @@
 package org.mark.chess.model;
 
+import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.logic.FieldLogic;
 
 import javax.swing.JButton;
 
 public class Field {
-    private final FieldLogic fieldLogic = new FieldLogic();
+    private final FieldLogic             fieldLogic             = new FieldLogic();
+    private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
 
     private int         id;
     private String      code;
     private Coordinates coordinates;
     private JButton     button;
     private Piece       piece;
+    private boolean     isValidMove;
 
-    public int getId() {
-        return id;
+    public JButton getButton() {
+        return button;
     }
 
-    public Field setId(int id) {
-        this.id = id;
-        this.code = fieldLogic.createCode(id);
-        this.coordinates = fieldLogic.createCoordinates(id);
-
+    public Field setButton(JButton button) {
+        this.button = button;
         return this;
     }
 
@@ -48,12 +48,15 @@ public class Field {
         return this;
     }
 
-    public JButton getButton() {
-        return button;
+    public int getId() {
+        return id;
     }
 
-    public Field setButton(JButton button) {
-        this.button = button;
+    public Field setId(int id) {
+        this.id = id;
+        this.code = fieldLogic.createCode(id);
+        this.coordinates = fieldLogic.createCoordinates(id);
+
         return this;
     }
 
@@ -63,6 +66,20 @@ public class Field {
 
     public Field setPiece(Piece piece) {
         this.piece = piece;
+        return this;
+    }
+
+    public boolean isValidMove() {
+        return isValidMove;
+    }
+
+    public Field setValidMove(boolean validMove) {
+        isValidMove = validMove;
+
+        if (this.button != null) {
+            this.button.setBackground(backgroundColorFactory.getBackgroundColor(this));
+        }
+
         return this;
     }
 }

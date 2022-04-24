@@ -43,16 +43,6 @@ class GridLogicTest {
     private InitialPieceFactory initialPieceFactory;
 
     @Test
-    void testInitializeGrid() {
-        Game game = new Game();
-        Board board = new Board(gameService);
-        List<Field> grid = gridLogic.initializeGrid(game, board);
-
-        assertEquals(64, grid.size());
-        verify(fieldLogic, times(64)).initializeField(eq(board), anyInt());
-    }
-
-    @Test
     void testCreateGridLayout() {
         GridLayout gridLayout = gridLogic.createGridLayout();
 
@@ -114,5 +104,15 @@ class GridLogicTest {
         assertEquals(field2, gridLogic.getKingField(grid, Color.BLACK));
         assertEquals(field4, gridLogic.getKingField(grid, Color.WHITE));
         assertNull(gridLogic.getKingField(grid, Color.DARK));
+    }
+
+    @Test
+    void testInitializeGrid() {
+        Game game = new Game();
+        Board board = new Board(gameService);
+        List<Field> grid = gridLogic.initializeGrid(game, board);
+
+        assertEquals(64, grid.size());
+        verify(fieldLogic, times(64)).initializeField(eq(board), anyInt());
     }
 }
