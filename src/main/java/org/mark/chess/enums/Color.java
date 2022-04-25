@@ -5,15 +5,16 @@ public enum Color {
     BLACK("black", new java.awt.Color(0, 0, 0), 8, 7),
     LIGHT("light", new java.awt.Color(250, 250, 200)),
     DARK("dark", new java.awt.Color(150, 100, 0)),
-    VALID_MOVE("valid move", new java.awt.Color(255, 255, 0));
+    VALID_MOVE("valid move", new java.awt.Color(255, 255, 0)),
+    ATTACKING("attacking", new java.awt.Color(255, 100, 150));
 
     static {
         BLACK.opposite = WHITE;
         WHITE.opposite = BLACK;
     }
 
-    private final String         name;
     private final java.awt.Color awtColor;
+    private final String         name;
     private       int            baseline;
     private       int            baselinePawn;
     private       Color          opposite;

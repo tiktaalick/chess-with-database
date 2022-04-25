@@ -27,6 +27,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardLogicTest {
@@ -59,29 +60,13 @@ class BoardLogicTest {
     private ApplicationFactory applicationFactory;
 
     @Test
-    void testHandleButtonClick_WhenClickOnDisabledButton_ThenDoNothing() {
-        JButton button = new JButton();
-        button.setEnabled(false);
-
-        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS);
-
-        boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
-
-        verify(board, never()).dispose();
-        verify(application, never()).startApplication();
-        verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
-        verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
-    }
-
-    @Test
     void testHandleButtonClick_WhenHasLost_ThenRestartGame() {
         JButton button = new JButton();
-        button.setEnabled(true);
 
         Game game = new Game().setGameStatus(GameStatus.HAS_LOST);
 
-        doReturn(application).when(applicationFactory).getInstance();
+        when(applicationFactory.getInstance()).thenReturn(application);
+        when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
@@ -95,11 +80,11 @@ class BoardLogicTest {
     @Test
     void testHandleButtonClick_WhenHasWon_ThenRestartGame() {
         JButton button = new JButton();
-        button.setEnabled(true);
 
         Game game = new Game().setGameStatus(GameStatus.HAS_WON);
 
-        doReturn(application).when(applicationFactory).getInstance();
+        when(applicationFactory.getInstance()).thenReturn(application);
+        when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
@@ -112,10 +97,9 @@ class BoardLogicTest {
 
     @Test
     void testHandleButtonClick_WhenMoveFrom_ThenSetFromAndEnableValidMoves() {
-        Field fieldClick = new Field();
+        Field fieldClick = new Field().setValidMove(true);
 
         JButton button = new JButton();
-        button.setEnabled(true);
 
         Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS);
 
@@ -134,17 +118,16 @@ class BoardLogicTest {
 
     @Test
     void testHandleButtonClick_WhenMoveTo_ThenSetToAndMovePiece() {
-        Field fieldClick = new Field();
+        Field fieldClick = new Field().setValidMove(true);
 
         JButton button = new JButton();
-        button.setEnabled(true);
 
         Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS).setGrid(new ArrayList<>());
 
         Board board = new Board(gameService).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
-        doReturn(fieldClick).when(gridLogic).getField(game.getGrid(), button);
-        doReturn(false).when(moveLogic).isFrom(game, fieldClick);
+        when(gridLogic.getField(game.getGrid(), button)).thenReturn(fieldClick);
+        when(moveLogic.isFrom(game, fieldClick)).thenReturn(false);
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
@@ -160,11 +143,27 @@ class BoardLogicTest {
     }
 
     @Test
+    void testHandleButtonClick_WhenNotAValidMove_ThenDoNothing() {
+        JButton button = new JButton();
+
+        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS);
+
+        when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(false));
+
+        boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
+
+        verify(board, never()).dispose();
+        verify(application, never()).startApplication();
+        verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
+        verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
+        verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
+    }
+
+    @Test
     void testHandleButtonClick_WhenRightClick_ThenResetValidMoves() {
         Field fieldClick = new Field();
 
         JButton button = new JButton();
-        button.setEnabled(true);
 
         Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS).setGrid(new ArrayList<>());
 

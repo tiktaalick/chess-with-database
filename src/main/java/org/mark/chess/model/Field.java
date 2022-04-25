@@ -6,15 +6,16 @@ import org.mark.chess.logic.FieldLogic;
 import javax.swing.JButton;
 
 public class Field {
-    private final FieldLogic             fieldLogic             = new FieldLogic();
     private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
+    private final FieldLogic             fieldLogic             = new FieldLogic();
 
-    private int         id;
-    private String      code;
-    private Coordinates coordinates;
-    private JButton     button;
-    private Piece       piece;
-    private boolean     isValidMove;
+    private       int                    id;
+    private       String                 code;
+    private       Coordinates            coordinates;
+    private       JButton                button;
+    private       Piece                  piece;
+    private       boolean                isValidMove;
+    private       boolean                isAttacking;
 
     public JButton getButton() {
         return button;
@@ -66,6 +67,15 @@ public class Field {
 
     public Field setPiece(Piece piece) {
         this.piece = piece;
+        return this;
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public Field setAttacking(boolean attacking) {
+        isAttacking = attacking;
         return this;
     }
 

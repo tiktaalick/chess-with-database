@@ -81,6 +81,7 @@ public class MoveLogic {
 
     public void resetValidMoves(Game game, Move move) {
         game.getGrid().forEach(field -> {
+            field.setAttacking(false);
             field.setValidMove(!getValidMoves(game, field).isEmpty());
 
             if (duringAMove(move, field)) {

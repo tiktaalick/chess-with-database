@@ -12,13 +12,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 public class BoardLogic {
-    private static final int WIDTH       = 414;
-    private static final int HEIGHT      = 435;
-    private static final int LEFT_CLICK  = 1;
-    private static final int RIGHT_CLICK = 3;
-
+    private static final int       HEIGHT      = 435;
+    private static final int       LEFT_CLICK  = 1;
+    private static final int       RIGHT_CLICK = 3;
+    private static final int       WIDTH       = 414;
     @Autowired
-    private MoveLogic moveLogic;
+    private              MoveLogic moveLogic;
 
     @Autowired
     private GridLogic gridLogic;
@@ -29,7 +28,7 @@ public class BoardLogic {
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
         Field fieldClick = gridLogic.getField(game.getGrid(), button);
 
-        if (game.getGameStatus() == GameStatus.IN_PROGRESS && buttonClick == LEFT_CLICK && !button.isEnabled()) {
+        if (buttonClick == LEFT_CLICK && !fieldClick.isValidMove()) {
             return;
         }
 
