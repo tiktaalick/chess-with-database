@@ -11,6 +11,8 @@ import org.mark.chess.model.King;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Queen;
 import org.mark.chess.service.GameService;
+import org.mark.chess.swing.Board;
+import org.mark.chess.swing.Button;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,6 +51,20 @@ class PieceLogicTest {
     private GameService gameService;
 
     @Test
+    void testGetAbsoluteHorizontalMove() {
+        assertEquals(3,
+                pieceLogic.getAbsoluteHorizontalMove(new Field().setCoordinates(new Coordinates(2, 3)),
+                        new Field().setCoordinates(new Coordinates(5, 8))));
+    }
+
+    @Test
+    void testGetAbsoluteVerticalMove() {
+        assertEquals(5,
+                pieceLogic.getAbsoluteVerticalMove(new Field().setCoordinates(new Coordinates(2, 3)),
+                        new Field().setCoordinates(new Coordinates(5, 8))));
+    }
+
+    @Test
     void testGetValidMoves_WhenNoValidMoves_ThenReturnOnlyFromMove() {
         Field from = new Field().setCoordinates(new Coordinates(0, 0));
         Field invalidTo = new Field().setCoordinates(new Coordinates(2, 2));
@@ -81,6 +97,31 @@ class PieceLogicTest {
     }
 
     @Test
+    void testHasEmptyParameters_WhenEmptyFrom_ThenTrue() {
+        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), null, new Field(), new PieceLogicFactory()));
+    }
+
+    @Test
+    void testHasEmptyParameters_WhenEmptyGrid_ThenTrue() {
+        assertTrue(pieceLogic.hasEmptyParameters(null, new Field(), new Field(), new PieceLogicFactory()));
+    }
+
+    @Test
+    void testHasEmptyParameters_WhenEmptyPieceLogicFactory_ThenTrue() {
+        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), new Field(), null));
+    }
+
+    @Test
+    void testHasEmptyParameters_WhenEmptyTo_ThenTrue() {
+        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), null, new PieceLogicFactory()));
+    }
+
+    @Test
+    void testHasEmptyParameters_WhenNoEmptyParameters_ThenFalse() {
+        assertFalse(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), new Field(), new PieceLogicFactory()));
+    }
+
+    @Test
     void testIsFriendlyFire_WhenPawnMovesToEmptyField_ThenReturnFalse() {
         assertFalse(pieceLogic.isFriendlyFire(new Pawn().setColor(WHITE), new Field()));
     }
@@ -106,18 +147,6 @@ class PieceLogicTest {
     }
 
     @Test
-    void testIsJumping_WhenWhitePawnMovesTwoStepsAndJumpsOverAPiece_ThenReturnTrue() {
-        List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList());
-
-        Field from = grid.stream().filter(field -> field.getCode().equals("e2")).findFirst().get().setPiece(new Pawn().setColor(WHITE));
-        Field to = grid.stream().filter(field -> field.getCode().equals("e4")).findFirst().get();
-
-        grid.stream().filter(field -> field.getCode().equals("e3")).findFirst().get().setPiece(new Pawn().setColor(WHITE));
-
-        assertTrue(pieceLogic.isJumping(grid, from, to));
-    }
-
-    @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndEndsOnAPiece_ThenReturnFalse() {
         List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList());
 
@@ -130,42 +159,15 @@ class PieceLogicTest {
     }
 
     @Test
-    void testGetAbsoluteHorizontalMove() {
-        assertEquals(3,
-                pieceLogic.getAbsoluteHorizontalMove(new Field().setCoordinates(new Coordinates(2, 3)),
-                        new Field().setCoordinates(new Coordinates(5, 8))));
-    }
+    void testIsJumping_WhenWhitePawnMovesTwoStepsAndJumpsOverAPiece_ThenReturnTrue() {
+        List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList());
 
-    @Test
-    void testGetAbsoluteVerticalMove() {
-        assertEquals(5,
-                pieceLogic.getAbsoluteVerticalMove(new Field().setCoordinates(new Coordinates(2, 3)),
-                        new Field().setCoordinates(new Coordinates(5, 8))));
-    }
+        Field from = grid.stream().filter(field -> field.getCode().equals("e2")).findFirst().get().setPiece(new Pawn().setColor(WHITE));
+        Field to = grid.stream().filter(field -> field.getCode().equals("e4")).findFirst().get();
 
-    @Test
-    void testHasEmptyParameters_WhenEmptyGrid_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(null, new Field(), new Field(), new PieceLogicFactory()));
-    }
+        grid.stream().filter(field -> field.getCode().equals("e3")).findFirst().get().setPiece(new Pawn().setColor(WHITE));
 
-    @Test
-    void testHasEmptyParameters_WhenEmptyFrom_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), null, new Field(), new PieceLogicFactory()));
-    }
-
-    @Test
-    void testHasEmptyParameters_WhenEmptyTo_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), null, new PieceLogicFactory()));
-    }
-
-    @Test
-    void testHasEmptyParameters_WhenEmptyPieceLogicFactory_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), new Field(), null));
-    }
-
-    @Test
-    void testHasEmptyParameters_WhenNoEmptyParameters_ThenFalse() {
-        assertFalse(pieceLogic.hasEmptyParameters(new ArrayList<>(), new Field(), new Field(), new PieceLogicFactory()));
+        assertTrue(pieceLogic.isJumping(grid, from, to));
     }
 
     @ParameterizedTest
@@ -195,7 +197,10 @@ class PieceLogicTest {
             String nameOfMovingPiece,
             String toCode,
             boolean expectedOutcome) {
-        List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList());
+        List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> {
+            Field field = new Field().setId(id);
+            return field.setButton(new Button(new Board(gameService), field));
+        }).collect(Collectors.toList());
 
         Field queenField = grid
                 .stream()

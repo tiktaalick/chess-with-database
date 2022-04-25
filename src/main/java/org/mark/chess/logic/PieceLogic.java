@@ -1,5 +1,6 @@
 package org.mark.chess.logic;
 
+import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
@@ -11,6 +12,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public interface PieceLogic {
+    BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
+
     default int getAbsoluteHorizontalMove(Field from, Field to) {
         return Math.abs(to.getCoordinates().getX() - from.getCoordinates().getX());
     }
@@ -84,6 +87,8 @@ public interface PieceLogic {
                         .getLogic(opponentField.getPiece().getPieceType())
                         .isValidMove(futureList, opponentField, kingField, opponentFactory, true))
                 .collect(Collectors.toList());
+
+        attackers.forEach(field -> field.setAttacking(true).getButton().setBackground(backgroundColorFactory.getBackgroundColor(field)));
 
         return !attackers.isEmpty();
     }
