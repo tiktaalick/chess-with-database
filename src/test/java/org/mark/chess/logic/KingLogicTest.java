@@ -138,12 +138,19 @@ class KingLogicTest {
 
     @Test
     void isValidCastling_KingInCheck_Invalid() {
+        Board board = new Board(gameService);
+
         Field from = new Field().setPiece(new King().setColor(Color.WHITE)).setCoordinates(new Coordinates(5, 1));
         Field to = new Field().setCoordinates(new Coordinates(7, 1));
 
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(rookCoordinates);
         Field opponentField = new Field().setPiece(new Rook().setColor(Color.BLACK)).setCoordinates(new Coordinates(5, 8));
+
+        from.setButton(new Button(board, from));
+        to.setButton(new Button(board, to));
+        rookField.setButton(new Button(board, to));
+        opponentField.setButton(new Button(board, to));
 
         List<Field> grid = new ArrayList<>();
         grid.add(rookField);

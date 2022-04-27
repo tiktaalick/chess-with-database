@@ -5,8 +5,12 @@ import org.mark.chess.model.Field;
 
 public class BackgroundColorFactory {
     public java.awt.Color getBackgroundColor(Field field) {
-        if (field.isAttacking()) {
+        if (field.isCheckMate()) {
+            return Color.CHECKMATE.getAwtColor();
+        } else if (field.isAttacking()) {
             return Color.ATTACKING.getAwtColor();
+        } else if (field.isValidFrom()) {
+            return Color.VALID_FROM.getAwtColor();
         } else if (field.isValidMove()) {
             return Color.VALID_MOVE.getAwtColor();
         } else {

@@ -88,8 +88,6 @@ public interface PieceLogic {
                         .isValidMove(futureList, opponentField, kingField, opponentFactory, true))
                 .collect(Collectors.toList());
 
-        attackers.forEach(field -> field.setAttacking(true).getButton().setBackground(backgroundColorFactory.getBackgroundColor(field)));
-
         return !attackers.isEmpty();
     }
 

@@ -40,9 +40,42 @@ class KnightLogicTest {
     @Mock
     private GridLogic gridLogic;
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "3;3;3;3;false",
+            "3;3;4;5;true",
+            "3;3;4;1;true",
+            "3;3;2;5;true",
+            "3;3;2;1;true",
+            "3;3;5;4;true",
+            "3;3;5;2;true",
+            "3;3;1;4;true",
+            "3;3;1;2;true",
+            "3;3;4;3;false",
+            "3;3;2;3;false",
+            "3;3;5;3;false",
+            "3;3;1;3;false"}, delimiter = ';')
+    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
+        Field from = new Field().setPiece(new Knight().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
+        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+
+        boolean actual = knightLogic.isValidMove(grid, from, to, opponentFactory, false);
+        assertEquals(expected, actual);
+    }
+
     @Test
-    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
-        assertFalse(knightLogic.isValidMove(null, null, null, null, false));
+    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
+        Field from = new Field().setPiece(new Knight().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(knightLogic).isFriendlyFire(from.getPiece(), to);
+
+        assertFalse(knightLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
 
     @Test
@@ -69,40 +102,7 @@ class KnightLogicTest {
     }
 
     @Test
-    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().setPiece(new Knight().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
-        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-        Mockito.doReturn(true).when(knightLogic).isFriendlyFire(from.getPiece(), to);
-
-        assertFalse(knightLogic.isValidMove(grid, from, to, opponentFactory, false));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "3;3;3;3;false",
-            "3;3;4;5;true",
-            "3;3;4;1;true",
-            "3;3;2;5;true",
-            "3;3;2;1;true",
-            "3;3;5;4;true",
-            "3;3;5;2;true",
-            "3;3;1;4;true",
-            "3;3;1;2;true",
-            "3;3;4;3;false",
-            "3;3;2;3;false",
-            "3;3;5;3;false",
-            "3;3;1;3;false"}, delimiter = ';')
-    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
-        Field from = new Field().setPiece(new Knight().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
-        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-
-        boolean actual = knightLogic.isValidMove(grid, from, to, opponentFactory, false);
-        assertEquals(expected, actual);
+    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
+        assertFalse(knightLogic.isValidMove(null, null, null, null, false));
     }
 }

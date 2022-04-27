@@ -39,9 +39,38 @@ class BishopLogicTest {
     @Mock
     private GridLogic gridLogic;
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "3;3;3;3;false",
+            "3;3;3;4;false",
+            "3;3;4;4;true",
+            "3;3;3;2;false",
+            "3;3;2;2;true",
+            "3;3;4;2;true",
+            "3;3;2;4;true",
+            "3;3;6;0;true",
+            "3;3;1;5;true"}, delimiter = ';')
+    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
+        Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
+        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+
+        boolean actual = bishopLogic.isValidMove(grid, from, to, opponentFactory, false);
+        assertEquals(expected, actual);
+    }
+
     @Test
-    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
-        assertFalse(bishopLogic.isValidMove(null, null, null, null, false));
+    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
+        Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(bishopLogic).isFriendlyFire(from.getPiece(), to);
+
+        assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
 
     @Test
@@ -68,36 +97,7 @@ class BishopLogicTest {
     }
 
     @Test
-    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
-        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-        Mockito.doReturn(true).when(bishopLogic).isFriendlyFire(from.getPiece(), to);
-
-        assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "3;3;3;3;false",
-            "3;3;3;4;false",
-            "3;3;4;4;true",
-            "3;3;3;2;false",
-            "3;3;2;2;true",
-            "3;3;4;2;true",
-            "3;3;2;4;true",
-            "3;3;6;0;true",
-            "3;3;1;5;true"}, delimiter = ';')
-    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
-        Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
-        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-
-        boolean actual = bishopLogic.isValidMove(grid, from, to, opponentFactory, false);
-        assertEquals(expected, actual);
+    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
+        assertFalse(bishopLogic.isValidMove(null, null, null, null, false));
     }
 }

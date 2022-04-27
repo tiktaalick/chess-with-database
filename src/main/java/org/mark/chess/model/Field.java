@@ -9,13 +9,15 @@ public class Field {
     private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
     private final FieldLogic             fieldLogic             = new FieldLogic();
 
-    private       int                    id;
-    private       String                 code;
-    private       Coordinates            coordinates;
-    private       JButton                button;
-    private       Piece                  piece;
-    private       boolean                isValidMove;
-    private       boolean                isAttacking;
+    private int         id;
+    private String      code;
+    private Coordinates coordinates;
+    private JButton     button;
+    private Piece       piece;
+    private boolean     isValidFrom;
+    private boolean     isValidMove;
+    private boolean     isAttacking;
+    private boolean     isCheckMate;
 
     public JButton getButton() {
         return button;
@@ -74,8 +76,26 @@ public class Field {
         return isAttacking;
     }
 
-    public Field setAttacking(boolean attacking) {
-        isAttacking = attacking;
+    public Field setAttacking(boolean isAttacking) {
+        this.isAttacking = isAttacking;
+        return this;
+    }
+
+    public boolean isCheckMate() {
+        return isCheckMate;
+    }
+
+    public Field setCheckMate(boolean checkMate) {
+        isCheckMate = checkMate;
+        return this;
+    }
+
+    public boolean isValidFrom() {
+        return isValidFrom;
+    }
+
+    public Field setValidFrom(boolean isValidFrom) {
+        this.isValidFrom = isValidFrom;
         return this;
     }
 
@@ -83,8 +103,8 @@ public class Field {
         return isValidMove;
     }
 
-    public Field setValidMove(boolean validMove) {
-        isValidMove = validMove;
+    public Field setValidMove(boolean isValidMove) {
+        this.isValidMove = isValidMove;
 
         if (this.button != null) {
             this.button.setBackground(backgroundColorFactory.getBackgroundColor(this));

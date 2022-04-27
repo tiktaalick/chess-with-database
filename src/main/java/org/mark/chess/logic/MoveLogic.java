@@ -45,7 +45,9 @@ public class MoveLogic {
 
     public void enableValidMoves(Game game, Field from) {
         game.getGrid().forEach(field -> field.setValidMove(false));
-        getValidMoves(game, from).forEach(to -> {
+
+        List<Field> validMoves = getValidMoves(game, from);
+        validMoves.forEach(to -> {
             to.setValidMove(true);
             to.getButton().setBackground(backgroundColorFactory.getBackgroundColor(to));
         });
@@ -80,9 +82,13 @@ public class MoveLogic {
     }
 
     public void resetValidMoves(Game game, Move move) {
+        List<Field> allValidMoves = new ArrayList<>();
         game.getGrid().forEach(field -> {
             field.setAttacking(false);
-            field.setValidMove(!getValidMoves(game, field).isEmpty());
+            field.setValidFrom(false);
+            List<Field> validMoves = getValidMoves(game, field);
+            field.setValidMove(!validMoves.isEmpty());
+            allValidMoves.addAll(validMoves);
 
             if (duringAMove(move, field)) {
                 return;
@@ -92,6 +98,18 @@ public class MoveLogic {
                 ((Pawn) field.getPiece()).setMayBeCapturedEnPassant(false);
             }
         });
+
+        game
+                .getGrid()
+                .stream()
+                .filter(field -> field.getPiece() != null)
+                .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
+                .forEach(field -> {
+                    field
+                            .setCheckMate(kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false) && allValidMoves.isEmpty())
+                            .getButton()
+                            .setBackground(backgroundColorFactory.getBackgroundColor(field));
+                });
     }
 
     public void setChessPieceSpecificFields(Game game, Field from, Field to) {
@@ -117,6 +135,8 @@ public class MoveLogic {
         move.setPiece(from.getPiece());
         move.setFrom(from);
         move.setTo(null);
+
+        from.setValidFrom(true);
     }
 
     public void setTo(Move move, Field to) {

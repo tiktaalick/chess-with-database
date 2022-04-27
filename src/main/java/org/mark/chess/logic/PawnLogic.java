@@ -27,8 +27,18 @@ public class PawnLogic implements PieceLogic {
                !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
-    private boolean isValidBasicMove(Field from, Field to) {
-        return !isCaptureMove(from, to) && getAbsoluteHorizontalMove(from, to) == 0 && getAbsoluteVerticalMove(from, to) == 1;
+    public boolean isPawnBeingPromoted(Field from, Field to) {
+        return from.getPiece().isPawnBeingPromoted() ||
+               from.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline() ||
+               to.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline();
+    }
+
+    public boolean mayBeCapturedEnPassant(List<Field> grid, Field from, Field to) {
+        return isValidBaselineMove(from, to) && !neighbourFieldsWithOpponentPawns(grid, to, from.getPiece().getColor()).isEmpty();
+    }
+
+    private boolean isCaptureMove(Field from, Field to) {
+        return to.getPiece() != null && to.getPiece().getColor() != from.getPiece().getColor();
     }
 
     private boolean isValidBaselineMove(Field from, Field to) {
@@ -38,16 +48,12 @@ public class PawnLogic implements PieceLogic {
                getAbsoluteVerticalMove(from, to) == 2;
     }
 
-    private boolean isValidCaptureMove(Field from, Field to) {
-        return isCaptureMove(from, to) && getAbsoluteHorizontalMove(from, to) == 1 && getAbsoluteVerticalMove(from, to) == 1;
+    private boolean isValidBasicMove(Field from, Field to) {
+        return !isCaptureMove(from, to) && getAbsoluteHorizontalMove(from, to) == 0 && getAbsoluteVerticalMove(from, to) == 1;
     }
 
-    private boolean isValidEnPassantMove(List<Field> grid, Field from, Field to) {
-        return neighbourFieldsWithOpponentPawns(grid, from, from.getPiece().getColor())
-                .stream()
-                .filter(field -> ((Pawn) field.getPiece()).isMayBeCapturedEnPassant())
-                .filter(field -> field.getCoordinates().getX() == to.getCoordinates().getX())
-                .anyMatch(field -> getAbsoluteVerticalMove(field, to) == 1);
+    private boolean isValidCaptureMove(Field from, Field to) {
+        return isCaptureMove(from, to) && getAbsoluteHorizontalMove(from, to) == 1 && getAbsoluteVerticalMove(from, to) == 1;
     }
 
     private boolean isValidDirection(Field from, Field to) {
@@ -57,8 +63,12 @@ public class PawnLogic implements PieceLogic {
                        : -1);
     }
 
-    private boolean isCaptureMove(Field from, Field to) {
-        return to.getPiece() != null && to.getPiece().getColor() != from.getPiece().getColor();
+    private boolean isValidEnPassantMove(List<Field> grid, Field from, Field to) {
+        return neighbourFieldsWithOpponentPawns(grid, from, from.getPiece().getColor())
+                .stream()
+                .filter(field -> ((Pawn) field.getPiece()).isMayBeCapturedEnPassant())
+                .filter(field -> field.getCoordinates().getX() == to.getCoordinates().getX())
+                .anyMatch(field -> getAbsoluteVerticalMove(field, to) == 1);
     }
 
     private List<Field> neighbourFieldsWithOpponentPawns(List<Field> grid, Field playerField, Color color) {
@@ -70,15 +80,5 @@ public class PawnLogic implements PieceLogic {
                 .filter(opponentField -> opponentField.getPiece() != null && opponentField.getPiece().getColor() != color)
                 .filter(opponentField -> opponentField.getPiece().getPieceType() == PieceType.PAWN)
                 .collect(Collectors.toList());
-    }
-
-    public boolean mayBeCapturedEnPassant(List<Field> grid, Field from, Field to) {
-        return isValidBaselineMove(from, to) && !neighbourFieldsWithOpponentPawns(grid, to, from.getPiece().getColor()).isEmpty();
-    }
-
-    public boolean isPawnBeingPromoted(Field from, Field to) {
-        return from.getPiece().isPawnBeingPromoted() ||
-               from.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline() ||
-               to.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline();
     }
 }
