@@ -7,6 +7,8 @@ public class BackgroundColorFactory {
     public java.awt.Color getBackgroundColor(Field field) {
         if (field.isCheckMate()) {
             return Color.CHECKMATE.getAwtColor();
+        } else if (field.isStaleMate()) {
+            return Color.STALEMATE.getAwtColor();
         } else if (field.isAttacking()) {
             return Color.ATTACKING.getAwtColor();
         } else if (field.isValidFrom()) {

@@ -8,7 +8,8 @@ public enum Color {
     VALID_MOVE(new java.awt.Color(255, 255, 0)),
     VALID_FROM(new java.awt.Color(255, 255, 0)),
     ATTACKING(new java.awt.Color(255, 150, 0)),
-    CHECKMATE(new java.awt.Color(255, 0, 0));
+    CHECKMATE(new java.awt.Color(255, 0, 0)),
+    STALEMATE(new java.awt.Color(100, 100, 100));
 
     static {
         BLACK.opposite = WHITE;

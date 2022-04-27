@@ -44,9 +44,9 @@ public class BoardLogic {
             moveLogic.moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
             moveLogic.changeTurn(game);
             moveLogic.resetFrom(board.getMove());
-            moveLogic.resetValidMoves(game, board.getMove());
+            moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
         } else if (buttonClick == RIGHT_CLICK) {
-            moveLogic.resetValidMoves(game, board.getMove());
+            moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
         }
     }
 

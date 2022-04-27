@@ -18,6 +18,7 @@ public class Field {
     private boolean     isValidMove;
     private boolean     isAttacking;
     private boolean     isCheckMate;
+    private boolean     isStaleMate;
 
     public JButton getButton() {
         return button;
@@ -87,6 +88,15 @@ public class Field {
 
     public Field setCheckMate(boolean checkMate) {
         isCheckMate = checkMate;
+        return this;
+    }
+
+    public boolean isStaleMate() {
+        return isStaleMate;
+    }
+
+    public Field setStaleMate(boolean isStaleMate) {
+        this.isStaleMate = isStaleMate;
         return this;
     }
 
