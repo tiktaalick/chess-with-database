@@ -81,11 +81,13 @@ public class MoveLogic {
         move.getFrom().getButton().setIcon(null);
     }
 
-    public void resetValidMoves(Game game, Move move) {
+    public List<Field> resetValidMoves(Game game, Move move) {
         List<Field> allValidMoves = new ArrayList<>();
+
         game.getGrid().forEach(field -> {
             field.setAttacking(false);
             field.setValidFrom(false);
+
             List<Field> validMoves = getValidMoves(game, field);
             field.setValidMove(!validMoves.isEmpty());
             allValidMoves.addAll(validMoves);
@@ -99,17 +101,7 @@ public class MoveLogic {
             }
         });
 
-        game
-                .getGrid()
-                .stream()
-                .filter(field -> field.getPiece() != null)
-                .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
-                .forEach(field -> {
-                    field
-                            .setCheckMate(kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false) && allValidMoves.isEmpty())
-                            .getButton()
-                            .setBackground(backgroundColorFactory.getBackgroundColor(field));
-                });
+        return allValidMoves;
     }
 
     public void setChessPieceSpecificFields(Game game, Field from, Field to) {
@@ -129,6 +121,22 @@ public class MoveLogic {
         } else if (from.getPiece().getPieceType() == PieceType.KING) {
             ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
+    }
+
+    public void setFieldColors(Game game, List<Field> allValidMoves) {
+        game
+                .getGrid()
+                .stream()
+                .filter(field -> field.getPiece() != null)
+                .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
+                .forEach(field -> {
+                    boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
+                    field
+                            .setCheckMate(isInCheckNow && allValidMoves.isEmpty())
+                            .setStaleMate(!isInCheckNow && allValidMoves.isEmpty())
+                            .getButton()
+                            .setBackground(backgroundColorFactory.getBackgroundColor(field));
+                });
     }
 
     public void setFrom(Move move, Field from) {
