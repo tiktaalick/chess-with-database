@@ -43,8 +43,8 @@ public class BoardLogic {
             moveLogic.setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
             moveLogic.moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
             moveLogic.changeTurn(game);
-            moveLogic.resetValidMoves(game, board.getMove());
             moveLogic.resetFrom(board.getMove());
+            moveLogic.resetValidMoves(game, board.getMove());
         } else if (buttonClick == RIGHT_CLICK) {
             moveLogic.resetValidMoves(game, board.getMove());
         }

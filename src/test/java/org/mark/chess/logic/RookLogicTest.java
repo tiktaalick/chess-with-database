@@ -39,9 +39,42 @@ class RookLogicTest {
     @Mock
     private GridLogic gridLogic;
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "3;3;2;4;false",
+            "3;3;3;4;true",
+            "3;3;4;2;false",
+            "3;3;2;3;true",
+            "3;3;3;3;false",
+            "3;3;4;3;true",
+            "3;3;2;4;false",
+            "3;3;3;4;true",
+            "3;3;4;4;false",
+            "3;3;0;6;false",
+            "3;3;6;3;true",
+            "3;3;3;6;true",
+            "3;3;6;0;false"}, delimiter = ';')
+    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
+        Field from = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
+        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+
+        boolean actual = rookLogic.isValidMove(grid, from, to, opponentFactory, false);
+        assertEquals(expected, actual);
+    }
+
     @Test
-    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
-        assertFalse(rookLogic.isValidMove(null, null, null, null, false));
+    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
+        Field from = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
+        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
+        List<Field> grid = new ArrayList<>();
+
+        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(rookLogic).isFriendlyFire(from.getPiece(), to);
+
+        assertFalse(rookLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
 
     @Test
@@ -68,40 +101,7 @@ class RookLogicTest {
     }
 
     @Test
-    void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
-        Field from = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
-        Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-        Mockito.doReturn(true).when(rookLogic).isFriendlyFire(from.getPiece(), to);
-
-        assertFalse(rookLogic.isValidMove(grid, from, to, opponentFactory, false));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "3;3;2;4;false",
-            "3;3;3;4;true",
-            "3;3;4;2;false",
-            "3;3;2;3;true",
-            "3;3;3;3;false",
-            "3;3;4;3;true",
-            "3;3;2;4;false",
-            "3;3;3;4;true",
-            "3;3;4;4;false",
-            "3;3;0;6;false",
-            "3;3;6;3;true",
-            "3;3;3;6;true",
-            "3;3;6;0;false"}, delimiter = ';')
-    void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
-        Field from = new Field().setPiece(new Rook().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
-        Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        List<Field> grid = new ArrayList<>();
-
-        Mockito.doReturn(false).when(rookLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
-
-        boolean actual = rookLogic.isValidMove(grid, from, to, opponentFactory, false);
-        assertEquals(expected, actual);
+    void testIsValidMove_WhenNullValues_ThenReturnFalse() {
+        assertFalse(rookLogic.isValidMove(null, null, null, null, false));
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class KingLogic implements PieceLogic {
     public static final  int KING_X_LEFT       = 3;
@@ -34,6 +35,25 @@ public class KingLogic implements PieceLogic {
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
                !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+    }
+
+    public boolean isInCheckNow(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+        if (isOpponent) {
+            return false;
+        }
+
+        List<Field> attackers = grid
+                .stream()
+                .filter(opponentField -> opponentField.getPiece() != null)
+                .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
+                .filter(opponentField -> opponentFactory
+                        .getLogic(opponentField.getPiece().getPieceType())
+                        .isValidMove(grid, opponentField, to, opponentFactory, true))
+                .collect(Collectors.toList());
+
+        attackers.forEach(field -> field.setAttacking(true).getButton().setBackground(backgroundColorFactory.getBackgroundColor(field)));
+
+        return !attackers.isEmpty();
     }
 
     public boolean isValidCastling(List<Field> grid,
@@ -63,20 +83,6 @@ public class KingLogic implements PieceLogic {
         boolean isInCheck = isInCheckNow(grid, from, from, opponentFactory, false);
 
         return isValidFrom && isValidTo && isKingValid && isRookValid && !isInCheck;
-    }
-
-    private boolean isInCheckNow(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
-        if (isOpponent) {
-            return false;
-        }
-
-        return grid
-                .stream()
-                .filter(opponentField -> opponentField.getPiece() != null)
-                .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
-                .anyMatch(opponentField -> opponentFactory
-                        .getLogic(opponentField.getPiece().getPieceType())
-                        .isValidMove(grid, opponentField, to, opponentFactory, true));
     }
 
     private boolean isValidBasicMove(Field from, Field to) {

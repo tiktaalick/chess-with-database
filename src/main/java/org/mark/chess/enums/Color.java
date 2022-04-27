@@ -3,10 +3,12 @@ package org.mark.chess.enums;
 public enum Color {
     WHITE("white", new java.awt.Color(255, 255, 255), 1, 2),
     BLACK("black", new java.awt.Color(0, 0, 0), 8, 7),
-    LIGHT("light", new java.awt.Color(250, 250, 200)),
-    DARK("dark", new java.awt.Color(150, 100, 0)),
-    VALID_MOVE("valid move", new java.awt.Color(255, 255, 0)),
-    ATTACKING("attacking", new java.awt.Color(255, 100, 150));
+    LIGHT(new java.awt.Color(250, 250, 200)),
+    DARK(new java.awt.Color(150, 100, 0)),
+    VALID_MOVE(new java.awt.Color(255, 255, 0)),
+    VALID_FROM(new java.awt.Color(255, 255, 0)),
+    ATTACKING(new java.awt.Color(255, 150, 0)),
+    CHECKMATE(new java.awt.Color(255, 0, 0));
 
     static {
         BLACK.opposite = WHITE;
@@ -14,13 +16,12 @@ public enum Color {
     }
 
     private final java.awt.Color awtColor;
-    private final String         name;
+    private       String         name;
     private       int            baseline;
     private       int            baselinePawn;
     private       Color          opposite;
 
-    Color(String name, java.awt.Color awtColor) {
-        this.name = name;
+    Color(java.awt.Color awtColor) {
         this.awtColor = awtColor;
     }
 
