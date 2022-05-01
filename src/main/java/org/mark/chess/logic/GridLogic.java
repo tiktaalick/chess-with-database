@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.mark.chess.enums.Color.WHITE;
+
 public class GridLogic {
     public static final int NUMBER_OF_COLUMNS_AND_ROWS = 8;
 
@@ -54,6 +56,9 @@ public class GridLogic {
     public List<Field> initializeGrid(Game game, Board board) {
         return IntStream
                 .rangeClosed(0, 63)
+                .map(id -> game.getHumanPlayerColor() == WHITE
+                        ? id
+                        : 63 - id)
                 .mapToObj(id -> fieldLogic.addChessPiece(game, fieldLogic.initializeField(board, id), initialPieceFactory.getInitialPiece(id)))
                 .collect(Collectors.toList());
     }

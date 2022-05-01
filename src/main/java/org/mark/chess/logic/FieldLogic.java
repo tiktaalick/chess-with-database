@@ -55,7 +55,7 @@ public class FieldLogic {
     }
 
     public boolean isActivePlayerField(Game game, Field field) {
-        return field.getPiece() != null && field.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
+        return field.getPiece() != null && field.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
     }
 }
 

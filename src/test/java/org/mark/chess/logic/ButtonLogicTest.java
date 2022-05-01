@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mark.chess.enums.Color.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class ButtonLogicTest {
@@ -44,7 +45,7 @@ class ButtonLogicTest {
 
     @Test
     void testGetIconWidth() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
         Field field = new Field().setCoordinates(new Coordinates(0, 0));
         Button button = new Button(board, field);
 
@@ -62,7 +63,7 @@ class ButtonLogicTest {
 
         JButton actual = buttonLogic.initializeButton(new Game()
                 .setGrid(grid)
-                .setCurrentPlayerId(Color.WHITE.ordinal())
+                .setCurrentPlayerColor(Color.WHITE)
                 .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), field);
 
         assertTrue(actual.isEnabled());
@@ -83,7 +84,7 @@ class ButtonLogicTest {
 
         JButton actual = buttonLogic.initializeButton(new Game()
                 .setGrid(grid)
-                .setCurrentPlayerId(Color.BLACK.ordinal())
+                .setCurrentPlayerColor(WHITE)
                 .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))), field);
 
         assertNull(actual.getText());

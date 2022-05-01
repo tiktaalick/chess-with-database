@@ -17,8 +17,8 @@ public class BackgroundColorFactory {
             return Color.VALID_MOVE.getAwtColor();
         } else {
             return (field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0
-                    ? Color.LIGHT.getAwtColor()
-                    : Color.DARK.getAwtColor();
+                    ? Color.DARK.getAwtColor()
+                    : Color.LIGHT.getAwtColor();
         }
     }
 }

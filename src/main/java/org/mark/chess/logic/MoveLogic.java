@@ -40,7 +40,7 @@ public class MoveLogic {
     private PieceLogicFactory pieceLogicFactory;
 
     public void changeTurn(Game game) {
-        game.setCurrentPlayerId(1 - game.getCurrentPlayerId());
+        game.setCurrentPlayerColor(game.getCurrentPlayerColor().getOpposite());
     }
 
     public void enableValidMoves(Game game, Field from) {
@@ -54,19 +54,20 @@ public class MoveLogic {
     }
 
     public boolean isFrom(Game game, Field fieldClick) {
-        return fieldClick.getPiece() != null && fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerId()).getColor();
+        return fieldClick.getPiece() != null &&
+               fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
     }
 
-    public void moveRookWhenCastling(List<Field> grid, Field from, Field to) {
+    public void moveRookWhenCastling(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PieceType.KING &&
-            kingLogic.isValidCastling(grid, from, to, to.getCoordinates().getX(), pieceLogicFactory, false, true)) {
+            kingLogic.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), pieceLogicFactory, false, true)) {
 
             Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                     ? KingLogic.ROOK_X_LEFT_FROM
                     : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
-            Field rookFromField = gridLogic.getField(grid, rookCoordinates);
-            Field rookToField = gridLogic.getField(grid,
+            Field rookFromField = gridLogic.getField(game.getGrid(), rookCoordinates);
+            Field rookToField = gridLogic.getField(game.getGrid(),
                     rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                             ? KingLogic.ROOK_X_LEFT_TO
                             : KingLogic.ROOK_X_RIGHT_TO));
@@ -132,10 +133,14 @@ public class MoveLogic {
                 .forEach(field -> {
                     boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
                     field
-                            .setCheckMate(isInCheckNow && allValidMoves.isEmpty())
-                            .setStaleMate(!isInCheckNow && allValidMoves.isEmpty())
+                            .setCheckMate(isNotAbleToMove(game, field, allValidMoves) && isInCheckNow)
+                            .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow)
                             .getButton()
                             .setBackground(backgroundColorFactory.getBackgroundColor(field));
+
+                    game.setInProgress(game.isInProgress()
+                            ? !field.isCheckMate() && !field.isStaleMate()
+                            : game.isInProgress());
                 });
     }
 
@@ -164,6 +169,10 @@ public class MoveLogic {
         return fieldLogic.isActivePlayerField(game, from)
                 ? pieceLogicFactory.getLogic(from.getPiece().getPieceType()).getValidMoves(game.getGrid(), from, pieceLogicFactory)
                 : new ArrayList<>();
+    }
+
+    private boolean isNotAbleToMove(Game game, Field field, List<Field> allValidMoves) {
+        return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
     private void moveRock(Field from, Field to) {

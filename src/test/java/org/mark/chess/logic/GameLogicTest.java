@@ -3,7 +3,6 @@ package org.mark.chess.logic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.Color;
-import org.mark.chess.enums.GameStatus;
 import org.mark.chess.enums.PlayerType;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Player;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mark.chess.enums.Color.WHITE;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,30 +33,16 @@ class GameLogicTest {
 
     @Test
     void testIinitializeGame() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
-        Game game = gameLogic.initializeGame(board);
+        Game game = gameLogic.initializeGame(board, WHITE);
 
-        assertEquals(GameStatus.IN_PROGRESS, game.getGameStatus());
+        assertTrue(game.isInProgress());
         assertEquals(2, game.getPlayers().size());
         assertEquals(2, game.getPlayers().stream().filter(player -> player.getPlayerType() == PlayerType.HUMAN).count());
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> color == Color.WHITE));
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> color == Color.BLACK));
 
         verify(gridLogic).initializeGrid(game, board);
-    }
-
-    @Test
-    void testEndGame_WhenHasWon_ThenSetWon() {
-        gameLogic.endGame(game, true);
-
-        verify(game).setWon();
-    }
-
-    @Test
-    void testEndGame_WhenHasLost_ThenSetLost() {
-        gameLogic.endGame(game, false);
-
-        verify(game).setLost();
     }
 }

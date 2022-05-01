@@ -1,5 +1,6 @@
 package org.mark.chess;
 
+import org.mark.chess.enums.Color;
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
@@ -15,10 +16,10 @@ public class Application {
     private GameService gameService;
 
     public static void main(String[] args) {
-        new ApplicationFactory().getInstance().startApplication();
+        new ApplicationFactory().getInstance().startApplication(Color.WHITE);
     }
 
-    public void startApplication() {
-        new Board(gameService);
+    public void startApplication(Color humanPlayerColor) {
+        new Board(gameService, humanPlayerColor);
     }
 }

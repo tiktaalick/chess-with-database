@@ -3,6 +3,7 @@ package org.mark.chess.swing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.mark.chess.enums.Color;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Move;
 import org.mark.chess.service.GameService;
@@ -18,14 +19,14 @@ import java.awt.event.MouseListener;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class Board extends JFrame implements ActionListener, MouseListener {
-    private final Game game;
-    private       Move move;
+    private final transient Game game;
+    private transient       Move move;
 
-    private GameService gameService;
+    private transient GameService gameService;
 
-    public Board(GameService gameService) {
+    public Board(GameService gameService, Color humanPlayerColor) {
         this.gameService = gameService;
-        game = gameService.initializeGame(this);
+        game = gameService.initializeGame(this, humanPlayerColor);
         move = new Move();
         gameService.initializeBoard(game, this);
     }
