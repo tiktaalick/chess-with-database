@@ -86,8 +86,8 @@ public class Field {
         return isCheckMate;
     }
 
-    public Field setCheckMate(boolean checkMate) {
-        isCheckMate = checkMate;
+    public Field setCheckMate(boolean isCheckMate) {
+        this.isCheckMate = isCheckMate;
         return this;
     }
 

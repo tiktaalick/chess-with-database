@@ -1,5 +1,6 @@
 package org.mark.chess.service;
 
+import org.mark.chess.enums.Color;
 import org.mark.chess.logic.BoardLogic;
 import org.mark.chess.logic.GameLogic;
 import org.mark.chess.model.Game;
@@ -23,7 +24,7 @@ public class GameService {
         boardlogic.initializeBoard(game, board);
     }
 
-    public Game initializeGame(Board board) {
-        return gameLogic.initializeGame(board);
+    public Game initializeGame(Board board, Color humanPlayerColor) {
+        return gameLogic.initializeGame(board, humanPlayerColor);
     }
 }

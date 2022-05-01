@@ -3,7 +3,6 @@ package org.mark.chess.logic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.Application;
-import org.mark.chess.enums.GameStatus;
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
@@ -22,6 +21,8 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mark.chess.enums.Color.BLACK;
+import static org.mark.chess.enums.Color.WHITE;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
@@ -60,10 +61,10 @@ class BoardLogicTest {
     private ApplicationFactory applicationFactory;
 
     @Test
-    void testHandleButtonClick_WhenHasLost_ThenRestartGame() {
+    void testHandleButtonClick_WhenGameNotInProgress_ThenRestartGame() {
         JButton button = new JButton();
 
-        Game game = new Game().setGameStatus(GameStatus.HAS_LOST);
+        Game game = new Game().setInProgress(false).setHumanPlayerColor(BLACK);
 
         when(applicationFactory.getInstance()).thenReturn(application);
         when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
@@ -71,25 +72,7 @@ class BoardLogicTest {
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
         verify(board).dispose();
-        verify(application).startApplication();
-        verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
-        verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
-    }
-
-    @Test
-    void testHandleButtonClick_WhenHasWon_ThenRestartGame() {
-        JButton button = new JButton();
-
-        Game game = new Game().setGameStatus(GameStatus.HAS_WON);
-
-        when(applicationFactory.getInstance()).thenReturn(application);
-        when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
-
-        boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
-
-        verify(board).dispose();
-        verify(application).startApplication();
+        verify(application).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
         verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
@@ -101,16 +84,16 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS);
+        Game game = new Game().setInProgress(true);
 
-        Board board = new Board(gameService).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
+        Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
         doReturn(fieldClick).when(gridLogic).getField(game.getGrid(), button);
         doReturn(true).when(moveLogic).isFrom(game, fieldClick);
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
-        verify(application, never()).startApplication();
+        verify(application, never()).startApplication(WHITE);
         verify(moveLogic).setFrom(board.getMove(), fieldClick);
         verify(moveLogic).enableValidMoves(game, fieldClick);
         verify(moveLogic, never()).setTo(any(Move.class), eq(fieldClick));
@@ -122,21 +105,21 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS).setGrid(new ArrayList<>());
+        Game game = new Game().setInProgress(true).setGrid(new ArrayList<>());
 
-        Board board = new Board(gameService).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
+        Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
         when(gridLogic.getField(game.getGrid(), button)).thenReturn(fieldClick);
         when(moveLogic.isFrom(game, fieldClick)).thenReturn(false);
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
-        verify(application, never()).startApplication();
+        verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
         verify(moveLogic).setTo(any(Move.class), eq(fieldClick));
         verify(moveLogic).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
-        verify(moveLogic).moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
+        verify(moveLogic).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).changeTurn(game);
         verify(moveLogic).resetValidMoves(game, board.getMove());
         verify(moveLogic).resetFrom(board.getMove());
@@ -146,14 +129,14 @@ class BoardLogicTest {
     void testHandleButtonClick_WhenNotAValidMove_ThenDoNothing() {
         JButton button = new JButton();
 
-        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS);
+        Game game = new Game().setInProgress(true);
 
         when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(false));
 
         boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
 
         verify(board, never()).dispose();
-        verify(application, never()).startApplication();
+        verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
         verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
@@ -165,20 +148,20 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setGameStatus(GameStatus.IN_PROGRESS).setGrid(new ArrayList<>());
+        Game game = new Game().setInProgress(true).setGrid(new ArrayList<>());
 
-        Board board = new Board(gameService).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
+        Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
         doReturn(fieldClick).when(gridLogic).getField(game.getGrid(), button);
 
         boardLogic.handleButtonClick(game, board, RIGHT_CLICK, button);
 
-        verify(application, never()).startApplication();
+        verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
         verify(moveLogic, never()).setTo(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
-        verify(moveLogic, never()).moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
+        verify(moveLogic, never()).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic, never()).changeTurn(game);
         verify(moveLogic).resetValidMoves(game, board.getMove());
         verify(moveLogic, never()).resetFrom(board.getMove());
@@ -186,7 +169,7 @@ class BoardLogicTest {
 
     @Test
     void testInitializeBoard() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
         boardLogic.initializeBoard(game, board);
 

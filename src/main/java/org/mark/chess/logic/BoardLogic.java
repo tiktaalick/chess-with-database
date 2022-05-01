@@ -1,6 +1,5 @@
 package org.mark.chess.logic;
 
-import org.mark.chess.enums.GameStatus;
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
@@ -28,20 +27,16 @@ public class BoardLogic {
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
         Field fieldClick = gridLogic.getField(game.getGrid(), button);
 
-        if (buttonClick == LEFT_CLICK && !fieldClick.isValidMove()) {
-            return;
-        }
-
-        if (game.getGameStatus() != GameStatus.IN_PROGRESS) {
+        if (!game.isInProgress()) {
             board.dispose();
-            applicationFactory.getInstance().startApplication();
-        } else if (buttonClick == LEFT_CLICK && moveLogic.isFrom(game, fieldClick)) {
+            applicationFactory.getInstance().startApplication(game.getHumanPlayerColor().getOpposite());
+        } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setFrom(board.getMove(), fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
-        } else if (buttonClick == LEFT_CLICK && !moveLogic.isFrom(game, fieldClick)) {
+        } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setTo(board.getMove(), fieldClick);
             moveLogic.setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
-            moveLogic.moveRookWhenCastling(game.getGrid(), board.getMove().getFrom(), fieldClick);
+            moveLogic.moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
             moveLogic.changeTurn(game);
             moveLogic.resetFrom(board.getMove());
             moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));

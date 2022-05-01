@@ -125,7 +125,7 @@ class FieldLogicTest {
         assertEquals(4, field.getCoordinates().getY());
         assertEquals(3 * FIELD_WIDTH, field.getButton().getX());
         assertEquals(4 * FIELD_WIDTH, field.getButton().getY());
-        assertEquals(Color.DARK.getAwtColor(), field.getButton().getBackground());
+        assertEquals(Color.LIGHT.getAwtColor(), field.getButton().getBackground());
     }
 
     @Test
@@ -138,14 +138,12 @@ class FieldLogicTest {
         assertEquals(5, field.getCoordinates().getY());
         assertEquals(3 * FIELD_WIDTH, field.getButton().getX());
         assertEquals(5 * FIELD_WIDTH, field.getButton().getY());
-        assertEquals(Color.LIGHT.getAwtColor(), field.getButton().getBackground());
+        assertEquals(Color.DARK.getAwtColor(), field.getButton().getBackground());
     }
 
     @Test
     void testIsActivePlayerField_WhenActivePlayerField_ThenReturnTrue() {
-        Game game = new Game()
-                .setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(WHITE.ordinal());
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
 
         Field field = fieldLogic.initializeField(board, 26).setPiece(new Pawn().setColor(WHITE));
 
@@ -154,9 +152,7 @@ class FieldLogicTest {
 
     @Test
     void testIsActivePlayerField_WhenEmptyField_ThenReturnFalse() {
-        Game game = new Game()
-                .setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(WHITE.ordinal());
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
 
         Field field = fieldLogic.initializeField(board, 26);
 
@@ -165,13 +161,10 @@ class FieldLogicTest {
 
     @Test
     void testIsActivePlayerField_WhenOpponentField_ThenReturnFalse() {
-        Game game = new Game()
-                .setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(WHITE.ordinal());
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
 
         Field field = fieldLogic.initializeField(board, 26).setPiece(new Pawn().setColor(BLACK));
 
         assertFalse(fieldLogic.isActivePlayerField(game, field));
     }
-
 }

@@ -1,7 +1,6 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.enums.Color;
-import org.mark.chess.enums.GameStatus;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Human;
 import org.mark.chess.swing.Board;
@@ -13,20 +12,13 @@ public class GameLogic {
     @Autowired
     private GridLogic gridLogic;
 
-    public Game initializeGame(Board board) {
+    public Game initializeGame(Board board, Color humanPlayerColor) {
         Game game = new Game()
-                .setGameStatus(GameStatus.IN_PROGRESS)
+                .setInProgress(true)
                 .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(Color.WHITE.ordinal());
+                .setHumanPlayerColor(humanPlayerColor)
+                .setCurrentPlayerColor(Color.WHITE);
 
         return game.setGrid(gridLogic.initializeGrid(game, board));
-    }
-
-    public void endGame(Game game, boolean hasWon) {
-        if (hasWon) {
-            game.setWon();
-        } else {
-            game.setLost();
-        }
     }
 }

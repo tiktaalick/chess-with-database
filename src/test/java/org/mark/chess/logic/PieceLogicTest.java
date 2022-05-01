@@ -199,7 +199,7 @@ class PieceLogicTest {
             boolean expectedOutcome) {
         List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id);
-            return field.setButton(new Button(new Board(gameService), field));
+            return field.setButton(new Button(new Board(gameService, WHITE), field));
         }).collect(Collectors.toList());
 
         Field queenField = grid

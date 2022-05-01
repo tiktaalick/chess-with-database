@@ -77,23 +77,23 @@ class MoveLogicTest {
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
-        Game game = new Game().setCurrentPlayerId(BLACK.ordinal());
+        Game game = new Game().setCurrentPlayerColor(BLACK);
         moveLogic.changeTurn(game);
 
-        assertEquals(WHITE.ordinal(), game.getCurrentPlayerId());
+        assertEquals(WHITE, game.getCurrentPlayerColor());
     }
 
     @Test
     void testChangeTurn_WhenWhite_ThenBlack() {
-        Game game = new Game().setCurrentPlayerId(WHITE.ordinal());
+        Game game = new Game().setCurrentPlayerColor(WHITE);
         moveLogic.changeTurn(game);
 
-        assertEquals(BLACK.ordinal(), game.getCurrentPlayerId());
+        assertEquals(BLACK, game.getCurrentPlayerColor());
     }
 
     @Test
     void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
         List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id).setValidMove(false);
@@ -112,7 +112,7 @@ class MoveLogicTest {
 
         when(fieldLogic.isActivePlayerField(game, from)).thenReturn(true);
         when(pieceLogicFactory.getLogic(PieceType.PAWN)).thenReturn(pawnLogic);
-        when(pawnLogic.getValidMoves(grid, from, pieceLogicFactory)).thenReturn(validMovesList);
+        when(pawnLogic.getValidMoves(game.getGrid(), from, pieceLogicFactory)).thenReturn(validMovesList);
 
         moveLogic.enableValidMoves(game, from);
 
@@ -133,7 +133,7 @@ class MoveLogicTest {
     void testIsFrom_WhenFieldWithWhitePawnAndItsBlacksTurn_ThenReturnFalse() {
         Game game = new Game()
                 .setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(Color.BLACK.ordinal());
+                .setCurrentPlayerColor(Color.BLACK);
         Field field = new Field().setPiece(new Pawn().setColor(WHITE));
 
         assertFalse(moveLogic.isFrom(game, field));
@@ -141,9 +141,7 @@ class MoveLogicTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsWhitesTurn_ThenReturnTrue() {
-        Game game = new Game()
-                .setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK)))
-                .setCurrentPlayerId(WHITE.ordinal());
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
         Field field = new Field().setPiece(new Pawn().setColor(WHITE));
 
         assertTrue(moveLogic.isFrom(game, field));
@@ -151,8 +149,9 @@ class MoveLogicTest {
 
     @Test
     void testMoveRookWhenCastling_WhenCastling_ThenMoveRook() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
         List<Field> grid = new ArrayList<>();
+        Game game = new Game().setGrid(grid).setHumanPlayerColor(WHITE);
 
         Piece rook = new Rook().setColor(WHITE);
 
@@ -166,11 +165,12 @@ class MoveLogicTest {
         Field rookTo = new Field().setCoordinates(new Coordinates(4, 1));
         rookTo.setButton(new Button(board, rookTo));
 
-        when(kingLogic.isValidCastling(grid, kingFrom, kingTo, kingTo.getCoordinates().getX(), pieceLogicFactory, false, true)).thenReturn(true);
+        when(kingLogic.isValidCastling(game.getGrid(), kingFrom, kingTo, kingTo.getCoordinates().getX(), pieceLogicFactory, false, true)).thenReturn(
+                true);
         when(gridLogic.getField(grid, rookFrom.getCoordinates())).thenReturn(rookFrom);
         when(gridLogic.getField(grid, rookTo.getCoordinates())).thenReturn(rookTo);
 
-        moveLogic.moveRookWhenCastling(grid, kingFrom, kingTo);
+        moveLogic.moveRookWhenCastling(game, kingFrom, kingTo);
 
         assertNull(rookFrom.getPiece());
         assertNull(rookFrom.getButton().getIcon());
@@ -180,7 +180,7 @@ class MoveLogicTest {
 
     @Test
     void testResetValidMoves_WhenNotDuringAMove_ThenEnableOrDisableAllMoves() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
         Game game = new Game().setGrid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id);
@@ -196,7 +196,7 @@ class MoveLogicTest {
 
     @Test
     void testResetValidMoves_WhenTwoPawnsInvolvedInMovement_Then62MayNotBeCapturedEnPassant() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
         Game game = new Game().setGrid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id).setPiece(new Pawn().setMayBeCapturedEnPassant(true));

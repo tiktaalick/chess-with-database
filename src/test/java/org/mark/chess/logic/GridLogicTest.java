@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.Color;
 import org.mark.chess.factory.InitialPieceFactory;
+import org.mark.chess.model.Computer;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Human;
 import org.mark.chess.model.King;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
@@ -23,6 +25,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mark.chess.enums.Color.WHITE;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -52,7 +55,7 @@ class GridLogicTest {
 
     @Test
     void testGetField_WhenButtonMatches_ThenReturnField() {
-        Board board = new Board(gameService);
+        Board board = new Board(gameService, WHITE);
 
         Field field1 = new Field().setCoordinates(new Coordinates(0, 0)).setId(0);
         Field field2 = new Field().setCoordinates(new Coordinates(1, 1)).setId(1);
@@ -108,8 +111,8 @@ class GridLogicTest {
 
     @Test
     void testInitializeGrid() {
-        Game game = new Game();
-        Board board = new Board(gameService);
+        Game game = new Game().setPlayers(Arrays.asList(new Human(), new Computer())).setHumanPlayerColor(WHITE);
+        Board board = new Board(gameService, WHITE);
         List<Field> grid = gridLogic.initializeGrid(game, board);
 
         assertEquals(64, grid.size());
