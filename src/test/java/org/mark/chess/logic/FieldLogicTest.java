@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
 import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
-import static org.mark.chess.swing.Button.FIELD_WIDTH;
+import static org.mark.chess.swing.Button.FIELD_WIDTH_AND_HEIGHT;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -123,8 +123,8 @@ class FieldLogicTest {
         assertEquals(3 - 1 + (NUMBER_OF_COLUMNS_AND_ROWS - 4) * NUMBER_OF_COLUMNS_AND_ROWS, field.getId());
         assertEquals(3, field.getCoordinates().getX());
         assertEquals(4, field.getCoordinates().getY());
-        assertEquals(3 * FIELD_WIDTH, field.getButton().getX());
-        assertEquals(4 * FIELD_WIDTH, field.getButton().getY());
+        assertEquals(3 * FIELD_WIDTH_AND_HEIGHT, field.getButton().getX());
+        assertEquals(4 * FIELD_WIDTH_AND_HEIGHT, field.getButton().getY());
         assertEquals(Color.LIGHT.getAwtColor(), field.getButton().getBackground());
     }
 
@@ -136,8 +136,8 @@ class FieldLogicTest {
         assertEquals(3 - 1 + (NUMBER_OF_COLUMNS_AND_ROWS - 5) * NUMBER_OF_COLUMNS_AND_ROWS, field.getId());
         assertEquals(3, field.getCoordinates().getX());
         assertEquals(5, field.getCoordinates().getY());
-        assertEquals(3 * FIELD_WIDTH, field.getButton().getX());
-        assertEquals(5 * FIELD_WIDTH, field.getButton().getY());
+        assertEquals(3 * FIELD_WIDTH_AND_HEIGHT, field.getButton().getX());
+        assertEquals(5 * FIELD_WIDTH_AND_HEIGHT, field.getButton().getY());
         assertEquals(Color.DARK.getAwtColor(), field.getButton().getBackground());
     }
 

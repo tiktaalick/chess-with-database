@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Image;
 
-import static org.mark.chess.swing.Button.FIELD_WIDTH;
+import static org.mark.chess.swing.Button.FIELD_WIDTH_AND_HEIGHT;
 
 public class ButtonLogic {
     private static final String EXTENSION  = ".png";
@@ -29,7 +29,7 @@ public class ButtonLogic {
         button.setText(null);
         button.setIcon(new ImageIcon(new ImageIcon(getIconPath(field.getPiece(), field.getPiece().getColor()))
                 .getImage()
-                .getScaledInstance(FIELD_WIDTH, FIELD_WIDTH, Image.SCALE_SMOOTH)));
+                .getScaledInstance(FIELD_WIDTH_AND_HEIGHT, FIELD_WIDTH_AND_HEIGHT, Image.SCALE_SMOOTH)));
 
         return button;
     }

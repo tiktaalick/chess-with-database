@@ -12,13 +12,16 @@ import javax.swing.JButton;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public class Button extends JButton {
-    public static final int FIELD_WIDTH = 75;
+    public static final int FIELD_WIDTH_AND_HEIGHT = 75;
 
     private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
 
     public Button(Board board, Field field) {
         setText(String.valueOf(field.getCode()));
-        setBounds(field.getCoordinates().getX() * FIELD_WIDTH, field.getCoordinates().getY() * FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH);
+        setBounds(field.getCoordinates().getX() * FIELD_WIDTH_AND_HEIGHT,
+                field.getCoordinates().getY() * FIELD_WIDTH_AND_HEIGHT,
+                FIELD_WIDTH_AND_HEIGHT,
+                FIELD_WIDTH_AND_HEIGHT);
         addActionListener(board);
         addMouseListener(board);
         this.setBackground(backgroundColorFactory.getBackgroundColor(field));
