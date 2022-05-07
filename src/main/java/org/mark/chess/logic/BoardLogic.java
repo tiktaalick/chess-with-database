@@ -11,10 +11,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 public class BoardLogic {
-    private static final int       HEIGHT      = 435;
+    private static final int       HEIGHT      = 870;
     private static final int       LEFT_CLICK  = 1;
     private static final int       RIGHT_CLICK = 3;
-    private static final int       WIDTH       = 414;
+    private static final int       WIDTH       = 828;
     @Autowired
     private              MoveLogic moveLogic;
 
