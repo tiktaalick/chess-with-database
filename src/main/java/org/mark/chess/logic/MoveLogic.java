@@ -11,12 +11,13 @@ import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Rook;
-import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.mark.chess.enums.PieceType.PAWN;
 
 public class MoveLogic {
     @Autowired
@@ -73,14 +74,14 @@ public class MoveLogic {
                             ? KingLogic.ROOK_X_LEFT_TO
                             : KingLogic.ROOK_X_RIGHT_TO));
 
-            moveRock(rookFromField, rookToField);
+            moveRock(game.getGrid(), rookFromField, rookToField);
         }
     }
 
-    public void resetFrom(Move move) {
-        move.getFrom().setPiece(null);
-        move.getFrom().getButton().setText(move.getFrom().getCode());
-        move.getFrom().getButton().setIcon(null);
+    public void resetField(Field field) {
+        field.setPiece(null);
+        field.getButton().setText(field.getCode());
+        field.getButton().setIcon(null);
     }
 
     public List<Field> resetValidMoves(Game game, Move move) {
@@ -98,7 +99,7 @@ public class MoveLogic {
                 return;
             }
 
-            if (field.getPiece() != null && field.getPiece().getPieceType() == PieceType.PAWN) {
+            if (field.getPiece() != null && field.getPiece().getPieceType() == PAWN) {
                 ((Pawn) field.getPiece()).setMayBeCapturedEnPassant(false);
             }
         });
@@ -107,15 +108,14 @@ public class MoveLogic {
     }
 
     public void setChessPieceSpecificFields(Game game, Field from, Field to) {
-        if (from.getPiece().getPieceType() == PieceType.PAWN) {
+        if (from.getPiece().getPieceType() == PAWN) {
             Pawn pawn = (Pawn) from.getPiece();
-            PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PieceType.PAWN);
+            PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PAWN);
             pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
             pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
-                fieldLogic.addChessPiece(
-                        to,
+                fieldLogic.addChessPiece(to,
                         pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()).setColor(from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
@@ -153,11 +153,18 @@ public class MoveLogic {
         from.setValidFrom(true);
     }
 
-    public void setTo(Move move, Field to) {
+    public void setTo(List<Field> grid, Move move, Field to) {
+        if (isCaptureEnPassant(move, to)) {
+            captureEnPassant(grid, move.getFrom(), to);
+        }
         move.setTo(to);
         move.getTo().setPiece(move.getFrom().getPiece());
         move.getTo().getButton().setText(null);
         move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
+    }
+
+    private void captureEnPassant(List<Field> grid, Field from, Field to) {
+        resetField(gridLogic.getField(grid, new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
     }
 
     private boolean duringAMove(Move move, Field field) {
@@ -172,14 +179,20 @@ public class MoveLogic {
                 : new ArrayList<>();
     }
 
+    private boolean isCaptureEnPassant(Move move, Field to) {
+        return move.getFrom().getPiece().getPieceType() == PAWN &&
+               move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
+               to.getPiece() == null;
+    }
+
     private boolean isNotAbleToMove(Game game, Field field, List<Field> allValidMoves) {
         return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
-    private void moveRock(Field from, Field to) {
+    private void moveRock(List<Field> grid, Field from, Field to) {
         Move rookMove = new Move();
         setFrom(rookMove, from);
-        setTo(rookMove, to);
-        resetFrom(rookMove);
+        setTo(grid, rookMove, to);
+        resetField(rookMove.getFrom());
     }
 }

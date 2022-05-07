@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
@@ -75,7 +76,7 @@ class BoardLogicTest {
         verify(application).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), any(Field.class));
     }
 
     @Test
@@ -96,7 +97,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic).setFrom(board.getMove(), fieldClick);
         verify(moveLogic).enableValidMoves(game, fieldClick);
-        verify(moveLogic, never()).setTo(any(Move.class), eq(fieldClick));
+        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), eq(fieldClick));
     }
 
     @Test
@@ -117,12 +118,12 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
-        verify(moveLogic).setTo(any(Move.class), eq(fieldClick));
+        verify(moveLogic).setTo(game.getGrid(), any(Move.class), eq(fieldClick));
         verify(moveLogic).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).changeTurn(game);
         verify(moveLogic).resetValidMoves(game, board.getMove());
-        verify(moveLogic).resetFrom(board.getMove());
+        verify(moveLogic).resetField(board.getMove().getFrom());
     }
 
     @Test
@@ -139,7 +140,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), any(Field.class));
     }
 
     @Test
@@ -159,12 +160,12 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
-        verify(moveLogic, never()).setTo(any(Move.class), eq(fieldClick));
+        verify(moveLogic, never()).setTo(anyList(), any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic, never()).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic, never()).changeTurn(game);
         verify(moveLogic).resetValidMoves(game, board.getMove());
-        verify(moveLogic, never()).resetFrom(board.getMove());
+        verify(moveLogic, never()).resetField(board.getMove().getFrom());
     }
 
     @Test

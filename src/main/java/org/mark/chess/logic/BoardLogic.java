@@ -34,11 +34,11 @@ public class BoardLogic {
             moveLogic.setFrom(board.getMove(), fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !moveLogic.isFrom(game, fieldClick)) {
-            moveLogic.setTo(board.getMove(), fieldClick);
+            moveLogic.setTo(game.getGrid(), board.getMove(), fieldClick);
             moveLogic.setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
             moveLogic.moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
             moveLogic.changeTurn(game);
-            moveLogic.resetFrom(board.getMove());
+            moveLogic.resetField(board.getMove().getFrom());
             moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
         } else if (buttonClick == RIGHT_CLICK) {
             moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
