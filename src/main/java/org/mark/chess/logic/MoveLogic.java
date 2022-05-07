@@ -11,6 +11,7 @@ import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Rook;
+import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class MoveLogic {
             pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
-                fieldLogic.addChessPiece(game,
+                fieldLogic.addChessPiece(
                         to,
                         pieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()).setColor(from.getPiece().getColor()));
             }

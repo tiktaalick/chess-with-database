@@ -12,7 +12,7 @@ import javax.swing.JButton;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public class Button extends JButton {
-    public static final int FIELD_WIDTH = 50;
+    public static final int FIELD_WIDTH = 75;
 
     private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
 

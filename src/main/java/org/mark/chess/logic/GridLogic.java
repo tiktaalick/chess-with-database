@@ -59,7 +59,7 @@ public class GridLogic {
                 .map(id -> game.getHumanPlayerColor() == WHITE
                         ? id
                         : 63 - id)
-                .mapToObj(id -> fieldLogic.addChessPiece(game, fieldLogic.initializeField(board, id), initialPieceFactory.getInitialPiece(id)))
+                .mapToObj(id -> fieldLogic.addChessPiece(fieldLogic.initializeField(board, id), initialPieceFactory.getInitialPiece(id)))
                 .collect(Collectors.toList());
     }
 }

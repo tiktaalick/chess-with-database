@@ -173,10 +173,10 @@ class BoardLogicTest {
 
         boardLogic.initializeBoard(game, board);
 
-        assertEquals(414, board.getSize().getWidth());
-        assertEquals(435, board.getSize().getHeight());
-        assertEquals(753, board.getLocation().getX());
-        assertEquals(323, board.getLocation().getY());
+        assertEquals(828, board.getSize().getWidth());
+        assertEquals(870, board.getSize().getHeight());
+        assertEquals(546, board.getLocation().getX());
+        assertEquals(105, board.getLocation().getY());
         assertTrue(board.isVisible());
         assertFalse(board.isResizable());
     }

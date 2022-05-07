@@ -14,8 +14,8 @@ public class FieldLogic {
     @Autowired
     private ButtonLogic buttonLogic;
 
-    public Field addChessPiece(Game game, Field field, Piece piece) {
-        return field.setPiece(piece).setButton(buttonLogic.initializeButton(game, field));
+    public Field addChessPiece(Field field, Piece piece) {
+        return field.setPiece(piece).setButton(buttonLogic.initializeButton(field));
     }
 
     public String createCode(int id) {

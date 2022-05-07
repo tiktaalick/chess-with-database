@@ -56,9 +56,9 @@ class FieldLogicTest {
         Game game = new Game().setGrid(grid);
         Piece bishop = new Bishop();
 
-        when(buttonLogic.initializeButton(game, field2)).thenReturn(new Button(board, field2));
+        when(buttonLogic.initializeButton(field2)).thenReturn(new Button(board, field2));
 
-        fieldLogic.addChessPiece(game, field2, bishop.setColor(Color.BLACK));
+        fieldLogic.addChessPiece(field2, bishop.setColor(Color.BLACK));
 
         assertEquals(Color.BLACK, game.getGrid().get(2).getPiece().getColor());
         assertEquals(bishop, game.getGrid().get(2).getPiece());

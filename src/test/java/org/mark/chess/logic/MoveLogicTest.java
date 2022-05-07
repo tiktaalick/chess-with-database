@@ -252,7 +252,7 @@ class MoveLogicTest {
 
         verify(pawnLogic).mayBeCapturedEnPassant(game.getGrid(), from, to);
         verify(pawnLogic).isPawnBeingPromoted(from, to);
-        verify(fieldLogic).addChessPiece(game, to, queen.setColor(WHITE));
+        verify(fieldLogic).addChessPiece(to, queen.setColor(WHITE));
 
         assertTrue(from.getPiece().isPawnBeingPromoted());
     }
