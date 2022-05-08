@@ -35,11 +35,6 @@ class ButtonLogicTest {
     private Board board;
 
     @Test
-    void testGetIconPath() {
-        assertEquals("src/main/resources/images/white_pawn.png", buttonLogic.getIconPath(new Pawn(), Color.WHITE));
-    }
-
-    @Test
     void testInitializeButton_WhenCurrentPlayer_ThenEnabled() {
         Field field = new Field().setCoordinates(new Coordinates(3, 4));
         Button button = new Button(board, field);

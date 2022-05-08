@@ -76,7 +76,7 @@ class BoardLogicTest {
         verify(application).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(anyList(), any(Move.class), any(Field.class));
     }
 
     @Test
@@ -97,7 +97,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic).setFrom(board.getMove(), fieldClick);
         verify(moveLogic).enableValidMoves(game, fieldClick);
-        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), eq(fieldClick));
+        verify(moveLogic, never()).setTo(anyList(), any(Move.class), eq(fieldClick));
     }
 
     @Test
@@ -118,7 +118,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
-        verify(moveLogic).setTo(game.getGrid(), any(Move.class), eq(fieldClick));
+        verify(moveLogic).setTo(anyList(), any(Move.class), eq(fieldClick));
         verify(moveLogic).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).changeTurn(game);
@@ -140,7 +140,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(game.getGrid(), any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(anyList(), any(Move.class), any(Field.class));
     }
 
     @Test
