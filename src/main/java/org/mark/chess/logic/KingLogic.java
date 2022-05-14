@@ -4,6 +4,7 @@ import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Piece;
 import org.mark.chess.model.Rook;
@@ -27,7 +28,7 @@ public class KingLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+    public boolean isValidMove(Grid grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                (isValidBasicMove(from, to) ||
                 isValidCastling(grid, from, to, KING_X_LEFT, opponentFactory, isOpponent, false) ||
@@ -37,12 +38,13 @@ public class KingLogic implements PieceLogic {
                !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
     }
 
-    public boolean isInCheckNow(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+    public boolean isInCheckNow(Grid grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }
 
         List<Field> attackers = grid
+                .getFields()
                 .stream()
                 .filter(opponentField -> opponentField.getPiece() != null)
                 .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
@@ -56,7 +58,7 @@ public class KingLogic implements PieceLogic {
         return !attackers.isEmpty();
     }
 
-    public boolean isValidCastling(List<Field> grid,
+    public boolean isValidCastling(Grid grid,
             Field from,
             Field to,
             int direction,

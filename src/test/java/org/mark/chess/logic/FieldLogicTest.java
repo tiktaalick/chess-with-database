@@ -10,6 +10,7 @@ import org.mark.chess.model.Bishop;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
@@ -51,17 +52,17 @@ class FieldLogicTest {
         Field field1 = new Field().setCode("b8");
         Field field2 = new Field().setCode("c8");
         Field field3 = new Field().setCode("d8");
-        List<Field> grid = new ArrayList<>(Arrays.asList(new Field().setId(0).setCoordinates(new Coordinates(0, 0)), field1, field2, field3));
+        List<Field> fields = new ArrayList<>(Arrays.asList(new Field().setId(0).setCoordinates(new Coordinates(0, 0)), field1, field2, field3));
 
-        Game game = new Game().setGrid(grid);
+        Game game = new Game().setGrid(new Grid(fields));
         Piece bishop = new Bishop();
 
         when(buttonLogic.initializeButton(field2)).thenReturn(new Button(board, field2));
 
         fieldLogic.addChessPiece(field2, bishop.setColor(Color.BLACK));
 
-        assertEquals(Color.BLACK, game.getGrid().get(2).getPiece().getColor());
-        assertEquals(bishop, game.getGrid().get(2).getPiece());
+        assertEquals(Color.BLACK, game.getGrid().getFields().get(2).getPiece().getColor());
+        assertEquals(bishop, game.getGrid().getFields().get(2).getPiece());
     }
 
     @ParameterizedTest

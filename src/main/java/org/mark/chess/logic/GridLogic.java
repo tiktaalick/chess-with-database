@@ -6,6 +6,7 @@ import org.mark.chess.factory.InitialPieceFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,12 +31,13 @@ public class GridLogic {
         return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
-    public Field getField(List<Field> grid, JButton button) {
-        return grid.stream().filter(field -> field.getButton() == button).findFirst().orElse(null);
+    public Field getField(Grid grid, JButton button) {
+        return grid.getFields().stream().filter(field -> field.getButton() == button).findFirst().orElse(null);
     }
 
-    public Field getField(List<Field> grid, Coordinates coordinates) {
+    public Field getField(Grid grid, Coordinates coordinates) {
         return grid
+                .getFields()
                 .stream()
                 .filter(field -> field.getCoordinates().getX() == coordinates.getX())
                 .filter(field -> field.getCoordinates().getY() == coordinates.getY())
@@ -43,8 +45,8 @@ public class GridLogic {
                 .orElse(null);
     }
 
-    public Field getKingField(List<Field> grid, Color color) {
-        return grid
+    public Field getKingField(List<Field> fields, Color color) {
+        return fields
                 .stream()
                 .filter(field -> field.getPiece() != null)
                 .filter(field -> field.getPiece().getColor() == color)

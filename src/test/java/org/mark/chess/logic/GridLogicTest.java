@@ -8,6 +8,7 @@ import org.mark.chess.model.Computer;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.model.King;
 import org.mark.chess.service.GameService;
@@ -67,7 +68,7 @@ class GridLogicTest {
         JButton button3 = new Button(board, field3);
         JButton button4 = new Button(board, field4);
 
-        List<Field> grid = new ArrayList<>(Arrays.asList(field1.setButton(button1), field2.setButton(button2), field3.setButton(button3), field4));
+        Grid grid = new Grid(new ArrayList<>(Arrays.asList(field1.setButton(button1), field2.setButton(button2), field3.setButton(button3), field4)));
 
         assertEquals(field1, gridLogic.getField(grid, button1));
         assertEquals(field2, gridLogic.getField(grid, button2));
@@ -87,7 +88,7 @@ class GridLogicTest {
         Field field3 = new Field().setCoordinates(coordinates3);
         Field field4 = new Field().setCoordinates(coordinates4);
 
-        List<Field> grid = new ArrayList<>(Arrays.asList(field1, field2, field3, field4));
+        Grid grid = new Grid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)));
 
         assertEquals(field1, gridLogic.getField(grid, coordinates1));
         assertEquals(field2, gridLogic.getField(grid, coordinates2));
@@ -102,11 +103,11 @@ class GridLogicTest {
         Field field3 = new Field().setCoordinates(new Coordinates(2, 2)).setId(2);
         Field field4 = new Field().setCoordinates(new Coordinates(3, 3)).setId(3).setPiece(new King().setColor(Color.WHITE));
 
-        List<Field> grid = new ArrayList<>(Arrays.asList(field1, field2, field3, field4));
+        Grid grid = new Grid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)));
 
-        assertEquals(field2, gridLogic.getKingField(grid, Color.BLACK));
-        assertEquals(field4, gridLogic.getKingField(grid, Color.WHITE));
-        assertNull(gridLogic.getKingField(grid, Color.DARK));
+        assertEquals(field2, gridLogic.getKingField(grid.getFields(), Color.BLACK));
+        assertEquals(field4, gridLogic.getKingField(grid.getFields(), Color.WHITE));
+        assertNull(gridLogic.getKingField(grid.getFields(), Color.DARK));
     }
 
     @Test

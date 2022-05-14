@@ -7,6 +7,7 @@ import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Move;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
@@ -23,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
@@ -76,7 +76,7 @@ class BoardLogicTest {
         verify(application).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(anyList(), any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), any(Field.class));
     }
 
     @Test
@@ -97,7 +97,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic).setFrom(board.getMove(), fieldClick);
         verify(moveLogic).enableValidMoves(game, fieldClick);
-        verify(moveLogic, never()).setTo(anyList(), any(Move.class), eq(fieldClick));
+        verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), eq(fieldClick));
     }
 
     @Test
@@ -106,7 +106,7 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setInProgress(true).setGrid(new ArrayList<>());
+        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>()));
 
         Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
@@ -118,7 +118,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
-        verify(moveLogic).setTo(anyList(), any(Move.class), eq(fieldClick));
+        verify(moveLogic).setTo(any(Grid.class), any(Move.class), eq(fieldClick));
         verify(moveLogic).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic).changeTurn(game);
@@ -140,7 +140,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
         verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(anyList(), any(Move.class), any(Field.class));
+        verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), any(Field.class));
     }
 
     @Test
@@ -149,7 +149,7 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setInProgress(true).setGrid(new ArrayList<>());
+        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>()));
 
         Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
@@ -160,7 +160,7 @@ class BoardLogicTest {
         verify(application, never()).startApplication(WHITE);
         verify(moveLogic, never()).setFrom(any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).enableValidMoves(game, fieldClick);
-        verify(moveLogic, never()).setTo(anyList(), any(Move.class), eq(fieldClick));
+        verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), eq(fieldClick));
         verify(moveLogic, never()).setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic, never()).moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
         verify(moveLogic, never()).changeTurn(game);
