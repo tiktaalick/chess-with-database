@@ -126,23 +126,22 @@ public class MoveLogic {
     }
 
     public void setFieldColors(Game game, List<Field> allValidMoves) {
-        game
-                .getGrid()
-                .stream()
-                .filter(field -> field.getPiece() != null)
-                .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
-                .forEach(field -> {
-                    boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
-                    field
-                            .setCheckMate(isNotAbleToMove(game, field, allValidMoves) && isInCheckNow)
-                            .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow)
-                            .getButton()
-                            .setBackground(backgroundColorFactory.getBackgroundColor(field));
+        game.getGrid().stream().filter(field -> field.getPiece() != null).forEach(field -> {
+            if (field.getPiece().getPieceType() == PieceType.KING) {
+                boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
+                field
+                        .setCheckMate(isNotAbleToMove(game, field, allValidMoves) && isInCheckNow)
+                        .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow)
+                        .getButton()
+                        .setBackground(backgroundColorFactory.getBackgroundColor(field));
+            } else {
+                fieldLogic.setValue(game, field);
+            }
 
-                    game.setInProgress(game.isInProgress()
-                            ? !field.isCheckMate() && !field.isStaleMate()
-                            : game.isInProgress());
-                });
+            game.setInProgress(game.isInProgress()
+                    ? !field.isCheckMate() && !field.isStaleMate()
+                    : game.isInProgress());
+        });
     }
 
     public void setFrom(Move move, Field from) {
