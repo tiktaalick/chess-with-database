@@ -8,6 +8,7 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Queen;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,7 +57,7 @@ class QueenLogicTest {
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
@@ -69,7 +69,7 @@ class QueenLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(queenLogic).isFriendlyFire(from.getPiece(), to);
@@ -81,7 +81,7 @@ class QueenLogicTest {
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(true).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
@@ -92,7 +92,7 @@ class QueenLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(queenLogic).isJumping(grid, from, to);

@@ -12,6 +12,6 @@ public class Game {
     private boolean      inProgress;
     private Color        humanPlayerColor;
     private Color        currentPlayerColor;
-    private List<Field>  grid;
+    private Grid         grid;
     private List<Player> players;
 }

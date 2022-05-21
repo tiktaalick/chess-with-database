@@ -9,6 +9,7 @@ import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Bishop;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
+import org.mark.chess.model.Grid;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,7 +53,7 @@ class BishopLogicTest {
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
@@ -65,7 +65,7 @@ class BishopLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(bishopLogic).isFriendlyFire(from.getPiece(), to);
@@ -77,7 +77,7 @@ class BishopLogicTest {
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(true).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
 
@@ -88,7 +88,7 @@ class BishopLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field().setPiece(new Bishop().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
 
         Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
         Mockito.doReturn(true).when(bishopLogic).isJumping(grid, from, to);

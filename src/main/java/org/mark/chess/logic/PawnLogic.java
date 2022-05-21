@@ -4,6 +4,7 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +16,7 @@ public class PawnLogic implements PieceLogic {
     private GridLogic gridLogic;
 
     @Override
-    public boolean isValidMove(List<Field> grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
+    public boolean isValidMove(Grid grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to, opponentFactory) &&
                (isValidBasicMove(from, to) ||
                 isValidBaselineMove(from, to) ||
@@ -33,7 +34,7 @@ public class PawnLogic implements PieceLogic {
                to.getCoordinates().getY() == from.getPiece().getColor().getOpposite().getBaseline();
     }
 
-    public boolean mayBeCapturedEnPassant(List<Field> grid, Field from, Field to) {
+    public boolean mayBeCapturedEnPassant(Grid grid, Field from, Field to) {
         return isValidBaselineMove(from, to) && !neighbourFieldsWithOpponentPawns(grid, to, from.getPiece().getColor()).isEmpty();
     }
 
@@ -63,7 +64,7 @@ public class PawnLogic implements PieceLogic {
                        : -1);
     }
 
-    private boolean isValidEnPassantMove(List<Field> grid, Field from, Field to) {
+    private boolean isValidEnPassantMove(Grid grid, Field from, Field to) {
         return neighbourFieldsWithOpponentPawns(grid, from, from.getPiece().getColor())
                 .stream()
                 .filter(field -> ((Pawn) field.getPiece()).isMayBeCapturedEnPassant())
@@ -71,8 +72,9 @@ public class PawnLogic implements PieceLogic {
                 .anyMatch(field -> getAbsoluteVerticalMove(field, to) == 1);
     }
 
-    private List<Field> neighbourFieldsWithOpponentPawns(List<Field> grid, Field playerField, Color color) {
+    private List<Field> neighbourFieldsWithOpponentPawns(Grid grid, Field playerField, Color color) {
         return grid
+                .getFields()
                 .stream()
                 .filter(opponentField -> (opponentField.getCoordinates().getX() - 1 == playerField.getCoordinates().getX() ||
                                           opponentField.getCoordinates().getX() + 1 == playerField.getCoordinates().getX()) &&

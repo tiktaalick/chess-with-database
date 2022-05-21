@@ -82,9 +82,9 @@ public class FieldLogic {
         field.setValue(getValue(field));
 
         if (game.getGrid() != null) {
-            int minValue = getMinValue(game.getGrid());
-            int maxValue = getMaxValue(game.getGrid());
-            game.getGrid().stream().filter(gridField -> gridField.getPiece() != null).forEach(gridField -> {
+            int minValue = getMinValue(game.getGrid().getFields());
+            int maxValue = getMaxValue(game.getGrid().getFields());
+            game.getGrid().getFields().stream().filter(gridField -> gridField.getPiece() != null).forEach(gridField -> {
                 double relativeValue = (((double) gridField.getValue() - minValue) / (Math.max(1, maxValue - minValue))) * 255;
                 gridField.setRelativeValue((int) relativeValue);
                 gridField.getButton().setBackground(backgroundColorFactory.getBackgroundColor(gridField));
