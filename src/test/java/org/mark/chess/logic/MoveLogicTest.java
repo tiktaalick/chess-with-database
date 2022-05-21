@@ -10,6 +10,7 @@ import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
@@ -95,15 +96,16 @@ class MoveLogicTest {
     void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
         Board board = new Board(gameService, WHITE);
 
-        List<Field> grid = IntStream.rangeClosed(0, 63).mapToObj(id -> {
+        Grid grid = new Grid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id).setValidMove(false);
             return field.setButton(new Button(board, field));
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()));
 
         Game game = new Game().setGrid(grid);
         Field from = new Field().setPiece(new Pawn().setColor(WHITE));
 
         List<Field> validMovesList = grid
+                .getFields()
                 .stream()
                 .filter(field -> field.getCoordinates().getX() == 4)
                 .filter(field -> Arrays.asList(4, 5).contains(field.getCoordinates().getY()))
@@ -116,9 +118,9 @@ class MoveLogicTest {
 
         moveLogic.enableValidMoves(game, from);
 
-        assertEquals(64, game.getGrid().size());
-        assertEquals(2, game.getGrid().stream().filter(Field::isValidMove).count());
-        assertEquals(validMovesList, game.getGrid().stream().filter(Field::isValidMove).collect(Collectors.toList()));
+        assertEquals(64, game.getGrid().getFields().size());
+        assertEquals(2, game.getGrid().getFields().stream().filter(Field::isValidMove).count());
+        assertEquals(validMovesList, game.getGrid().getFields().stream().filter(Field::isValidMove).collect(Collectors.toList()));
     }
 
     @Test
@@ -150,7 +152,7 @@ class MoveLogicTest {
     @Test
     void testMoveRookWhenCastling_WhenCastling_ThenMoveRook() {
         Board board = new Board(gameService, WHITE);
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
         Game game = new Game().setGrid(grid).setHumanPlayerColor(WHITE);
 
         Piece rook = new Rook().setColor(WHITE);
@@ -182,12 +184,12 @@ class MoveLogicTest {
     void testResetValidMoves_WhenNotDuringAMove_ThenEnableOrDisableAllMoves() {
         Board board = new Board(gameService, WHITE);
 
-        Game game = new Game().setGrid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
+        Game game = new Game().setGrid(new Grid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id);
             Button button = new Button(board, field);
             button.setEnabled(true);
             return field.setButton(button);
-        }).collect(Collectors.toList()));
+        }).collect(Collectors.toList())));
 
         moveLogic.resetValidMoves(game, new Move());
 
@@ -198,35 +200,37 @@ class MoveLogicTest {
     void testResetValidMoves_WhenTwoPawnsInvolvedInMovement_Then62MayNotBeCapturedEnPassant() {
         Board board = new Board(gameService, WHITE);
 
-        Game game = new Game().setGrid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
+        Game game = new Game().setGrid(new Grid(IntStream.rangeClosed(0, 63).mapToObj(id -> {
             Field field = new Field().setId(id).setPiece(new Pawn().setMayBeCapturedEnPassant(true));
             Button button = new Button(board, field);
             button.setEnabled(true);
             return field.setButton(button);
-        }).collect(Collectors.toList()));
+        }).collect(Collectors.toList())));
 
         moveLogic.resetValidMoves(game,
                 new Move()
                         .setFrom(game
                                 .getGrid()
+                                .getFields()
                                 .stream()
                                 .filter(field -> field.getCoordinates().getX() == 5 && field.getCoordinates().getY() == 6)
                                 .findFirst()
                                 .get())
                         .setTo(game
                                 .getGrid()
+                                .getFields()
                                 .stream()
                                 .filter(field -> field.getCoordinates().getX() == 5 && field.getCoordinates().getY() == 4)
                                 .findFirst()
                                 .get()));
 
         verify(fieldLogic, times(64)).isActivePlayerField(eq(game), any(Field.class));
-        assertEquals(62, game.getGrid().stream().filter(field -> !((Pawn) field.getPiece()).isMayBeCapturedEnPassant()).count());
+        assertEquals(62, game.getGrid().getFields().stream().filter(field -> !((Pawn) field.getPiece()).isMayBeCapturedEnPassant()).count());
     }
 
     @Test
     void testSetChessPieceSpecificFields_WhenKing_ThenSetHasMovedAtLeastOnce() {
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
         Game game = new Game().setGrid(grid);
         Field from = new Field().setPiece(new King());
         Field to = new Field();
@@ -238,7 +242,7 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnIsBeingPromoted_ThenPawnIsPromotedToQueen() {
-        List<Field> grid = new ArrayList<>();
+        Grid grid = new Grid(new ArrayList<>());
         Game game = new Game().setGrid(grid);
         Field from = new Field().setPiece(new Pawn().setColor(WHITE));
         Field to = new Field();
@@ -259,8 +263,7 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
-        List<Field> grid = new ArrayList<>();
-        Game game = new Game().setGrid(grid);
+        Game game = new Game().setGrid(new Grid(new ArrayList<>()));
         Field from = new Field().setPiece(new Pawn());
         Field to = new Field();
 
@@ -277,8 +280,7 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenRook_ThenSetHasMovedAtLeastOnce() {
-        List<Field> grid = new ArrayList<>();
-        Game game = new Game().setGrid(grid);
+        Game game = new Game().setGrid(new Grid(new ArrayList<>()));
         Field from = new Field().setPiece(new Rook());
         Field to = new Field();
 

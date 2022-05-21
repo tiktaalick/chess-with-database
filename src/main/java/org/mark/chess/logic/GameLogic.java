@@ -2,6 +2,7 @@ package org.mark.chess.logic;
 
 import org.mark.chess.enums.Color;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,6 @@ public class GameLogic {
                 .setHumanPlayerColor(humanPlayerColor)
                 .setCurrentPlayerColor(Color.WHITE);
 
-        return game.setGrid(gridLogic.initializeGrid(game, board));
+        return game.setGrid(new Grid(gridLogic.initializeGrid(game, board)));
     }
 }

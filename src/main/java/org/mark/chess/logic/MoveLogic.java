@@ -7,6 +7,7 @@ import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
@@ -46,7 +47,7 @@ public class MoveLogic {
     }
 
     public void enableValidMoves(Game game, Field from) {
-        game.getGrid().forEach(field -> field.setValidMove(false));
+        game.getGrid().getFields().forEach(field -> field.setValidMove(false));
 
         List<Field> validMoves = getValidMoves(game, from);
         validMoves.forEach(to -> {
@@ -87,7 +88,7 @@ public class MoveLogic {
     public List<Field> resetValidMoves(Game game, Move move) {
         List<Field> allValidMoves = new ArrayList<>();
 
-        game.getGrid().forEach(field -> {
+        game.getGrid().getFields().forEach(field -> {
             field.setAttacking(false);
             field.setValidFrom(false);
 
@@ -126,7 +127,7 @@ public class MoveLogic {
     }
 
     public void setFieldColors(Game game, List<Field> allValidMoves) {
-        game.getGrid().stream().filter(field -> field.getPiece() != null).forEach(field -> {
+        game.getGrid().getFields().stream().filter(field -> field.getPiece() != null).forEach(field -> {
             if (field.getPiece().getPieceType() == PieceType.KING) {
                 boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
                 field
@@ -152,7 +153,7 @@ public class MoveLogic {
         from.setValidFrom(true);
     }
 
-    public void setTo(List<Field> grid, Move move, Field to) {
+    public void setTo(Grid grid, Move move, Field to) {
         if (isCaptureEnPassant(move, to)) {
             captureEnPassant(grid, move.getFrom(), to);
         }
@@ -162,7 +163,7 @@ public class MoveLogic {
         move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
     }
 
-    private void captureEnPassant(List<Field> grid, Field from, Field to) {
+    private void captureEnPassant(Grid grid, Field from, Field to) {
         resetField(gridLogic.getField(grid, new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
     }
 
@@ -188,7 +189,7 @@ public class MoveLogic {
         return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
-    private void moveRock(List<Field> grid, Field from, Field to) {
+    private void moveRock(Grid grid, Field from, Field to) {
         Move rookMove = new Move();
         setFrom(rookMove, from);
         setTo(grid, rookMove, to);
