@@ -25,6 +25,6 @@ public class BackgroundColorFactory {
     }
 
     private java.awt.Color getValueColor(Field field) {
-        return new java.awt.Color(255 - field.getRelativeValue(), field.getRelativeValue(), 0);
+        return new java.awt.Color(255 - field.getRelativeValue(), field.getRelativeValue(), 255 - (Math.abs(255 - 2 * field.getRelativeValue())));
     }
 }
