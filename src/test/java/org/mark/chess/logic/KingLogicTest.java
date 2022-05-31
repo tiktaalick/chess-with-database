@@ -194,7 +194,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         Grid grid = new Grid(new ArrayList<>());
 
-        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
 
         boolean actual = kingLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);
@@ -206,7 +206,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         doReturn(true).when(kingLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -233,7 +233,7 @@ class KingLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        doReturn(false).when(kingLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         doReturn(true).when(kingLogic).isJumping(grid, from, to);
 
         assertFalse(kingLogic.isValidMove(grid, from, to, opponentFactory, false));

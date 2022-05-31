@@ -237,6 +237,6 @@ class PieceLogicTest {
 
         when(opponentFactory.getLogic(QUEEN)).thenReturn(new QueenLogic());
 
-        assertEquals(expectedOutcome, pieceLogic.isMovingIntoCheck(grid, fromField, toField, isOpponent, opponentFactory, gridLogic));
+        assertEquals(expectedOutcome, pieceLogic.isMovingIntoCheck(grid, fromField, toField, isOpponent, opponentFactory));
     }
 }
