@@ -50,10 +50,8 @@ public class MoveLogic {
         game.getGrid().getFields().forEach(field -> field.setValidMove(false));
 
         List<Field> validMoves = getValidMoves(game, from);
-        validMoves.forEach(to -> {
-            to.setValidMove(true);
-            to.getButton().setBackground(backgroundColorFactory.getBackgroundColor(to));
-        });
+        validMoves.forEach(to -> to.setValidMove(true));
+        gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, Field::isValidMove);
     }
 
     public boolean isFrom(Game game, Field fieldClick) {
@@ -94,6 +92,7 @@ public class MoveLogic {
 
             List<Field> validMoves = getValidMoves(game, field);
             field.setValidMove(!validMoves.isEmpty());
+            field.setValidFrom(field.isValidMove());
             allValidMoves.addAll(validMoves);
 
             if (duringAMove(move, field)) {
@@ -124,25 +123,6 @@ public class MoveLogic {
         } else if (from.getPiece().getPieceType() == PieceType.KING) {
             ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
-    }
-
-    public void setFieldColors(Game game, List<Field> allValidMoves) {
-        game.getGrid().getFields().stream().filter(field -> field.getPiece() != null).forEach(field -> {
-            if (field.getPiece().getPieceType() == PieceType.KING) {
-                boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
-                field
-                        .setCheckMate(isNotAbleToMove(game, field, allValidMoves) && isInCheckNow)
-                        .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow)
-                        .getButton()
-                        .setBackground(backgroundColorFactory.getBackgroundColor(field));
-            } else {
-                fieldLogic.setValue(game, field);
-            }
-
-            game.setInProgress(game.isInProgress()
-                    ? !field.isCheckMate() && !field.isStaleMate()
-                    : game.isInProgress());
-        });
     }
 
     public void setFrom(Move move, Field from) {
@@ -183,10 +163,6 @@ public class MoveLogic {
         return move.getFrom().getPiece().getPieceType() == PAWN &&
                move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
                to.getPiece() == null;
-    }
-
-    private boolean isNotAbleToMove(Game game, Field field, List<Field> allValidMoves) {
-        return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
     private void moveRock(Grid grid, Field from, Field to) {

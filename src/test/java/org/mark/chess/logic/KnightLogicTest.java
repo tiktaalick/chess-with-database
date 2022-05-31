@@ -60,7 +60,7 @@ class KnightLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
 
         boolean actual = knightLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);
@@ -72,7 +72,7 @@ class KnightLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         Mockito.doReturn(true).when(knightLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(knightLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -84,7 +84,7 @@ class KnightLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(true).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
 
         assertFalse(knightLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
@@ -95,7 +95,7 @@ class KnightLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(knightLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         Mockito.doReturn(true).when(knightLogic).isJumping(grid, from, to);
 
         assertTrue(knightLogic.isValidMove(grid, from, to, opponentFactory, false));
