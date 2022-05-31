@@ -39,9 +39,9 @@ public class BoardLogic {
             moveLogic.moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
             moveLogic.changeTurn(game);
             moveLogic.resetField(board.getMove().getFrom());
-            moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
+            gridLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
         } else if (buttonClick == RIGHT_CLICK) {
-            moveLogic.setFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
+            gridLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
         }
     }
 

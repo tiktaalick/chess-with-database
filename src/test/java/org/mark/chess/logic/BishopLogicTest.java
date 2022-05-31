@@ -55,7 +55,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
 
         boolean actual = bishopLogic.isValidMove(grid, from, to, opponentFactory, false);
         assertEquals(expected, actual);
@@ -67,7 +67,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         Mockito.doReturn(true).when(bishopLogic).isFriendlyFire(from.getPiece(), to);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
@@ -79,7 +79,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(true).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(true).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));
     }
@@ -90,7 +90,7 @@ class BishopLogicTest {
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
         Grid grid = new Grid(new ArrayList<>());
 
-        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory, gridLogic);
+        Mockito.doReturn(false).when(bishopLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
         Mockito.doReturn(true).when(bishopLogic).isJumping(grid, from, to);
 
         assertFalse(bishopLogic.isValidMove(grid, from, to, opponentFactory, false));

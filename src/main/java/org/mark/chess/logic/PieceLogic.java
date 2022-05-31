@@ -51,7 +51,7 @@ public interface PieceLogic {
         return mustIJump;
     }
 
-    default boolean isMovingIntoCheck(Grid grid, Field from, Field to, boolean isOpponent, PieceLogicFactory opponentFactory, GridLogic gridLogic) {
+    default boolean isMovingIntoCheck(Grid grid, Field from, Field to, boolean isOpponent, PieceLogicFactory opponentFactory) {
         if (isOpponent) {
             return false;
         }

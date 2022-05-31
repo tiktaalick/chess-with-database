@@ -14,8 +14,6 @@ public class BackgroundColorFactory {
         } else if (field.isValidFrom()) {
             return Color.VALID_FROM.getAwtColor();
         } else if (field.isValidMove()) {
-            return Color.VALID_MOVE.getAwtColor();
-        } else if (field.getPiece() != null && field.getValue() != 0) {
             return getValueColor(field);
         } else {
             return (field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0

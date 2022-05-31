@@ -9,6 +9,7 @@ import org.mark.chess.model.King;
 import org.mark.chess.model.Piece;
 import org.mark.chess.model.Rook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,7 @@ public class KingLogic implements PieceLogic {
     private static final int KING_INITIAL_X    = 5;
 
     @Autowired
+    @Lazy
     private GridLogic gridLogic;
 
     @Override
@@ -35,7 +37,7 @@ public class KingLogic implements PieceLogic {
                 isValidCastling(grid, from, to, KING_X_RIGHT, opponentFactory, isOpponent, false)) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory);
     }
 
     public boolean isInCheckNow(Grid grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {

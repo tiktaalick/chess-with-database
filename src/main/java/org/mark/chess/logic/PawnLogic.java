@@ -7,12 +7,14 @@ import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PawnLogic implements PieceLogic {
     @Autowired
+    @Lazy
     private GridLogic gridLogic;
 
     @Override
@@ -25,7 +27,7 @@ public class PawnLogic implements PieceLogic {
                isValidDirection(from, to) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory);
     }
 
     public boolean isPawnBeingPromoted(Field from, Field to) {

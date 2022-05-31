@@ -4,9 +4,11 @@ import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 public class RookLogic implements PieceLogic {
     @Autowired
+    @Lazy
     private GridLogic gridLogic;
 
     @Override
@@ -15,7 +17,7 @@ public class RookLogic implements PieceLogic {
                isValidBasicMove(from, to) &&
                !this.isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory, gridLogic);
+               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {

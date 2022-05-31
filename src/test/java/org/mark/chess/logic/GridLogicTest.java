@@ -11,6 +11,8 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.model.King;
+import org.mark.chess.model.Pawn;
+import org.mark.chess.model.Piece;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
@@ -22,15 +24,16 @@ import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mark.chess.enums.Color.WHITE;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GridLogicTest {
@@ -105,18 +108,23 @@ class GridLogicTest {
 
         Grid grid = new Grid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)));
 
-        assertEquals(field2, gridLogic.getKingField(grid.getFields(), Color.BLACK));
-        assertEquals(field4, gridLogic.getKingField(grid.getFields(), Color.WHITE));
-        assertNull(gridLogic.getKingField(grid.getFields(), Color.DARK));
+        assertEquals(field2, gridLogic.getKingField(grid, Color.BLACK));
+        assertEquals(field4, gridLogic.getKingField(grid, Color.WHITE));
+        assertNull(gridLogic.getKingField(grid, Color.DARK));
     }
 
     @Test
     void testInitializeGrid() {
         Game game = new Game().setPlayers(Arrays.asList(new Human(), new Computer())).setHumanPlayerColor(WHITE);
         Board board = new Board(gameService, WHITE);
-        List<Field> grid = gridLogic.initializeGrid(game, board);
 
-        assertEquals(64, grid.size());
+        when(fieldLogic.addChessPiece(any(Field.class), any(Piece.class))).thenReturn(new Field());
+        when(fieldLogic.initializeField(eq(board), anyInt())).thenReturn(new Field());
+        when(initialPieceFactory.getInitialPiece(anyInt())).thenReturn(new Pawn());
+
+        Grid grid = gridLogic.initializeGrid(game, board);
+
+        assertEquals(64, grid.getFields().size());
         verify(fieldLogic, times(64)).initializeField(eq(board), anyInt());
     }
 }
