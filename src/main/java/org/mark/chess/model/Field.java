@@ -14,8 +14,8 @@ public class Field {
     private Coordinates coordinates;
     private JButton     button;
     private Piece       piece;
-    private int         value;
-    private int         relativeValue;
+    private Integer     value;
+    private Integer     relativeValue;
     private boolean     isValidFrom;
     private boolean     isValidMove;
     private boolean     isAttacking;
@@ -75,20 +75,20 @@ public class Field {
         return this;
     }
 
-    public int getRelativeValue() {
+    public Integer getRelativeValue() {
         return relativeValue;
     }
 
-    public Field setRelativeValue(int relativeValue) {
+    public Field setRelativeValue(Integer relativeValue) {
         this.relativeValue = relativeValue;
         return this;
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public Field setValue(int value) {
+    public Field setValue(Integer value) {
         this.value = value;
         return this;
     }
