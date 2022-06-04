@@ -49,7 +49,7 @@ public class MoveLogic {
     }
 
     public void enableValidMoves(Game game, Field from) {
-        game.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false));
+        game.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
 
         List<Field> validMoves = getValidMoves(game, from);
         validMoves.forEach(to -> {
@@ -93,8 +93,7 @@ public class MoveLogic {
         List<Field> allValidMoves = new ArrayList<>();
 
         game.getGrid().getFields().forEach(from -> {
-            from.setAttacking(false);
-            from.setValidFrom(false);
+            from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
 
             List<Field> validMoves = getValidMoves(game, from);
             from.setValidMove(!validMoves.isEmpty());
