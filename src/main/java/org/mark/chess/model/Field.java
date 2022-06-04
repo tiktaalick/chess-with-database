@@ -19,6 +19,7 @@ public class Field {
     private boolean     isValidFrom;
     private boolean     isValidMove;
     private boolean     isAttacking;
+    private boolean     isUnderAttack;
     private boolean     isCheckMate;
     private boolean     isStaleMate;
 
@@ -117,6 +118,15 @@ public class Field {
 
     public Field setStaleMate(boolean isStaleMate) {
         this.isStaleMate = isStaleMate;
+        return this;
+    }
+
+    public boolean isUnderAttack() {
+        return isUnderAttack;
+    }
+
+    public Field setUnderAttack(boolean underAttack) {
+        isUnderAttack = underAttack;
         return this;
     }
 

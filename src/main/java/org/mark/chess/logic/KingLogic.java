@@ -45,6 +45,8 @@ public class KingLogic implements PieceLogic {
             return false;
         }
 
+        grid.getFields().forEach(field -> field.setUnderAttack(false));
+
         List<Field> attackers = grid
                 .getFields()
                 .stream()
@@ -55,7 +57,14 @@ public class KingLogic implements PieceLogic {
                         .isValidMove(grid, opponentField, to, opponentFactory, true))
                 .collect(Collectors.toList());
 
-        attackers.forEach(field -> field.setAttacking(true).getButton().setBackground(backgroundColorFactory.getBackgroundColor(field)));
+        attackers.forEach(field -> {
+            field.setAttacking(true).getButton().setBackground(backgroundColorFactory.getBackgroundColor(field));
+            grid
+                    .getOpponentKingField()
+                    .setUnderAttack(true)
+                    .getButton()
+                    .setBackground(backgroundColorFactory.getBackgroundColor(grid.getOpponentKingField()));
+        });
 
         return !attackers.isEmpty();
     }
