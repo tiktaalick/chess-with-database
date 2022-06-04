@@ -15,11 +15,12 @@ import org.springframework.context.annotation.Lazy;
 import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.mark.chess.enums.Color.WHITE;
+import static org.mark.chess.factory.BackgroundColorFactory.MAX_COLOR_VALUE;
+import static org.mark.chess.factory.BackgroundColorFactory.MIN_COLOR_VALUE;
 import static org.mark.chess.logic.PieceLogic.backgroundColorFactory;
 
 public class GridLogic {
@@ -94,21 +95,24 @@ public class GridLogic {
                 boolean isInCheckNow = kingLogic.isInCheckNow(game.getGrid(), field, field, pieceLogicFactory, false);
                 field
                         .setCheckMate(isNotAbleToMove(game, field, allValidMoves) && isInCheckNow)
-                        .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow)
-                        .getButton()
-                        .setBackground(backgroundColorFactory.getBackgroundColor(field));
+                        .setStaleMate(isNotAbleToMove(game, field, allValidMoves) && !isInCheckNow);
             }
 
             game.setInProgress(game.isInProgress()
                     ? !field.isCheckMate() && !field.isStaleMate()
                     : game.isInProgress());
+
+            if (!game.isInProgress()) {
+                field.getButton().setBackground(backgroundColorFactory.getBackgroundColor(field));
+            }
         });
     }
 
-    public void setValidMoveColors(Grid grid, Field from, List<Field> validMoves, Predicate<? super Field> fieldFilter) {
-        grid.getFields().forEach(field -> field.setValue(0));
-        validMoves.forEach(to -> createAbsoluteFieldValues(grid, from, to));
-        createRelativeFieldValues(grid, fieldFilter);
+    public void setValidMoveColors(Grid grid, Field from, List<Field> validMoves, List<Field> allValidMoves) {
+        System.out.println();
+        grid.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+        allValidMoves.forEach(to -> createAbsoluteFieldValues(grid, from, to));
+        createRelativeFieldValues(validMoves, allValidMoves, from);
     }
 
     private void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
@@ -116,43 +120,57 @@ public class GridLogic {
             Grid gridAfterMovement = new Grid(grid, from, to);
 
             to.setValue(gridAfterMovement.getGridValue());
-            to.getButton().setToolTipText(String.valueOf(to.getValue()));
+            from.setValue(from.getValue() == null
+                    ? to.getValue()
+                    : Math.max(from.getValue(), to.getValue()));
         }
     }
 
-    private void createRelativeFieldValues(Grid grid, Predicate<? super Field> fieldFilter) {
-        System.out.println("");
-        int minValue = getMinValue(grid, fieldFilter);
-        int maxValue = getMaxValue(grid, fieldFilter);
-        grid.getFields().stream().filter(fieldFilter).forEach(gridField -> {
-            double relativeValue = maxValue - minValue == 0
-                    ? 255
-                    : (((double) gridField.getValue() - minValue) / (maxValue - minValue)) * 255;
+    private void createRelativeFieldValues(List<Field> validMoves, List<Field> allValidMoves, Field from) {
+        int minValue = getMinValue(allValidMoves);
+        int maxValue = getMaxValue(allValidMoves);
+        validMoves.forEach(gridField -> {
+            double relativeValue = maxValue - minValue <= 0
+                    ? MAX_COLOR_VALUE
+                    : (((double) gridField.getValue() - minValue) / (maxValue - minValue)) * (MAX_COLOR_VALUE - MIN_COLOR_VALUE) + MIN_COLOR_VALUE;
             gridField.setRelativeValue((int) relativeValue);
-            System.out.println(gridField.getCode() +
+
+            from.setRelativeValue(from.getRelativeValue() == null
+                    ? gridField.getRelativeValue()
+                    : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
+
+            System.out.println(from.getCode() +
+                               ": " +
+                               from.getValue() +
+                               " " +
+                               from.getRelativeValue() +
+                               "\t-->\t" +
+                               gridField.getCode() +
                                ": " +
                                gridField.getValue() +
                                " " +
                                gridField.getRelativeValue() +
-                               " (" +
+                               "\t(" +
                                minValue +
                                " - " +
                                maxValue +
                                ")");
             gridField.getButton().setBackground(backgroundColorFactory.getBackgroundColor(gridField));
         });
+
+        from.getButton().setBackground(backgroundColorFactory.getBackgroundColor(from));
     }
 
-    private int getMaxValue(Grid grid, Predicate<? super Field> fieldFilter) {
-        return grid.getFields() == null
+    private int getMaxValue(List<Field> validMoves) {
+        return validMoves == null
                 ? 0
-                : grid.getFields().stream().filter(fieldFilter).mapToInt(Field::getValue).max().orElse(0);
+                : validMoves.stream().mapToInt(Field::getValue).max().orElse(0);
     }
 
-    private int getMinValue(Grid grid, Predicate<? super Field> fieldFilter) {
-        return grid.getFields() == null
+    private int getMinValue(List<Field> validMoves) {
+        return validMoves == null
                 ? 0
-                : grid.getFields().stream().filter(fieldFilter).mapToInt(Field::getValue).min().orElse(0);
+                : validMoves.stream().mapToInt(Field::getValue).min().orElse(0);
     }
 
     private boolean isNotAbleToMove(Game game, Field field, List<Field> allValidMoves) {

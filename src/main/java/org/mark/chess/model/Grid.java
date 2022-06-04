@@ -17,11 +17,13 @@ public class Grid {
 
     private List<Field> fields;
     private Field       kingField;
+    private Field       opponentKingField;
     private int         gridValue;
 
     public Grid(List<Field> fields) {
         this.fields = fields;
         this.kingField = gridLogic.getKingField(this, Color.WHITE);
+        this.opponentKingField = gridLogic.getKingField(this, Color.BLACK);
         this.gridValue = gridLogic.calculateGridValue(this, Color.WHITE);
     }
 
@@ -44,6 +46,7 @@ public class Grid {
         this.fields.addAll(movementList);
 
         this.kingField = gridLogic.getKingField(this, from.getPiece().getColor());
+        this.opponentKingField = gridLogic.getKingField(this, from.getPiece().getColor().getOpposite());
         this.gridValue = gridLogic.calculateGridValue(this, from.getPiece().getColor());
     }
 }
