@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mark.chess.enums.PieceType.PAWN;
 
@@ -47,11 +49,14 @@ public class MoveLogic {
     }
 
     public void enableValidMoves(Game game, Field from) {
-        game.getGrid().getFields().forEach(field -> field.setValidMove(false));
+        game.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false));
 
         List<Field> validMoves = getValidMoves(game, from);
-        validMoves.forEach(to -> to.setValidMove(true));
-        gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, Field::isValidMove);
+        validMoves.forEach(to -> {
+            from.setValidFrom(true);
+            to.setValidMove(true);
+        });
+        gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, validMoves);
     }
 
     public boolean isFrom(Game game, Field fieldClick) {
@@ -84,25 +89,32 @@ public class MoveLogic {
     }
 
     public List<Field> resetValidMoves(Game game, Move move) {
+        Map<Field, List<Field>> allValidFromsAndMoves = new HashMap<>();
         List<Field> allValidMoves = new ArrayList<>();
 
-        game.getGrid().getFields().forEach(field -> {
-            field.setAttacking(false);
-            field.setValidFrom(false);
+        game.getGrid().getFields().forEach(from -> {
+            from.setAttacking(false);
+            from.setValidFrom(false);
 
-            List<Field> validMoves = getValidMoves(game, field);
-            field.setValidMove(!validMoves.isEmpty());
-            field.setValidFrom(field.isValidMove());
+            List<Field> validMoves = getValidMoves(game, from);
+            from.setValidMove(!validMoves.isEmpty());
+            from.setValidFrom(from.isValidMove());
             allValidMoves.addAll(validMoves);
 
-            if (duringAMove(move, field)) {
+            if (from.isValidFrom()) {
+                allValidFromsAndMoves.put(from, validMoves);
+            }
+
+            if (duringAMove(move, from)) {
                 return;
             }
 
-            if (field.getPiece() != null && field.getPiece().getPieceType() == PAWN) {
-                ((Pawn) field.getPiece()).setMayBeCapturedEnPassant(false);
+            if (from.getPiece() != null && from.getPiece().getPieceType() == PAWN) {
+                ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(false);
             }
         });
+
+        allValidFromsAndMoves.forEach((from, validMoves) -> gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, allValidMoves));
 
         return allValidMoves;
     }
