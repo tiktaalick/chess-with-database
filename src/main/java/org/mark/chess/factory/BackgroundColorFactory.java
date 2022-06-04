@@ -5,18 +5,16 @@ import org.mark.chess.model.Field;
 
 public class BackgroundColorFactory {
     public static final int MAX_COLOR_VALUE = 255;
-    public static final int MIN_COLOR_VALUE = 25;
+    public static final int MIN_COLOR_VALUE = 100;
 
     public java.awt.Color getBackgroundColor(Field field) {
         if (field.isCheckMate()) {
             return Color.CHECKMATE.getAwtColor();
         } else if (field.isStaleMate()) {
             return Color.STALEMATE.getAwtColor();
-        } else if (field.isAttacking()) {
+        } else if ((field.isAttacking() || field.isUnderAttack()) && !field.isValidFrom()) {
             return Color.ATTACKING.getAwtColor();
-        } else if (field.isValidFrom()) {
-            return getValueColor(field);
-        } else if (field.isValidMove()) {
+        } else if (field.isValidFrom() || field.isValidMove()) {
             return getValueColor(field);
         } else {
             return (field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0
