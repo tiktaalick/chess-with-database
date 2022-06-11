@@ -5,7 +5,7 @@ import org.mark.chess.model.Field;
 
 public class BackgroundColorFactory {
     public static final int MAX_COLOR_VALUE = 255;
-    public static final int MIN_COLOR_VALUE = 100;
+    public static final int MIN_COLOR_VALUE = 0;
 
     public java.awt.Color getBackgroundColor(Field field) {
         if (field.isCheckMate()) {
@@ -27,6 +27,8 @@ public class BackgroundColorFactory {
         int relativeValue = field.getRelativeValue() == null
                 ? 0
                 : field.getRelativeValue();
-        return new java.awt.Color(MAX_COLOR_VALUE - relativeValue, relativeValue, MAX_COLOR_VALUE - (Math.abs(MAX_COLOR_VALUE - 2 * relativeValue)));
+        return new java.awt.Color(MAX_COLOR_VALUE - relativeValue,
+                Math.abs(MAX_COLOR_VALUE - 2 * relativeValue),
+                MAX_COLOR_VALUE - (Math.abs(MAX_COLOR_VALUE - 2 * relativeValue)));
     }
 }
