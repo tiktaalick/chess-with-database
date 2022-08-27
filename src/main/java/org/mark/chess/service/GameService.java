@@ -6,15 +6,20 @@ import org.mark.chess.logic.GameLogic;
 import org.mark.chess.model.Game;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.swing.JButton;
 
+@Service
 public class GameService {
-    @Autowired
     private BoardLogic boardlogic;
+    private GameLogic  gameLogic;
 
     @Autowired
-    private GameLogic gameLogic;
+    public GameService(BoardLogic boardlogic, GameLogic gameLogic) {
+        this.boardlogic = boardlogic;
+        this.gameLogic = gameLogic;
+    }
 
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
         boardlogic.handleButtonClick(game, board, buttonClick, button);

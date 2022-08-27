@@ -9,7 +9,9 @@ import org.mark.chess.logic.PieceLogic;
 import org.mark.chess.logic.QueenLogic;
 import org.mark.chess.logic.RookLogic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PieceLogicFactory {
     @Autowired
     private BishopLogic bishopLogic;

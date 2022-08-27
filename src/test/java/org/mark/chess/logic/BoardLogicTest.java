@@ -13,6 +13,8 @@ import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,8 +35,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardLogicTest {
-    private static final int LEFT_CLICK  = 1;
-    private static final int RIGHT_CLICK = 3;
+    private static final double COORDINATE_X = 546.0;
+    private static final double COORDINATE_Y = 105.0;
+    private static final double HEIGHT       = 870.0;
+    private static final int    LEFT_CLICK   = 1;
+    private static final int    RIGHT_CLICK  = 3;
+    private static final double WIDTH        = 828.0;
 
     @Spy
     @InjectMocks
@@ -58,25 +64,25 @@ class BoardLogicTest {
     @Mock
     private Application application;
 
-    @Mock
-    private ApplicationFactory applicationFactory;
-
     @Test
     void testHandleButtonClick_WhenGameNotInProgress_ThenRestartGame() {
         JButton button = new JButton();
 
         Game game = new Game().setInProgress(false).setHumanPlayerColor(BLACK);
 
-        when(applicationFactory.getInstance()).thenReturn(application);
-        when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
+        try (MockedStatic<ApplicationFactory> applicationFactory = Mockito.mockStatic(ApplicationFactory.class)) {
+            applicationFactory.when(ApplicationFactory::getInstance).thenReturn(application);
 
-        boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
+            when(gridLogic.getField(game.getGrid(), button)).thenReturn(new Field().setValidMove(true));
 
-        verify(board).dispose();
-        verify(application).startApplication(WHITE);
-        verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
-        verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
-        verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), any(Field.class));
+            boardLogic.handleButtonClick(game, board, LEFT_CLICK, button);
+
+            verify(board).dispose();
+            verify(application).startApplication(WHITE);
+            verify(moveLogic, never()).setFrom(any(Move.class), any(Field.class));
+            verify(moveLogic, never()).enableValidMoves(eq(game), any(Field.class));
+            verify(moveLogic, never()).setTo(any(Grid.class), any(Move.class), any(Field.class));
+        }
     }
 
     @Test
@@ -106,7 +112,7 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>()));
+        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>(), gridLogic));
 
         Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
@@ -149,7 +155,7 @@ class BoardLogicTest {
 
         JButton button = new JButton();
 
-        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>()));
+        Game game = new Game().setInProgress(true).setGrid(new Grid(new ArrayList<>(), gridLogic));
 
         Board board = new Board(gameService, WHITE).setMove(new Move().setFrom(new Field().setCoordinates(new Coordinates(0, 0))));
 
@@ -174,10 +180,10 @@ class BoardLogicTest {
 
         boardLogic.initializeBoard(game, board);
 
-        assertEquals(828, board.getSize().getWidth());
-        assertEquals(870, board.getSize().getHeight());
-        assertEquals(546, board.getLocation().getX());
-        assertEquals(105, board.getLocation().getY());
+        assertEquals(WIDTH, board.getSize().getWidth());
+        assertEquals(HEIGHT, board.getSize().getHeight());
+        assertEquals(COORDINATE_X, board.getLocation().getX());
+        assertEquals(COORDINATE_Y, board.getLocation().getY());
         assertTrue(board.isVisible());
         assertFalse(board.isResizable());
     }

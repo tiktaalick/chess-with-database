@@ -9,13 +9,14 @@ import org.mark.chess.model.Piece;
 import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
 
-public class PieceFactory {
-    public Piece getPiece(PieceType pieceType) {
+public final class PieceFactory {
+    private PieceFactory() {
+    }
+
+    public static Piece getPiece(PieceType pieceType) {
         switch (pieceType) {
             case KING:
                 return new King();
-            case QUEEN:
-                return new Queen();
             case ROOK:
                 return new Rook();
             case BISHOP:
@@ -24,8 +25,9 @@ public class PieceFactory {
                 return new Knight();
             case PAWN:
                 return new Pawn();
+            case QUEEN:
             default:
-                return null;
+                return new Queen();
         }
     }
 }

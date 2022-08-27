@@ -7,7 +7,6 @@ import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
-import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
@@ -15,8 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.JButton;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,11 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class ButtonLogicTest {
+    private static final int BUTTON_WIDTH = 75;
+
     @InjectMocks
     private ButtonLogic buttonLogic;
-
-    @Mock
-    private GameService gameService;
 
     @Mock
     private Board board;
@@ -40,15 +36,14 @@ class ButtonLogicTest {
         Button button = new Button(board, field);
         Piece piece = new Pawn().setColor(Color.WHITE);
 
-        List<Field> grid = new ArrayList<>();
-        grid.add(field.setButton(button).setPiece(piece));
+        field.setButton(button).setPiece(piece);
 
         JButton actual = buttonLogic.initializeButton(field);
 
         assertTrue(actual.isEnabled());
         assertNull(actual.getText());
         assertNotNull(actual.getIcon());
-        assertEquals(75, actual.getWidth());
+        assertEquals(BUTTON_WIDTH, actual.getWidth());
         assertNotNull(actual.getIcon());
     }
 
@@ -58,14 +53,13 @@ class ButtonLogicTest {
         Button button = new Button(board, field);
         Piece piece = new Pawn().setColor(Color.WHITE);
 
-        List<Field> grid = new ArrayList<>();
-        grid.add(field.setButton(button).setPiece(piece));
+        field.setButton(button).setPiece(piece);
 
         JButton actual = buttonLogic.initializeButton(field);
 
         assertNull(actual.getText());
         assertNotNull(actual.getIcon());
-        assertEquals(75, actual.getWidth());
+        assertEquals(BUTTON_WIDTH, actual.getWidth());
         assertNotNull(actual.getIcon());
     }
 }

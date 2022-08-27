@@ -1,23 +1,30 @@
 package org.mark.chess.logic;
 
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RookLogic implements PieceLogic {
-    @Autowired
+    private GridLogic  gridLogic;
+    private CheckLogic checkLogic;
+
     @Lazy
-    private GridLogic gridLogic;
+    @Autowired
+    public RookLogic(GridLogic gridLogic, CheckLogic checkLogic) {
+        this.gridLogic = gridLogic;
+        this.checkLogic = checkLogic;
+    }
 
     @Override
-    public boolean isValidMove(Grid grid, Field from, Field to, PieceLogicFactory opponentFactory, boolean isOpponent) {
-        return !hasEmptyParameters(grid, from, to, opponentFactory) &&
+    public boolean isValidMove(Grid grid, Field from, Field to, boolean isOpponent) {
+        return !hasEmptyParameters(grid, from, to) &&
                isValidBasicMove(from, to) &&
-               !this.isFriendlyFire(from.getPiece(), to) &&
+               !isFriendlyFire(from.getPiece(), to) &&
                !isJumping(grid, from, to) &&
-               !isMovingIntoCheck(grid, from, to, isOpponent, opponentFactory);
+               !checkLogic.isMovingIntoCheck(grid, from, to, isOpponent, gridLogic);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {

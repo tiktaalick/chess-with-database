@@ -21,9 +21,9 @@ public enum PieceType {
     }
 
     public PieceType getNextPawnPromotion() {
-        return this != KNIGHT
-                ? PieceType.values()[ordinal() + 1]
-                : QUEEN;
+        return this == KNIGHT
+                ? QUEEN
+                : values()[ordinal() + 1];
     }
 
     public int getValue() {

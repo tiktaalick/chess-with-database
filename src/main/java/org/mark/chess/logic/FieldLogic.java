@@ -7,15 +7,19 @@ import org.mark.chess.model.Piece;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 
+@Component
 public class FieldLogic {
-    @Autowired
+    private static final char FIRST_COLUMN_NAME = 'a';
+
     private ButtonLogic buttonLogic;
 
-    public Field addChessPiece(Field field, Piece piece) {
-        return field.setPiece(piece).setButton(buttonLogic.initializeButton(field));
+    @Autowired
+    public FieldLogic(ButtonLogic buttonLogic) {
+        this.buttonLogic = buttonLogic;
     }
 
     public String createCode(int id) {
@@ -24,10 +28,6 @@ public class FieldLogic {
 
     public String createCode(Coordinates coordinates) {
         return createCode(coordinates.getX(), coordinates.getY());
-    }
-
-    public String createCode(int x, int y) {
-        return ((char) ('a' + x - 1)) + String.valueOf(y);
     }
 
     public Coordinates createCoordinates(int id) {
@@ -43,10 +43,18 @@ public class FieldLogic {
     }
 
     public int createId(String code) {
-        return (code.charAt(0) - 'a') + (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
+        return (code.charAt(0) - FIRST_COLUMN_NAME) + (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
     }
 
-    public Field initializeField(Board board, int id) {
+    Field addChessPiece(Field field, Piece piece) {
+        return field.setPiece(piece).setButton(buttonLogic.initializeButton(field));
+    }
+
+    String createCode(int x, int y) {
+        return ((char) (FIRST_COLUMN_NAME + x - 1)) + String.valueOf(y);
+    }
+
+    Field initializeField(Board board, int id) {
         Field field = new Field().setId(id);
         field.setButton(new Button(board, field));
         board.add(field.getButton());
@@ -54,7 +62,7 @@ public class FieldLogic {
         return field;
     }
 
-    public boolean isActivePlayerField(Game game, Field field) {
+    boolean isActivePlayerField(Game game, Field field) {
         return field.getPiece() != null && field.getPiece().getColor() == game.getCurrentPlayerColor();
     }
 }

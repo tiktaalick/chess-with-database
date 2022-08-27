@@ -5,15 +5,13 @@ public enum Color {
     BLACK("black", new java.awt.Color(0, 0, 0), 8, 7),
     LIGHT(new java.awt.Color(250, 250, 200)),
     DARK(new java.awt.Color(150, 100, 0)),
-    VALID_MOVE(new java.awt.Color(255, 255, 0)),
-    VALID_FROM(new java.awt.Color(255, 255, 0)),
     ATTACKING(new java.awt.Color(255, 150, 0)),
     CHECKMATE(new java.awt.Color(255, 0, 0)),
     STALEMATE(new java.awt.Color(100, 100, 100));
 
     static {
-        BLACK.opposite = WHITE;
-        WHITE.opposite = BLACK;
+        BLACK.setOpposite(WHITE);
+        WHITE.setOpposite(BLACK);
     }
 
     private final java.awt.Color awtColor;
@@ -50,6 +48,15 @@ public enum Color {
     }
 
     public Color getOpposite() {
+        return opposite();
+    }
+
+    public Color setOpposite(Color opposite) {
+        this.opposite = opposite;
+        return this;
+    }
+
+    public Color opposite() {
         return opposite;
     }
 }
