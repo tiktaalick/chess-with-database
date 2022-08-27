@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class QueenLogicTest {
+    private static final char        DELIMITER                   = ';';
     private static final Coordinates VALID_MOVE_COORDINATES_FROM = new Coordinates(3, 3);
     private static final Coordinates VALID_MOVE_COORDINATES_TO   = new Coordinates(3, 2);
 
@@ -38,6 +39,9 @@ class QueenLogicTest {
 
     @Mock
     private GridLogic gridLogic;
+
+    @Mock
+    private CheckLogic checkLogic;
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -53,15 +57,15 @@ class QueenLogicTest {
             "3;3;0;6;true",
             "3;3;6;3;true",
             "3;3;3;6;true",
-            "3;3;6;0;true"}, delimiter = ';')
+            "3;3;6;0;true"}, delimiter = DELIMITER)
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field().setCoordinates(new Coordinates(toX, toY));
-        Grid grid = new Grid(new ArrayList<>());
+        Grid grid = new Grid(new ArrayList<>(), gridLogic);
 
-        Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
+        Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
-        boolean actual = queenLogic.isValidMove(grid, from, to, opponentFactory, false);
+        boolean actual = queenLogic.isValidMove(grid, from, to, false);
         assertEquals(expected, actual);
     }
 
@@ -69,39 +73,39 @@ class QueenLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = new Grid(new ArrayList<>());
+        Grid grid = new Grid(new ArrayList<>(), gridLogic);
 
-        Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
+        Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(queenLogic).isFriendlyFire(from.getPiece(), to);
 
-        assertFalse(queenLogic.isValidMove(grid, from, to, opponentFactory, false));
+        assertFalse(queenLogic.isValidMove(grid, from, to, false));
     }
 
     @Test
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = new Grid(new ArrayList<>());
+        Grid grid = new Grid(new ArrayList<>(), gridLogic);
 
-        Mockito.doReturn(true).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
+        Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
-        assertFalse(queenLogic.isValidMove(grid, from, to, opponentFactory, false));
+        assertFalse(queenLogic.isValidMove(grid, from, to, false));
     }
 
     @Test
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field().setPiece(new Queen().setColor(Color.WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field().setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = new Grid(new ArrayList<>());
+        Grid grid = new Grid(new ArrayList<>(), gridLogic);
 
-        Mockito.doReturn(false).when(queenLogic).isMovingIntoCheck(grid, from, to, false, opponentFactory);
+        Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(queenLogic).isJumping(grid, from, to);
 
-        assertFalse(queenLogic.isValidMove(grid, from, to, opponentFactory, false));
+        assertFalse(queenLogic.isValidMove(grid, from, to, false));
     }
 
     @Test
     void testIsValidMove_WhenNullValues_ThenReturnFalse() {
-        assertFalse(queenLogic.isValidMove(null, null, null, null, false));
+        assertFalse(queenLogic.isValidMove(null, null, null, false));
     }
 }

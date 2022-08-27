@@ -11,10 +11,8 @@ import javax.swing.JButton;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public class Button extends JButton {
+public final class Button extends JButton {
     public static final int FIELD_WIDTH_AND_HEIGHT = 75;
-
-    private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
 
     public Button(Board board, Field field) {
         setText(String.valueOf(field.getCode()));
@@ -24,6 +22,6 @@ public class Button extends JButton {
                 FIELD_WIDTH_AND_HEIGHT);
         addActionListener(board);
         addMouseListener(board);
-        this.setBackground(backgroundColorFactory.getBackgroundColor(field));
+        this.setBackground(BackgroundColorFactory.getBackgroundColor(field));
     }
 }

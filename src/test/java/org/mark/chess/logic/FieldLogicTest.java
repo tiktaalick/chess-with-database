@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.enums.Color;
-import org.mark.chess.factory.InitialPieceFactory;
 import org.mark.chess.model.Bishop;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
@@ -35,6 +34,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FieldLogicTest {
+    private static final char DELIMITER   = ';';
+    private static final int  FIELD_ID_C4 = 34;
+    private static final int  FIELD_ID_C5 = 26;
+
     @InjectMocks
     private FieldLogic fieldLogic;
 
@@ -45,7 +48,7 @@ class FieldLogicTest {
     private ButtonLogic buttonLogic;
 
     @Mock
-    private InitialPieceFactory initialPieceFactory;
+    private GridLogic gridLogic;
 
     @Test
     void testAddChessPiece() {
@@ -54,41 +57,41 @@ class FieldLogicTest {
         Field field3 = new Field().setCode("d8");
         List<Field> fields = new ArrayList<>(Arrays.asList(new Field().setId(0).setCoordinates(new Coordinates(0, 0)), field1, field2, field3));
 
-        Game game = new Game().setGrid(new Grid(fields));
+        Game game = new Game().setGrid(new Grid(fields, gridLogic));
         Piece bishop = new Bishop();
 
         when(buttonLogic.initializeButton(field2)).thenReturn(new Button(board, field2));
 
-        fieldLogic.addChessPiece(field2, bishop.setColor(Color.BLACK));
+        fieldLogic.addChessPiece(field2, bishop.setColor(BLACK));
 
-        assertEquals(Color.BLACK, game.getGrid().getFields().get(2).getPiece().getColor());
+        assertEquals(BLACK, game.getGrid().getFields().get(2).getPiece().getColor());
         assertEquals(bishop, game.getGrid().getFields().get(2).getPiece());
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "1;8;a8", "2;7;b7", "3;6;c6", "4;5;d5", "5;4;e4", "6;3;f3", "7;2;g2", "8;1;h1"}, delimiter = ';')
+            "1;8;a8", "2;7;b7", "3;6;c6", "4;5;d5", "5;4;e4", "6;3;f3", "7;2;g2", "8;1;h1"}, delimiter = DELIMITER)
     void testCreateCode_WhenCoordinatesProvided_ThenReturnCorrespondingCode(int x, int y, String code) {
         assertEquals(code, fieldLogic.createCode(new Coordinates(x, y)));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "0;a8", "9;b7", "18;c6", "27;d5", "36;e4", "45;f3", "54;g2", "63;h1"}, delimiter = ';')
+            "0;a8", "9;b7", "18;c6", "27;d5", "36;e4", "45;f3", "54;g2", "63;h1"}, delimiter = DELIMITER)
     void testCreateCode_WhenIdProvided_ThenReturnCorrespondingCode(int id, String code) {
         assertEquals(code, fieldLogic.createCode(id));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "1;8;a8", "2;7;b7", "3;6;c6", "4;5;d5", "5;4;e4", "6;3;f3", "7;2;g2", "8;1;h1"}, delimiter = ';')
+            "1;8;a8", "2;7;b7", "3;6;c6", "4;5;d5", "5;4;e4", "6;3;f3", "7;2;g2", "8;1;h1"}, delimiter = DELIMITER)
     void testCreateCode_WhenXAndYProvided_ThenReturnCorrespondingCode(int x, int y, String code) {
         assertEquals(code, fieldLogic.createCode(x, y));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "1;1;a1", "2;2;b2", "3;3;c3", "4;4;d4", "5;5;e5", "6;6;f6", "7;7;g7", "8;8;h8"}, delimiter = ';')
+            "1;1;a1", "2;2;b2", "3;3;c3", "4;4;d4", "5;5;e5", "6;6;f6", "7;7;g7", "8;8;h8"}, delimiter = DELIMITER)
     void testCreateCoordinates_WhenCodeProvided_ThenReturnCorrespondingCoordinates(int x, int y, String code) {
         assertEquals(x, fieldLogic.createCoordinates(code).getX());
         assertEquals(y, fieldLogic.createCoordinates(code).getY());
@@ -96,7 +99,7 @@ class FieldLogicTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "1;8;0", "2;7;9", "3;6;18", "4;5;27", "5;4;36", "6;3;45", "7;2;54", "8;1;63"}, delimiter = ';')
+            "1;8;0", "2;7;9", "3;6;18", "4;5;27", "5;4;36", "6;3;45", "7;2;54", "8;1;63"}, delimiter = DELIMITER)
     void testCreateCoordinates_WhenIdProvided_ThenReturnCorrespondingCoordinates(int x, int y, int id) {
         assertEquals(x, fieldLogic.createCoordinates(id).getX());
         assertEquals(y, fieldLogic.createCoordinates(id).getY());
@@ -104,21 +107,21 @@ class FieldLogicTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "a8;0", "b7;9", "c6;18", "d5;27", "e4;36", "f3;45", "g2;54", "h1;63"}, delimiter = ';')
+            "a8;0", "b7;9", "c6;18", "d5;27", "e4;36", "f3;45", "g2;54", "h1;63"}, delimiter = DELIMITER)
     void testCreateId_WhenCodeProvided_ThenReturnCorrespondingId(String code, int id) {
         assertEquals(id, fieldLogic.createId(code));
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "0;0;0", "1;1;9", "2;2;18", "3;3;27", "4;4;36", "5;5;45", "6;6;54", "7;7;63"}, delimiter = ';')
+            "0;0;0", "1;1;9", "2;2;18", "3;3;27", "4;4;36", "5;5;45", "6;6;54", "7;7;63"}, delimiter = DELIMITER)
     void testCreateId_WhenCoordinatesProvided_ThenReturnCorrespondingId(int x, int y, int id) {
         assertEquals(id, fieldLogic.createId(new Coordinates(x, y)));
     }
 
     @Test
     void testInitializeField_WhenDark_ThenReturnDarkField() {
-        Field field = fieldLogic.initializeField(board, 34);
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C4);
 
         assertEquals("c4", field.getCode());
         assertEquals(3 - 1 + (NUMBER_OF_COLUMNS_AND_ROWS - 4) * NUMBER_OF_COLUMNS_AND_ROWS, field.getId());
@@ -131,7 +134,7 @@ class FieldLogicTest {
 
     @Test
     void testInitializeField_WhenLight_ThenReturnLightField() {
-        Field field = fieldLogic.initializeField(board, 26);
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5);
 
         assertEquals("c5", field.getCode());
         assertEquals(3 - 1 + (NUMBER_OF_COLUMNS_AND_ROWS - 5) * NUMBER_OF_COLUMNS_AND_ROWS, field.getId());
@@ -144,27 +147,27 @@ class FieldLogicTest {
 
     @Test
     void testIsActivePlayerField_WhenActivePlayerField_ThenReturnTrue() {
-        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
 
-        Field field = fieldLogic.initializeField(board, 26).setPiece(new Pawn().setColor(WHITE));
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn().setColor(WHITE));
 
         assertTrue(fieldLogic.isActivePlayerField(game, field));
     }
 
     @Test
     void testIsActivePlayerField_WhenEmptyField_ThenReturnFalse() {
-        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
 
-        Field field = fieldLogic.initializeField(board, 26);
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5);
 
         assertFalse(fieldLogic.isActivePlayerField(game, field));
     }
 
     @Test
     void testIsActivePlayerField_WhenOpponentField_ThenReturnFalse() {
-        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(Color.BLACK))).setCurrentPlayerColor(WHITE);
+        Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
 
-        Field field = fieldLogic.initializeField(board, 26).setPiece(new Pawn().setColor(BLACK));
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn().setColor(BLACK));
 
         assertFalse(fieldLogic.isActivePlayerField(game, field));
     }

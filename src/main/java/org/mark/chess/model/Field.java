@@ -1,21 +1,25 @@
 package org.mark.chess.model;
 
 import org.mark.chess.factory.BackgroundColorFactory;
+import org.mark.chess.logic.ButtonLogic;
 import org.mark.chess.logic.FieldLogic;
 
 import javax.swing.JButton;
 
 public class Field {
-    private final BackgroundColorFactory backgroundColorFactory = new BackgroundColorFactory();
-    private final FieldLogic             fieldLogic             = new FieldLogic();
+    private static final String  CODE_UNKNOWN         = "xx";
+    private static final int     ID_UNKNOWN           = -1;
+    private static final Integer VALUE_NOT_CALCULATED = null;
 
-    private int         id;
-    private String      code;
+    private final FieldLogic fieldLogic = new FieldLogic(new ButtonLogic());
+
+    private int         id            = ID_UNKNOWN;
+    private String      code          = CODE_UNKNOWN;
     private Coordinates coordinates;
     private JButton     button;
     private Piece       piece;
-    private Integer     value;
-    private Integer     relativeValue;
+    private Integer     value         = VALUE_NOT_CALCULATED;
+    private Integer     relativeValue = VALUE_NOT_CALCULATED;
     private boolean     isValidFrom;
     private boolean     isValidMove;
     private boolean     isAttacking;
@@ -147,7 +151,7 @@ public class Field {
         this.isValidMove = isValidMove;
 
         if (this.button != null) {
-            this.button.setBackground(backgroundColorFactory.getBackgroundColor(this));
+            this.button.setBackground(BackgroundColorFactory.getBackgroundColor(this));
         }
 
         return this;

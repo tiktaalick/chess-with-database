@@ -6,28 +6,31 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.logic.GridLogic;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
 @Accessors(chain = true)
-public class Grid {
-    private GridLogic gridLogic = new GridLogic();
 
+public class Grid {
+    private GridLogic   gridLogic;
     private List<Field> fields;
     private Field       kingField;
     private Field       opponentKingField;
     private int         gridValue;
 
-    public Grid(List<Field> fields) {
-        this.fields = fields;
+    public Grid(List<Field> fields, GridLogic gridLogic) {
+        this.fields = Collections.unmodifiableList(fields);
+        this.gridLogic = gridLogic;
         this.kingField = gridLogic.getKingField(this, Color.WHITE);
         this.opponentKingField = gridLogic.getKingField(this, Color.BLACK);
-        this.gridValue = gridLogic.calculateGridValue(this, Color.WHITE);
+        this.gridValue = GridLogic.calculateGridValue(this, Color.WHITE);
     }
 
-    public Grid(Grid gridBeforeTheMove, Field from, Field to) {
+    public Grid(Grid gridBeforeTheMove, Field from, Field to, GridLogic gridLogic) {
+        this.gridLogic = gridLogic;
         this.fields = gridBeforeTheMove
                 .getFields()
                 .stream()
@@ -47,6 +50,6 @@ public class Grid {
 
         this.kingField = gridLogic.getKingField(this, from.getPiece().getColor());
         this.opponentKingField = gridLogic.getKingField(this, from.getPiece().getColor().getOpposite());
-        this.gridValue = gridLogic.calculateGridValue(this, from.getPiece().getColor());
+        this.gridValue = GridLogic.calculateGridValue(this, from.getPiece().getColor());
     }
 }

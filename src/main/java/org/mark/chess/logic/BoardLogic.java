@@ -5,32 +5,34 @@ import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.JButton;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+@Component
 public class BoardLogic {
     private static final int HEIGHT      = 870;
     private static final int LEFT_CLICK  = 1;
     private static final int RIGHT_CLICK = 3;
     private static final int WIDTH       = 828;
 
-    @Autowired
     private MoveLogic moveLogic;
-
-    @Autowired
     private GridLogic gridLogic;
 
     @Autowired
-    private ApplicationFactory applicationFactory;
+    public BoardLogic(MoveLogic moveLogic, GridLogic gridLogic) {
+        this.moveLogic = moveLogic;
+        this.gridLogic = gridLogic;
+    }
 
     public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
         Field fieldClick = gridLogic.getField(game.getGrid(), button);
 
         if (!game.isInProgress()) {
             board.dispose();
-            applicationFactory.getInstance().startApplication(game.getHumanPlayerColor().getOpposite());
+            ApplicationFactory.getInstance().startApplication(game.getHumanPlayerColor().getOpposite());
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && moveLogic.isFrom(game, fieldClick)) {
             moveLogic.setFrom(board.getMove(), fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
@@ -48,7 +50,7 @@ public class BoardLogic {
 
     public void initializeBoard(Game game, Board board) {
         board.setSize(WIDTH, HEIGHT);
-        board.setLayout(gridLogic.createGridLayout());
+        board.setLayout(GridLogic.createGridLayout());
         board.setVisible(true);
         board.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

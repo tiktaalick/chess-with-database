@@ -5,12 +5,18 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Human;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+@Component
 public class GameLogic {
-    @Autowired
     private GridLogic gridLogic;
+
+    @Autowired
+    public GameLogic(GridLogic gridLogic) {
+        this.gridLogic = gridLogic;
+    }
 
     public Game initializeGame(Board board, Color humanPlayerColor) {
         Game game = new Game()

@@ -6,17 +6,19 @@ import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"org.mark.chess"})
 public class Application {
 
-    @Autowired
     private GameService gameService;
 
+    @Autowired
+    public Application(GameService gameService) {
+        this.gameService = gameService;
+    }
+
     public static void main(String[] args) {
-        new ApplicationFactory().getInstance().startApplication(Color.WHITE);
+        ApplicationFactory.getInstance().startApplication(Color.WHITE);
     }
 
     public void startApplication(Color humanPlayerColor) {
