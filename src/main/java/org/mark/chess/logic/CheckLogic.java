@@ -1,6 +1,5 @@
 package org.mark.chess.logic;
 
-import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
@@ -13,10 +12,14 @@ import java.util.stream.Collectors;
 @Component
 public class CheckLogic {
     private PieceLogicFactory pieceLogicFactory;
+    private ColorLogic        colorLogic;
+    private FieldLogic        fieldLogic;
 
     @Autowired
-    public CheckLogic(PieceLogicFactory pieceLogicFactory) {
+    public CheckLogic(PieceLogicFactory pieceLogicFactory, ColorLogic colorLogic, FieldLogic fieldLogic) {
         this.pieceLogicFactory = pieceLogicFactory;
+        this.colorLogic = colorLogic;
+        this.fieldLogic = fieldLogic;
     }
 
     public boolean isInCheckNow(Grid grid, Field from, Field to, boolean isOpponent) {
@@ -36,14 +39,7 @@ public class CheckLogic {
                         .isValidMove(grid, opponentField, to, true))
                 .collect(Collectors.toList());
 
-        attackers.forEach(field -> {
-            field.setAttacking(true).getButton().setBackground(BackgroundColorFactory.getBackgroundColor(field));
-            grid
-                    .getOpponentKingField()
-                    .setUnderAttack(true)
-                    .getButton()
-                    .setBackground(BackgroundColorFactory.getBackgroundColor(grid.getOpponentKingField()));
-        });
+        attackers.forEach((Field field) -> colorLogic.setAttacking(grid, field));
 
         return !attackers.isEmpty();
     }
@@ -53,18 +49,22 @@ public class CheckLogic {
             return false;
         }
 
-        Grid gridAfterMovement = new Grid(grid, from, to, gridLogic);
+        var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic, fieldLogic);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
                 .stream()
                 .filter(opponentField -> opponentField.getPiece() != null)
                 .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
-                .filter(opponentField -> pieceLogicFactory
-                        .getLogic(opponentField.getPiece().getPieceType())
-                        .isValidMove(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true))
+                .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
                 .collect(Collectors.toList());
 
         return !attackers.isEmpty();
+    }
+
+    private boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
+        return pieceLogicFactory
+                .getLogic(opponentField.getPiece().getPieceType())
+                .isValidMove(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true);
     }
 }

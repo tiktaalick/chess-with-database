@@ -8,7 +8,6 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Move;
 import org.mark.chess.service.GameService;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +27,7 @@ public class Board extends JFrame implements ActionListener, MouseListener {
         this.gameService = gameService;
         game = gameService.initializeGame(this, humanPlayerColor);
         move = new Move();
-        gameService.initializeBoard(game, this);
+        gameService.initializeBoard(game, this, move);
     }
 
     @Override
@@ -43,7 +42,7 @@ public class Board extends JFrame implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent event) {
-        gameService.handleButtonClick(game, this, event.getButton(), (JButton) event.getSource());
+        gameService.handleButtonClick(game, this, move, event.getButton(), (Button) event.getSource());
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,25 +29,15 @@ public class MoveLogic {
     private GridLogic         gridLogic;
     private KingLogic         kingLogic;
     private PieceLogicFactory pieceLogicFactory;
+    private ColorLogic        colorLogic;
 
     @Autowired
-    public MoveLogic(FieldLogic fieldLogic, GridLogic gridLogic, KingLogic kingLogic, PieceLogicFactory pieceLogicFactory) {
+    public MoveLogic(FieldLogic fieldLogic, GridLogic gridLogic, KingLogic kingLogic, PieceLogicFactory pieceLogicFactory, ColorLogic colorLogic) {
         this.fieldLogic = fieldLogic;
         this.gridLogic = gridLogic;
         this.kingLogic = kingLogic;
         this.pieceLogicFactory = pieceLogicFactory;
-    }
-
-    private static boolean duringAMove(Move move, Field field) {
-        return move.getFrom() != null &&
-               move.getTo() != null &&
-               Arrays.asList(move.getFrom().getCode(), move.getTo().getCode()).contains(field.getCode());
-    }
-
-    private static boolean isCaptureEnPassant(Move move, Field to) {
-        return move.getFrom().getPiece().getPieceType() == PAWN &&
-               move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
-               to.getPiece() == null;
+        this.colorLogic = colorLogic;
     }
 
     void changeTurn(Game game) {
@@ -57,28 +48,32 @@ public class MoveLogic {
         game.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
 
         List<Field> validMoves = getValidMoves(game, from);
-        validMoves.forEach(to -> {
+        validMoves.forEach((Field to) -> {
             from.setValidFrom(true);
             to.setValidMove(true);
         });
-        gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, validMoves);
+        colorLogic.setValidMoveColors(game.getGrid(), from, validMoves, validMoves);
     }
 
     boolean isFrom(Game game, Field fieldClick) {
         return fieldClick.getPiece() != null &&
-               fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
+                fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
+    }
+
+    boolean isNotAbleToMove(Game game, Field field, Collection<Field> allValidMoves) {
+        return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
     void moveRookWhenCastling(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PieceType.KING &&
-            kingLogic.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true)) {
+                kingLogic.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true)) {
 
-            Coordinates rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
+            var rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                     ? KingLogic.ROOK_X_LEFT_FROM
                     : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
-            Field rookFromField = gridLogic.getField(game.getGrid(), rookCoordinates);
-            Field rookToField = gridLogic.getField(game.getGrid(),
+            var rookFromField = gridLogic.getField(game.getGrid(), rookCoordinates);
+            var rookToField = gridLogic.getField(game.getGrid(),
                     rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.KING_X_LEFT
                             ? KingLogic.ROOK_X_LEFT_TO
                             : KingLogic.ROOK_X_RIGHT_TO));
@@ -97,42 +92,31 @@ public class MoveLogic {
         Map<Field, List<Field>> allValidFromsAndMoves = new HashMap<>();
         List<Field> allValidMoves = new ArrayList<>();
 
-        game.getGrid().getFields().forEach(from -> {
+        game.getGrid().getFields().forEach((Field from) -> {
             from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
 
-            List<Field> validMoves = getValidMoves(game, from);
-            from.setValidMove(!validMoves.isEmpty());
-            from.setValidFrom(from.isValidMove());
-            allValidMoves.addAll(validMoves);
+            setValidMoves(game, allValidFromsAndMoves, allValidMoves, from);
 
-            if (from.isValidFrom()) {
-                allValidFromsAndMoves.put(from, validMoves);
-            }
-
-            if (duringAMove(move, from)) {
-                return;
-            }
-
-            if (from.getPiece() != null && from.getPiece().getPieceType() == PAWN) {
+            if (!duringAMove(move, from) && from.getPiece() != null && from.getPiece().getPieceType() == PAWN) {
                 ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(false);
             }
         });
 
-        allValidFromsAndMoves.forEach((from, validMoves) -> gridLogic.setValidMoveColors(game.getGrid(), from, validMoves, allValidMoves));
+        allValidFromsAndMoves.forEach((from, validMoves) -> colorLogic.setValidMoveColors(game.getGrid(), from, validMoves, allValidMoves));
 
         return allValidMoves;
     }
 
     void setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PAWN) {
-            Pawn pawn = (Pawn) from.getPiece();
-            PawnLogic pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PAWN);
+            var pawn = (Pawn) from.getPiece();
+            var pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PAWN);
             pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
             pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
                 fieldLogic.addChessPiece(to,
-                        PieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion()).setColor(from.getPiece().getColor()));
+                        PieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion(), from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
             ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
@@ -159,6 +143,18 @@ public class MoveLogic {
         move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
     }
 
+    private static boolean duringAMove(Move move, Field field) {
+        return move.getFrom() != null &&
+                move.getTo() != null &&
+                Arrays.asList(move.getFrom().getCode(), move.getTo().getCode()).contains(field.getCode());
+    }
+
+    private static boolean isCaptureEnPassant(Move move, Field to) {
+        return move.getFrom().getPiece().getPieceType() == PAWN &&
+                move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
+                to.getPiece() == null;
+    }
+
     private void captureEnPassant(Grid grid, Field from, Field to) {
         resetField(gridLogic.getField(grid, new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
     }
@@ -170,9 +166,20 @@ public class MoveLogic {
     }
 
     private void moveRock(Grid grid, Field from, Field to) {
-        Move rookMove = new Move();
+        var rookMove = new Move();
         setFrom(rookMove, from);
         setTo(grid, rookMove, to);
         resetField(rookMove.getFrom());
+    }
+
+    private void setValidMoves(Game game, Map<Field, List<Field>> allValidFromsAndMoves, List<Field> allValidMoves, Field from) {
+        List<Field> validMoves = getValidMoves(game, from);
+        from.setValidMove(!validMoves.isEmpty());
+        from.setValidFrom(from.isValidMove());
+        allValidMoves.addAll(validMoves);
+
+        if (from.isValidFrom()) {
+            allValidFromsAndMoves.put(from, validMoves);
+        }
     }
 }

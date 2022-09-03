@@ -15,7 +15,7 @@ import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 public class FieldLogic {
     private static final char FIRST_COLUMN_NAME = 'a';
 
-    private ButtonLogic buttonLogic;
+    private final ButtonLogic buttonLogic;
 
     @Autowired
     public FieldLogic(ButtonLogic buttonLogic) {
@@ -23,7 +23,7 @@ public class FieldLogic {
     }
 
     public String createCode(int id) {
-        return createCode(id % NUMBER_OF_COLUMNS_AND_ROWS + 1, 8 - id / NUMBER_OF_COLUMNS_AND_ROWS);
+        return createCode(id % NUMBER_OF_COLUMNS_AND_ROWS + 1, NUMBER_OF_COLUMNS_AND_ROWS - id / NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
     public String createCode(Coordinates coordinates) {
@@ -31,7 +31,7 @@ public class FieldLogic {
     }
 
     public Coordinates createCoordinates(int id) {
-        return new Coordinates(id % NUMBER_OF_COLUMNS_AND_ROWS + 1, 8 - id / NUMBER_OF_COLUMNS_AND_ROWS);
+        return new Coordinates(id % NUMBER_OF_COLUMNS_AND_ROWS + 1, NUMBER_OF_COLUMNS_AND_ROWS - id / NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
     public Coordinates createCoordinates(String code) {
@@ -43,7 +43,7 @@ public class FieldLogic {
     }
 
     public int createId(String code) {
-        return (code.charAt(0) - FIRST_COLUMN_NAME) + (8 - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
+        return (code.charAt(0) - FIRST_COLUMN_NAME) + (NUMBER_OF_COLUMNS_AND_ROWS - Integer.parseInt(code.substring(1))) * NUMBER_OF_COLUMNS_AND_ROWS;
     }
 
     Field addChessPiece(Field field, Piece piece) {
@@ -55,7 +55,7 @@ public class FieldLogic {
     }
 
     Field initializeField(Board board, int id) {
-        Field field = new Field().setId(id);
+        var field = new Field(null).setId(id);
         field.setButton(new Button(board, field));
         board.add(field.getButton());
 

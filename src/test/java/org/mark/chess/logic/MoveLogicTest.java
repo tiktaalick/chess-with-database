@@ -16,8 +16,6 @@ import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
 import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
-import org.mark.chess.service.GameService;
-import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,7 +23,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.ImageIcon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,9 +54,6 @@ class MoveLogicTest {
     private FieldLogic fieldLogic;
 
     @Mock
-    private GameService gameService;
-
-    @Mock
     private GridLogic gridLogic;
 
     @Mock
@@ -69,10 +63,13 @@ class MoveLogicTest {
     private PawnLogic pawnLogic;
 
     @Mock
-    private PieceFactory pieceFactory;
+    private PieceLogicFactory pieceLogicFactory;
 
     @Mock
-    private PieceLogicFactory pieceLogicFactory;
+    private Button button;
+
+    @Mock
+    private ColorLogic colorLogic;
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
@@ -92,15 +89,13 @@ class MoveLogicTest {
 
     @Test
     void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
-        Board board = new Board(gameService, WHITE);
-
-        Grid grid = new Grid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
-            Field field = new Field().setId(id).setValidMove(false);
-            return field.setButton(new Button(board, field));
-        }).collect(Collectors.toList()), gridLogic);
+        Grid grid = Grid.createGrid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
+            Field field = new Field(null).setId(id).setValidMove(false);
+            return field.setButton(button);
+        }).collect(Collectors.toList()), gridLogic, fieldLogic);
 
         Game game = new Game().setGrid(grid);
-        Field from = new Field().setPiece(new Pawn().setColor(WHITE));
+        Field from = new Field(new Pawn(WHITE));
 
         List<Field> validMovesList = grid
                 .getFields()
@@ -124,7 +119,7 @@ class MoveLogicTest {
     @Test
     void testIsFrom_WhenFieldWithNoPiece_ThenReturnFalse() {
         Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK)));
-        Field field = new Field();
+        Field field = new Field(null);
 
         assertFalse(moveLogic.isFrom(game, field));
     }
@@ -132,7 +127,7 @@ class MoveLogicTest {
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsBlacksTurn_ThenReturnFalse() {
         Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(BLACK);
-        Field field = new Field().setPiece(new Pawn().setColor(WHITE));
+        Field field = new Field(new Pawn(WHITE));
 
         assertFalse(moveLogic.isFrom(game, field));
     }
@@ -140,28 +135,26 @@ class MoveLogicTest {
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsWhitesTurn_ThenReturnTrue() {
         Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
-        Field field = new Field().setPiece(new Pawn().setColor(WHITE));
+        Field field = new Field(new Pawn(WHITE));
 
         assertTrue(moveLogic.isFrom(game, field));
     }
 
     @Test
     void testMoveRookWhenCastling_WhenCastling_ThenMoveRook() {
-        Board board = new Board(gameService, WHITE);
-        Grid grid = new Grid(new ArrayList<>(), gridLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
         Game game = new Game().setGrid(grid).setHumanPlayerColor(WHITE);
 
-        Piece rook = new Rook().setColor(WHITE);
+        Piece rook = new Rook(WHITE);
 
-        Field kingFrom = new Field().setPiece(new King().setColor(WHITE));
-        Field kingTo = new Field().setCoordinates(new Coordinates(3, 1));
+        Field kingFrom = new Field(new King(WHITE));
+        Field kingTo = new Field(null).setCoordinates(new Coordinates(3, 1));
 
-        Field rookFrom = new Field().setPiece(rook).setCoordinates(new Coordinates(1, 1));
-        rookFrom.setButton(new Button(board, rookFrom));
-        rookFrom.getButton().setIcon(new ImageIcon("src/main/resources/images/white_rook.png"));
+        Field rookFrom = new Field(rook).setCoordinates(new Coordinates(1, 1));
+        rookFrom.setButton(button);
 
-        Field rookTo = new Field().setCoordinates(new Coordinates(4, 1));
-        rookTo.setButton(new Button(board, rookTo));
+        Field rookTo = new Field(null).setCoordinates(new Coordinates(4, 1));
+        rookTo.setButton(button);
 
         when(kingLogic.isValidCastling(game.getGrid(), kingFrom, kingTo, kingTo.getCoordinates().getX(), false, true)).thenReturn(true);
         when(gridLogic.getField(grid, rookFrom.getCoordinates())).thenReturn(rookFrom);
@@ -172,19 +165,14 @@ class MoveLogicTest {
         assertNull(rookFrom.getPiece());
         assertNull(rookFrom.getButton().getIcon());
         assertEquals(rook, rookTo.getPiece());
-        assertEquals("src/main/resources/images/white_rook.png", rookTo.getButton().getIcon().toString());
     }
 
     @Test
     void testResetValidMoves_WhenNotDuringAMove_ThenEnableOrDisableAllMoves() {
-        Board board = new Board(gameService, WHITE);
-
-        Game game = new Game().setGrid(new Grid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
-            Field field = new Field().setId(id);
-            Button button = new Button(board, field);
-            button.setEnabled(true);
+        Game game = new Game().setGrid(Grid.createGrid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
+            Field field = new Field(null).setId(id);
             return field.setButton(button);
-        }).collect(Collectors.toList()), gridLogic));
+        }).collect(Collectors.toList()), gridLogic, fieldLogic));
 
         moveLogic.resetValidMoves(game, new Move());
 
@@ -193,14 +181,10 @@ class MoveLogicTest {
 
     @Test
     void testResetValidMoves_WhenTwoPawnsInvolvedInMovement_Then62MayNotBeCapturedEnPassant() {
-        Board board = new Board(gameService, WHITE);
-
-        Game game = new Game().setGrid(new Grid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
-            Field field = new Field().setId(id).setPiece(new Pawn().setMayBeCapturedEnPassant(true));
-            Button button = new Button(board, field);
-            button.setEnabled(true);
+        Game game = new Game().setGrid(Grid.createGrid(IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
+            Field field = new Field(new Pawn(WHITE).setMayBeCapturedEnPassant(true)).setId(id);
             return field.setButton(button);
-        }).collect(Collectors.toList()), gridLogic));
+        }).collect(Collectors.toList()), gridLogic, fieldLogic));
 
         moveLogic.resetValidMoves(game,
                 new Move()
@@ -226,10 +210,10 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenKing_ThenSetHasMovedAtLeastOnce() {
-        Grid grid = new Grid(new ArrayList<>(), gridLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
         Game game = new Game().setGrid(grid);
-        Field from = new Field().setPiece(new King());
-        Field to = new Field();
+        Field from = new Field(new King(WHITE));
+        Field to = new Field(null);
 
         moveLogic.setChessPieceSpecificFields(game, from, to);
 
@@ -238,14 +222,14 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnIsBeingPromoted_ThenPawnIsPromotedToQueen() {
-        Grid grid = new Grid(new ArrayList<>(), gridLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
         Game game = new Game().setGrid(grid);
-        Field from = new Field().setPiece(new Pawn().setColor(WHITE));
-        Field to = new Field();
-        Queen queen = new Queen();
+        Field from = new Field(new Pawn(WHITE));
+        Field to = new Field(null);
+        Queen queen = new Queen(WHITE);
 
         try (MockedStatic<PieceFactory> pieceFactory = Mockito.mockStatic(PieceFactory.class)) {
-            pieceFactory.when(() -> PieceFactory.getPiece(PieceType.QUEEN)).thenReturn(queen);
+            pieceFactory.when(() -> PieceFactory.getPiece(PieceType.QUEEN, WHITE)).thenReturn(queen);
             when(pieceLogicFactory.getLogic(PieceType.PAWN)).thenReturn(pawnLogic);
             when(pawnLogic.isPawnBeingPromoted(from, to)).thenReturn(true);
 
@@ -261,9 +245,9 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
-        Game game = new Game().setGrid(new Grid(new ArrayList<>(), gridLogic));
-        Field from = new Field().setPiece(new Pawn());
-        Field to = new Field();
+        Game game = new Game().setGrid(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic));
+        Field from = new Field(new Pawn(WHITE));
+        Field to = new Field(null);
 
         when(pieceLogicFactory.getLogic(PieceType.PAWN)).thenReturn(pawnLogic);
         when(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to)).thenReturn(true);
@@ -278,9 +262,9 @@ class MoveLogicTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenRook_ThenSetHasMovedAtLeastOnce() {
-        Game game = new Game().setGrid(new Grid(new ArrayList<>(), gridLogic));
-        Field from = new Field().setPiece(new Rook());
-        Field to = new Field();
+        Game game = new Game().setGrid(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic));
+        Field from = new Field(new Rook(WHITE));
+        Field to = new Field(null);
 
         moveLogic.setChessPieceSpecificFields(game, from, to);
 

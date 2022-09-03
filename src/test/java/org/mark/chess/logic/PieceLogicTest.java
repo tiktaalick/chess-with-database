@@ -47,26 +47,29 @@ class PieceLogicTest {
     @Mock
     private CheckLogic checkLogic;
 
+    @Mock
+    private FieldLogic fieldLogic;
+
     @Test
     void testGetAbsoluteHorizontalMove() {
         assertEquals(3,
-                pieceLogic.getAbsoluteHorizontalMove(new Field().setCoordinates(new Coordinates(2, 3)),
-                        new Field().setCoordinates(new Coordinates(5, 8))));
+                pieceLogic.getAbsoluteHorizontalMove(new Field(null).setCoordinates(new Coordinates(2, 3)),
+                        new Field(null).setCoordinates(new Coordinates(5, 8))));
     }
 
     @Test
     void testGetAbsoluteVerticalMove() {
         assertEquals(5,
-                pieceLogic.getAbsoluteVerticalMove(new Field().setCoordinates(new Coordinates(2, 3)),
-                        new Field().setCoordinates(new Coordinates(5, 8))));
+                pieceLogic.getAbsoluteVerticalMove(new Field(null).setCoordinates(new Coordinates(2, 3)),
+                        new Field(null).setCoordinates(new Coordinates(5, 8))));
     }
 
     @Test
     void testGetValidMoves_WhenNoValidMoves_ThenReturnOnlyFromMove() {
-        Field from = new Field().setCoordinates(new Coordinates(0, 0));
-        Field invalidTo = new Field().setCoordinates(new Coordinates(2, 2));
+        Field from = new Field(null).setCoordinates(new Coordinates(0, 0));
+        Field invalidTo = new Field(null).setCoordinates(new Coordinates(2, 2));
 
-        Grid grid = new Grid(Arrays.asList(from, invalidTo), gridLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(from, invalidTo), gridLogic, fieldLogic);
 
         when(pieceLogic.isValidMove(grid, from, from, false)).thenReturn(false);
         when(pieceLogic.isValidMove(grid, from, invalidTo, false)).thenReturn(false);
@@ -78,11 +81,11 @@ class PieceLogicTest {
 
     @Test
     void testGetValidMoves_WhenOneValidMove_ThenReturnValidMoveAndFromMove() {
-        Field from = new Field().setCoordinates(new Coordinates(0, 0));
-        Field validTo = new Field().setCoordinates(new Coordinates(1, 1));
-        Field invalidTo = new Field().setCoordinates(new Coordinates(2, 2));
+        Field from = new Field(null).setCoordinates(new Coordinates(0, 0));
+        Field validTo = new Field(null).setCoordinates(new Coordinates(1, 1));
+        Field invalidTo = new Field(null).setCoordinates(new Coordinates(2, 2));
 
-        Grid grid = new Grid(Arrays.asList(from, validTo, invalidTo), gridLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(from, validTo, invalidTo), gridLogic, fieldLogic);
 
         when(pieceLogic.isValidMove(grid, from, from, false)).thenReturn(false);
         when(pieceLogic.isValidMove(grid, from, validTo, false)).thenReturn(true);
@@ -95,50 +98,52 @@ class PieceLogicTest {
 
     @Test
     void testHasEmptyParameters_WhenEmptyFrom_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(new Grid(new ArrayList<>(), gridLogic), null, new Field()));
+        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), null, new Field(null)));
     }
 
     @Test
     void testHasEmptyParameters_WhenEmptyGrid_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(null, new Field(), new Field()));
+        assertTrue(pieceLogic.hasEmptyParameters(null, new Field(null), new Field(null)));
     }
 
     @Test
     void testHasEmptyParameters_WhenEmptyTo_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(new Grid(new ArrayList<>(), gridLogic), new Field(), null));
+        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), new Field(null), null));
     }
 
     @Test
     void testHasEmptyParameters_WhenNoEmptyParameters_ThenFalse() {
-        assertFalse(pieceLogic.hasEmptyParameters(new Grid(new ArrayList<>(), gridLogic), new Field(), new Field()));
+        assertFalse(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), new Field(null), new Field(null)));
     }
 
     @Test
     void testIsFriendlyFire_WhenPawnMovesToEmptyField_ThenReturnFalse() {
-        assertFalse(pieceLogic.isFriendlyFire(new Pawn().setColor(WHITE), new Field()));
+        assertFalse(pieceLogic.isFriendlyFire(new Pawn(WHITE), new Field(null)));
     }
 
     @Test
     void testIsFriendlyFire_WhenPawnMovesToFieldWithBlackQueen_ThenReturnFalse() {
-        assertFalse(pieceLogic.isFriendlyFire(new Pawn().setColor(WHITE), new Field().setPiece(new Queen().setColor(BLACK))));
+        assertFalse(pieceLogic.isFriendlyFire(new Pawn(WHITE), new Field(new Queen(BLACK))));
     }
 
     @Test
     void testIsFriendlyFire_WhenPawnMovesToFieldWithWhiteQueen_ThenReturnTrue() {
-        assertTrue(pieceLogic.isFriendlyFire(new Pawn().setColor(WHITE), new Field().setPiece(new Queen().setColor(WHITE))));
+        assertTrue(pieceLogic.isFriendlyFire(new Pawn(WHITE), new Field(new Queen(WHITE))));
     }
 
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndDoesNotJumpOverAPiece_ThenReturnFalse() {
-        Grid grid = new Grid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList()), gridLogic);
+        Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
+                gridLogic,
+                fieldLogic);
 
         Field from = grid
                 .getFields()
                 .stream()
                 .filter(field -> field.getCode().equals("e2"))
                 .findFirst()
-                .orElse(new Field())
-                .setPiece(new Pawn().setColor(WHITE));
+                .orElse(new Field(null))
+                .setPiece(new Pawn(WHITE));
         Field to = grid.getFields().stream().filter(field -> field.getCode().equals("e4")).findFirst().orElse(null);
 
         assertNotNull(to);
@@ -147,18 +152,20 @@ class PieceLogicTest {
 
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndEndsOnAPiece_ThenReturnFalse() {
-        Grid grid = new Grid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList()), gridLogic);
+        Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
+                gridLogic,
+                fieldLogic);
 
         Field from = grid
                 .getFields()
                 .stream()
                 .filter(field -> field.getCode().equals("e2"))
                 .findFirst()
-                .orElse(new Field())
-                .setPiece(new Pawn().setColor(WHITE));
+                .orElse(new Field(null))
+                .setPiece(new Pawn(WHITE));
         Field to = grid.getFields().stream().filter(field -> field.getCode().equals("e4")).findFirst().orElse(null);
 
-        grid.getFields().stream().filter(field -> field.getCode().equals("e4")).findFirst().orElse(new Field()).setPiece(new Pawn().setColor(WHITE));
+        grid.getFields().stream().filter(field -> field.getCode().equals("e4")).findFirst().orElse(new Field(null)).setPiece(new Pawn(WHITE));
 
         assertNotNull(to);
         assertFalse(pieceLogic.isJumping(grid, from, to));
@@ -166,18 +173,20 @@ class PieceLogicTest {
 
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndJumpsOverAPiece_ThenReturnTrue() {
-        Grid grid = new Grid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field().setId(id)).collect(Collectors.toList()), gridLogic);
+        Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
+                gridLogic,
+                fieldLogic);
 
         Field from = grid
                 .getFields()
                 .stream()
                 .filter(field -> field.getCode().equals("e2"))
                 .findFirst()
-                .orElse(new Field())
-                .setPiece(new Pawn().setColor(WHITE));
+                .orElse(new Field(null))
+                .setPiece(new Pawn(WHITE));
         Field to = grid.getFields().stream().filter(field -> field.getCode().equals("e4")).findFirst().orElse(null);
 
-        grid.getFields().stream().filter(field -> field.getCode().equals("e3")).findFirst().orElse(new Field()).setPiece(new Pawn().setColor(WHITE));
+        grid.getFields().stream().filter(field -> field.getCode().equals("e3")).findFirst().orElse(new Field(null)).setPiece(new Pawn(WHITE));
 
         assertNotNull(to);
         assertTrue(pieceLogic.isJumping(grid, from, to));
