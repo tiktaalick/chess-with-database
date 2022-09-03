@@ -48,15 +48,11 @@ public enum Color {
     }
 
     public Color getOpposite() {
-        return opposite();
+        return opposite;
     }
 
-    public Color setOpposite(Color opposite) {
+    private Color setOpposite(Color opposite) {
         this.opposite = opposite;
         return this;
-    }
-
-    public Color opposite() {
-        return opposite;
     }
 }

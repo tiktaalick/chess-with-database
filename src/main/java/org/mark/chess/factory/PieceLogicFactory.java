@@ -13,23 +13,27 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PieceLogicFactory {
-    @Autowired
     private BishopLogic bishopLogic;
-
-    @Autowired
-    private KingLogic kingLogic;
-
-    @Autowired
+    private KingLogic   kingLogic;
     private KnightLogic knightLogic;
+    private PawnLogic   pawnLogic;
+    private QueenLogic  queenLogic;
+    private RookLogic   rookLogic;
 
     @Autowired
-    private PawnLogic pawnLogic;
-
-    @Autowired
-    private QueenLogic queenLogic;
-
-    @Autowired
-    private RookLogic rookLogic;
+    public PieceLogicFactory(BishopLogic bishopLogic,
+            KingLogic kingLogic,
+            KnightLogic knightLogic,
+            PawnLogic pawnLogic,
+            QueenLogic queenLogic,
+            RookLogic rookLogic) {
+        this.bishopLogic = bishopLogic;
+        this.kingLogic = kingLogic;
+        this.knightLogic = knightLogic;
+        this.pawnLogic = pawnLogic;
+        this.queenLogic = queenLogic;
+        this.rookLogic = rookLogic;
+    }
 
     public PieceLogic getLogic(PieceType pieceType) {
         switch (pieceType) {

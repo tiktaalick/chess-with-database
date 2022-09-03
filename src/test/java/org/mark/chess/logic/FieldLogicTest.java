@@ -52,13 +52,13 @@ class FieldLogicTest {
 
     @Test
     void testAddChessPiece() {
-        Field field1 = new Field().setCode("b8");
-        Field field2 = new Field().setCode("c8");
-        Field field3 = new Field().setCode("d8");
-        List<Field> fields = new ArrayList<>(Arrays.asList(new Field().setId(0).setCoordinates(new Coordinates(0, 0)), field1, field2, field3));
+        Field field1 = new Field(null).setCode("b8");
+        Field field2 = new Field(null).setCode("c8");
+        Field field3 = new Field(null).setCode("d8");
+        List<Field> fields = new ArrayList<>(Arrays.asList(new Field(null).setId(0).setCoordinates(new Coordinates(0, 0)), field1, field2, field3));
 
-        Game game = new Game().setGrid(new Grid(fields, gridLogic));
-        Piece bishop = new Bishop();
+        Game game = new Game().setGrid(Grid.createGrid(fields, gridLogic, fieldLogic));
+        Piece bishop = new Bishop(WHITE);
 
         when(buttonLogic.initializeButton(field2)).thenReturn(new Button(board, field2));
 
@@ -149,7 +149,7 @@ class FieldLogicTest {
     void testIsActivePlayerField_WhenActivePlayerField_ThenReturnTrue() {
         Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
 
-        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn().setColor(WHITE));
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn(WHITE));
 
         assertTrue(fieldLogic.isActivePlayerField(game, field));
     }
@@ -167,7 +167,7 @@ class FieldLogicTest {
     void testIsActivePlayerField_WhenOpponentField_ThenReturnFalse() {
         Game game = new Game().setPlayers(Arrays.asList(new Human().setColor(WHITE), new Human().setColor(BLACK))).setCurrentPlayerColor(WHITE);
 
-        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn().setColor(BLACK));
+        Field field = fieldLogic.initializeField(board, FIELD_ID_C5).setPiece(new Pawn(BLACK));
 
         assertFalse(fieldLogic.isActivePlayerField(game, field));
     }

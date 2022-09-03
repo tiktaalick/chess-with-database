@@ -1,60 +1,64 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.factory.ApplicationFactory;
-import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
-import org.mark.chess.swing.Board;
+import org.mark.chess.model.Move;
+import org.mark.chess.swing.Button;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.swing.JButton;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Window;
 
 @Component
 public class BoardLogic {
-    private static final int HEIGHT      = 870;
-    private static final int LEFT_CLICK  = 1;
-    private static final int RIGHT_CLICK = 3;
-    private static final int WIDTH       = 828;
+    private static final int HEIGHT       = 870;
+    private static final int LEFT_CLICK   = 1;
+    private static final int RIGHT_CLICK  = 3;
+    private static final int SPLIT_IN_TWO = 2;
+    private static final int WIDTH        = 828;
 
-    private MoveLogic moveLogic;
-    private GridLogic gridLogic;
+    private MoveLogic  moveLogic;
+    private GridLogic  gridLogic;
+    private ColorLogic colorLogic;
 
     @Autowired
-    public BoardLogic(MoveLogic moveLogic, GridLogic gridLogic) {
+    public BoardLogic(MoveLogic moveLogic, GridLogic gridLogic, ColorLogic colorLogic) {
         this.moveLogic = moveLogic;
         this.gridLogic = gridLogic;
+        this.colorLogic = colorLogic;
     }
 
-    public void handleButtonClick(Game game, Board board, int buttonClick, JButton button) {
-        Field fieldClick = gridLogic.getField(game.getGrid(), button);
+    public void handleButtonClick(Game game, Window board, Move move, int buttonClick, Button button) {
+        var fieldClick = gridLogic.getField(game.getGrid(), button);
 
         if (!game.isInProgress()) {
             board.dispose();
             ApplicationFactory.getInstance().startApplication(game.getHumanPlayerColor().getOpposite());
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && moveLogic.isFrom(game, fieldClick)) {
-            moveLogic.setFrom(board.getMove(), fieldClick);
+            moveLogic.setFrom(move, fieldClick);
             moveLogic.enableValidMoves(game, fieldClick);
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !moveLogic.isFrom(game, fieldClick)) {
-            moveLogic.setTo(game.getGrid(), board.getMove(), fieldClick);
-            moveLogic.setChessPieceSpecificFields(game, board.getMove().getFrom(), fieldClick);
-            moveLogic.moveRookWhenCastling(game, board.getMove().getFrom(), fieldClick);
+            moveLogic.setTo(game.getGrid(), move, fieldClick);
+            moveLogic.setChessPieceSpecificFields(game, move.getFrom(), fieldClick);
+            moveLogic.moveRookWhenCastling(game, move.getFrom(), fieldClick);
             moveLogic.changeTurn(game);
-            moveLogic.resetField(board.getMove().getFrom());
-            gridLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
+            moveLogic.resetField(move.getFrom());
+            colorLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, move));
         } else if (buttonClick == RIGHT_CLICK) {
-            gridLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, board.getMove()));
+            colorLogic.setKingFieldColors(game, moveLogic.resetValidMoves(game, move));
         }
     }
 
-    public void initializeBoard(Game game, Board board) {
+    public void initializeBoard(Game game, Frame board, Move move) {
         board.setSize(WIDTH, HEIGHT);
         board.setLayout(GridLogic.createGridLayout());
         board.setVisible(true);
         board.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        board.setLocation(dim.width / 2 - board.getSize().width / 2, dim.height / 2 - board.getSize().height / 2);
-        moveLogic.resetValidMoves(game, board.getMove());
+        board.setLocation(dim.width / SPLIT_IN_TWO - WIDTH / SPLIT_IN_TWO, dim.height / SPLIT_IN_TWO - HEIGHT / SPLIT_IN_TWO);
+        moveLogic.resetValidMoves(game, move);
     }
 }

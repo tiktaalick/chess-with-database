@@ -1,12 +1,13 @@
 package org.mark.chess.model;
 
+import com.google.common.base.Objects;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.logic.ButtonLogic;
 import org.mark.chess.logic.FieldLogic;
+import org.mark.chess.swing.Button;
 
-import javax.swing.JButton;
-
-public class Field {
+public class Field implements Comparable<Field> {
     private static final String  CODE_UNKNOWN         = "xx";
     private static final int     ID_UNKNOWN           = -1;
     private static final Integer VALUE_NOT_CALCULATED = null;
@@ -15,8 +16,8 @@ public class Field {
 
     private int         id            = ID_UNKNOWN;
     private String      code          = CODE_UNKNOWN;
-    private Coordinates coordinates;
-    private JButton     button;
+    private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
+    private Button      button;
     private Piece       piece;
     private Integer     value         = VALUE_NOT_CALCULATED;
     private Integer     relativeValue = VALUE_NOT_CALCULATED;
@@ -27,11 +28,61 @@ public class Field {
     private boolean     isCheckMate;
     private boolean     isStaleMate;
 
-    public JButton getButton() {
+    public Field(Piece piece) {
+        this.piece = piece;
+    }
+
+    @Override
+    public int compareTo(@NotNull Field other) {
+        return this.id - other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id,
+                code,
+                coordinates,
+                button,
+                piece,
+                value,
+                relativeValue,
+                isValidFrom,
+                isValidMove,
+                isAttacking,
+                isUnderAttack,
+                isCheckMate,
+                isStaleMate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        var field = (Field) o;
+        return id == field.id &&
+               isValidFrom == field.isValidFrom &&
+               isValidMove == field.isValidMove &&
+               isAttacking == field.isAttacking &&
+               isUnderAttack == field.isUnderAttack &&
+               isCheckMate == field.isCheckMate &&
+               isStaleMate == field.isStaleMate &&
+               Objects.equal(code, field.code) &&
+               Objects.equal(coordinates, field.coordinates) &&
+               Objects.equal(button, field.button) &&
+               Objects.equal(piece, field.piece) &&
+               Objects.equal(value, field.value) &&
+               Objects.equal(relativeValue, field.relativeValue);
+    }
+
+    public Button getButton() {
         return button;
     }
 
-    public Field setButton(JButton button) {
+    public Field setButton(Button button) {
         this.button = button;
         return this;
     }

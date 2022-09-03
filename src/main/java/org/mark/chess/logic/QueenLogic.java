@@ -21,16 +21,38 @@ public class QueenLogic implements PieceLogic {
     @Override
     public boolean isValidMove(Grid grid, Field from, Field to, boolean isOpponent) {
         return !hasEmptyParameters(grid, from, to) &&
-               isValidBasicMove(from, to) &&
-               !this.isFriendlyFire(from.getPiece(), to) &&
-               !isJumping(grid, from, to) &&
-               !checkLogic.isMovingIntoCheck(grid, from, to, isOpponent, gridLogic);
+                !this.isFriendlyFire(from.getPiece(), to) &&
+                isValidQueenSpecificMove(grid, from, to) &&
+                !checkLogic.isMovingIntoCheck(grid, from, to, isOpponent, gridLogic);
+    }
+
+    private static boolean isMoving(int horizontalMove, int verticalMove) {
+        return !(horizontalMove == 0 && verticalMove == 0);
+    }
+
+    private static boolean isMovingDiagonally(int horizontalMove, int verticalMove) {
+        return horizontalMove == verticalMove;
+    }
+
+    private static boolean isMovingHorizontally(int horizontalMove, int verticalMove) {
+        return (horizontalMove != 0 && verticalMove == 0);
+    }
+
+    private static boolean isMovingVertically(int horizontalMove, int verticalMove) {
+        return (horizontalMove == 0 && verticalMove != 0);
     }
 
     private boolean isValidBasicMove(Field from, Field to) {
         int horizontalMove = getAbsoluteHorizontalMove(from, to);
         int verticalMove = getAbsoluteVerticalMove(from, to);
-        return ((horizontalMove != 0 && verticalMove == 0) || (horizontalMove == 0 && verticalMove != 0) || horizontalMove == verticalMove) &&
-               !(horizontalMove == 0 && verticalMove == 0);
+
+        return isMoving(horizontalMove, verticalMove) &&
+                (isMovingHorizontally(horizontalMove, verticalMove) ||
+                        isMovingVertically(horizontalMove, verticalMove) ||
+                        isMovingDiagonally(horizontalMove, verticalMove));
+    }
+
+    private boolean isValidQueenSpecificMove(Grid grid, Field from, Field to) {
+        return !isJumping(grid, from, to) && isValidBasicMove(from, to);
     }
 }

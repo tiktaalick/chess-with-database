@@ -1,5 +1,6 @@
 package org.mark.chess.factory;
 
+import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.model.Bishop;
 import org.mark.chess.model.King;
@@ -13,21 +14,21 @@ public final class PieceFactory {
     private PieceFactory() {
     }
 
-    public static Piece getPiece(PieceType pieceType) {
+    public static Piece getPiece(PieceType pieceType, Color color) {
         switch (pieceType) {
             case KING:
-                return new King();
+                return new King(color);
             case ROOK:
-                return new Rook();
+                return new Rook(color);
             case BISHOP:
-                return new Bishop();
+                return new Bishop(color);
             case KNIGHT:
-                return new Knight();
+                return new Knight(color);
             case PAWN:
-                return new Pawn();
+                return new Pawn(color);
             case QUEEN:
             default:
-                return new Queen();
+                return new Queen(color);
         }
     }
 }

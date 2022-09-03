@@ -12,4 +12,9 @@ public abstract class Piece {
     private Color     color;
     private boolean   kickedOff;
     private boolean   isPawnBeingPromoted;
+
+    public Piece(PieceType pieceType, Color color) {
+        this.pieceType = pieceType;
+        this.color = color;
+    }
 }
