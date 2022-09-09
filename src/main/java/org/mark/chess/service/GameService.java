@@ -7,7 +7,6 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Move;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +14,6 @@ public class GameService {
     private BoardLogic boardlogic;
     private GameLogic  gameLogic;
 
-    @Autowired
     public GameService(BoardLogic boardlogic, GameLogic gameLogic) {
         this.boardlogic = boardlogic;
         this.gameLogic = gameLogic;

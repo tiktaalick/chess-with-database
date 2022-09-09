@@ -1,6 +1,5 @@
 package org.mark.chess.model;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import org.mark.chess.enums.PieceType;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public class Rook extends Piece {
-    private boolean   hasMovedAtLeastOnce;
+    private boolean hasMovedAtLeastOnce;
 
     public Rook(Color color) {
         super(PieceType.ROOK, color);

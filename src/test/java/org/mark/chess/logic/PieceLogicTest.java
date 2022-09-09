@@ -1,16 +1,15 @@
 package org.mark.chess.logic;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Queen;
-import org.mark.chess.service.GameService;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -29,26 +28,20 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PieceLogicTest {
-    private static final char DELIMITER     = ';';
-    private static final int  MAX_SQUARE_ID = 63;
-
-    @Spy
-    private PieceLogic pieceLogic;
-
-    @Mock
-    private PieceLogicFactory opponentFactory;
-
-    @Mock
-    private GameService gameService;
+    private static final int MAX_SQUARE_ID = 63;
 
     @Mock
     private GridLogic gridLogic;
 
     @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
     private FieldLogic fieldLogic;
+
+    private PieceLogic pieceLogic;
+
+    @BeforeEach
+    void beforeEach() {
+        pieceLogic = Mockito.mock(PieceLogic.class, Mockito.CALLS_REAL_METHODS);
+    }
 
     @Test
     void testGetAbsoluteHorizontalMove() {

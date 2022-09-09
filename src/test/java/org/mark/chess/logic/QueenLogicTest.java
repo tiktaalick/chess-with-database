@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.enums.Color;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
@@ -34,9 +32,6 @@ class QueenLogicTest {
     @Spy
     @InjectMocks
     private QueenLogic queenLogic;
-
-    @Mock
-    private PieceLogicFactory opponentFactory;
 
     @Mock
     private GridLogic gridLogic;

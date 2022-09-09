@@ -11,6 +11,8 @@ public enum PlayerType {
 
     private PlayerType opposite;
 
+    PlayerType() { }
+
     public PlayerType getOpposite() {
         return opposite;
     }

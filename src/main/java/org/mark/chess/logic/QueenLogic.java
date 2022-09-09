@@ -2,20 +2,15 @@ package org.mark.chess.logic;
 
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class QueenLogic implements PieceLogic {
-    private GridLogic  gridLogic;
-    private CheckLogic checkLogic;
+@Service
+public class QueenLogic extends PieceLogic {
 
     @Lazy
-    @Autowired
-    public QueenLogic(GridLogic gridLogic, CheckLogic checkLogic) {
-        this.gridLogic = gridLogic;
-        this.checkLogic = checkLogic;
+    protected QueenLogic(CheckLogic checkLogic, GridLogic gridLogic) {
+        super(checkLogic, gridLogic);
     }
 
     @Override

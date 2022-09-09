@@ -1,8 +1,6 @@
 package org.mark.chess.logic;
 
 import org.mark.chess.enums.PieceType;
-import org.mark.chess.factory.PieceFactory;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
@@ -10,9 +8,9 @@ import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
+import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Rook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,20 +21,19 @@ import java.util.Map;
 
 import static org.mark.chess.enums.PieceType.PAWN;
 
-@Component
+@Service
 public class MoveLogic {
-    private FieldLogic        fieldLogic;
-    private GridLogic         gridLogic;
-    private KingLogic         kingLogic;
-    private PieceLogicFactory pieceLogicFactory;
-    private ColorLogic        colorLogic;
+    private final ColorLogic     colorLogic;
+    private final FieldLogic     fieldLogic;
+    private final GridLogic      gridLogic;
+    private final KingLogic      kingLogic;
+    private final PieceTypeLogic pieceTypeLogic;
 
-    @Autowired
-    public MoveLogic(FieldLogic fieldLogic, GridLogic gridLogic, KingLogic kingLogic, PieceLogicFactory pieceLogicFactory, ColorLogic colorLogic) {
+    public MoveLogic(FieldLogic fieldLogic, GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
         this.fieldLogic = fieldLogic;
         this.gridLogic = gridLogic;
         this.kingLogic = kingLogic;
-        this.pieceLogicFactory = pieceLogicFactory;
+        this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
     }
 
@@ -89,20 +86,20 @@ public class MoveLogic {
     }
 
     List<Field> resetValidMoves(Game game, Move move) {
-        Map<Field, List<Field>> allValidFromsAndMoves = new HashMap<>();
+        Map<Field, List<Field>> allValidFromsAndValidMoves = new HashMap<>();
         List<Field> allValidMoves = new ArrayList<>();
 
         game.getGrid().getFields().forEach((Field from) -> {
             from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
 
-            setValidMoves(game, allValidFromsAndMoves, allValidMoves, from);
+            setValidMoves(game, allValidFromsAndValidMoves, allValidMoves, from);
 
             if (!duringAMove(move, from) && from.getPiece() != null && from.getPiece().getPieceType() == PAWN) {
                 ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(false);
             }
         });
 
-        allValidFromsAndMoves.forEach((from, validMoves) -> colorLogic.setValidMoveColors(game.getGrid(), from, validMoves, allValidMoves));
+        allValidFromsAndValidMoves.forEach((from, validMoves) -> colorLogic.setValidMoveColors(game.getGrid(), from, validMoves, allValidMoves));
 
         return allValidMoves;
     }
@@ -110,13 +107,12 @@ public class MoveLogic {
     void setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PAWN) {
             var pawn = (Pawn) from.getPiece();
-            var pawnLogic = (PawnLogic) pieceLogicFactory.getLogic(PAWN);
+            var pawnLogic = (PawnLogic) PAWN.getLogic(pieceTypeLogic);
             pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
             pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
-                fieldLogic.addChessPiece(to,
-                        PieceFactory.getPiece(from.getPiece().getPieceType().getNextPawnPromotion(), from.getPiece().getColor()));
+                fieldLogic.addChessPiece(to, from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
             ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
@@ -161,7 +157,7 @@ public class MoveLogic {
 
     private List<Field> getValidMoves(Game game, Field from) {
         return fieldLogic.isActivePlayerField(game, from)
-                ? pieceLogicFactory.getLogic(from.getPiece().getPieceType()).getValidMoves(game.getGrid(), from)
+                ? from.getPiece().getPieceType().getLogic(pieceTypeLogic).getValidMoves(game.getGrid(), from)
                 : new ArrayList<>();
     }
 
@@ -172,14 +168,14 @@ public class MoveLogic {
         resetField(rookMove.getFrom());
     }
 
-    private void setValidMoves(Game game, Map<Field, List<Field>> allValidFromsAndMoves, List<Field> allValidMoves, Field from) {
+    private void setValidMoves(Game game, Map<Field, List<Field>> allValidFromsAndValidMoves, List<Field> allValidMoves, Field from) {
         List<Field> validMoves = getValidMoves(game, from);
         from.setValidMove(!validMoves.isEmpty());
         from.setValidFrom(from.isValidMove());
         allValidMoves.addAll(validMoves);
 
         if (from.isValidFrom()) {
-            allValidFromsAndMoves.put(from, validMoves);
+            allValidFromsAndValidMoves.put(from, validMoves);
         }
     }
 }

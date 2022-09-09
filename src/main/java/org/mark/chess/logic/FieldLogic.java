@@ -6,18 +6,16 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Piece;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
 
-@Component
+@Service
 public class FieldLogic {
     private static final char FIRST_COLUMN_NAME = 'a';
 
     private final ButtonLogic buttonLogic;
 
-    @Autowired
     public FieldLogic(ButtonLogic buttonLogic) {
         this.buttonLogic = buttonLogic;
     }

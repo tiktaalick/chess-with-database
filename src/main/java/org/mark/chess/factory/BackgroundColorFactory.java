@@ -5,8 +5,10 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.model.Field;
 
 public final class BackgroundColorFactory {
-    public static final int MAX_COLOR_VALUE = 255;
-    public static final int MIN_COLOR_VALUE = 0;
+    public static final  int MAX_COLOR_VALUE = 255;
+    public static final  int MIN_COLOR_VALUE = 0;
+    private static final int DOUBLE          = 2;
+    private static final int EVEN            = 2;
 
     private BackgroundColorFactory() {
     }
@@ -21,7 +23,7 @@ public final class BackgroundColorFactory {
         } else if (field.isValidFrom() || field.isValidMove()) {
             return getValueColor(field);
         } else {
-            return (field.getCoordinates().getX() + field.getCoordinates().getY()) % 2 == 0
+            return (field.getCoordinates().getX() + field.getCoordinates().getY()) % EVEN == 0
                     ? Color.DARK.getAwtColor()
                     : Color.LIGHT.getAwtColor();
         }
@@ -32,7 +34,7 @@ public final class BackgroundColorFactory {
                 ? 0
                 : field.getRelativeValue();
         return new java.awt.Color(MAX_COLOR_VALUE - relativeValue,
-                Math.abs(MAX_COLOR_VALUE - 2 * relativeValue),
-                MAX_COLOR_VALUE - (Math.abs(MAX_COLOR_VALUE - 2 * relativeValue)));
+                Math.abs(MAX_COLOR_VALUE - DOUBLE * relativeValue),
+                MAX_COLOR_VALUE - (Math.abs(MAX_COLOR_VALUE - DOUBLE * relativeValue)));
     }
 }

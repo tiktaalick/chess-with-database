@@ -4,13 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.enums.Color;
-import org.mark.chess.enums.PieceType;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
+import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
 import org.mark.chess.swing.Board;
@@ -31,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
+import static org.mark.chess.enums.PieceType.QUEEN;
+import static org.mark.chess.enums.PieceType.ROOK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -47,7 +47,7 @@ class KingLogicTest {
     private KingLogic kingLogic;
 
     @Mock
-    private PieceLogicFactory opponentFactory;
+    private PieceTypeLogic pieceTypeLogic;
 
     @Mock
     private GridLogic gridLogic;
@@ -162,7 +162,7 @@ class KingLogicTest {
         Grid grid = Grid.createGrid(Arrays.asList(rookField, opponentField), gridLogic, fieldLogic).setOpponentKingField(opponentField);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
-        when(opponentFactory.getLogic(PieceType.ROOK)).thenReturn(rookLogic);
+        when(ROOK.getLogic(pieceTypeLogic)).thenReturn(rookLogic);
         when(rookLogic.isValidMove(grid, opponentField, from, true)).thenReturn(Boolean.TRUE);
         when(checkLogic.isInCheckNow(grid, from, from, false)).thenReturn(Boolean.TRUE);
 
@@ -230,7 +230,7 @@ class KingLogicTest {
         opponentField.setButton(button);
         Grid grid = Grid.createGrid(Arrays.asList(opponentField, from, to), gridLogic, fieldLogic);
 
-        when(opponentFactory.getLogic(PieceType.QUEEN)).thenReturn(queenLogic);
+        when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
         when(queenLogic.isValidMove(any(Grid.class), eq(opponentField), any(Field.class), eq(true))).thenReturn(Boolean.TRUE);
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(Boolean.TRUE);
 

@@ -1,23 +1,21 @@
 package org.mark.chess.logic;
 
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.mark.chess.model.PieceTypeLogic;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class CheckLogic {
-    private PieceLogicFactory pieceLogicFactory;
-    private ColorLogic        colorLogic;
-    private FieldLogic        fieldLogic;
+    private final ColorLogic     colorLogic;
+    private final FieldLogic     fieldLogic;
+    private final PieceTypeLogic pieceTypeLogic;
 
-    @Autowired
-    public CheckLogic(PieceLogicFactory pieceLogicFactory, ColorLogic colorLogic, FieldLogic fieldLogic) {
-        this.pieceLogicFactory = pieceLogicFactory;
+    public CheckLogic(PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic, FieldLogic fieldLogic) {
+        this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
         this.fieldLogic = fieldLogic;
     }
@@ -34,9 +32,7 @@ public class CheckLogic {
                 .stream()
                 .filter(opponentField -> null != opponentField.getPiece())
                 .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
-                .filter(opponentField -> pieceLogicFactory
-                        .getLogic(opponentField.getPiece().getPieceType())
-                        .isValidMove(grid, opponentField, to, true))
+                .filter(opponentField -> opponentField.getPiece().getPieceType().getLogic(pieceTypeLogic).isValidMove(grid, opponentField, to, true))
                 .collect(Collectors.toList());
 
         attackers.forEach((Field field) -> colorLogic.setAttacking(grid, field));
@@ -63,8 +59,10 @@ public class CheckLogic {
     }
 
     private boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
-        return pieceLogicFactory
-                .getLogic(opponentField.getPiece().getPieceType())
+        return opponentField
+                .getPiece()
+                .getPieceType()
+                .getLogic(pieceTypeLogic)
                 .isValidMove(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true);
     }
 }

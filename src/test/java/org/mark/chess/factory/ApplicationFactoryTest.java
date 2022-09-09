@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 class ApplicationFactoryTest {
     @Test
-    void getInstance() {
+    void testGetInstance() {
         assertNotNull(ApplicationFactory.getInstance());
     }
 }

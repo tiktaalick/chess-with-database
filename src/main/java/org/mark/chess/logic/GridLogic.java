@@ -9,9 +9,8 @@ import org.mark.chess.model.Game;
 import org.mark.chess.model.Grid;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.awt.GridLayout;
 import java.util.Collection;
@@ -20,7 +19,7 @@ import java.util.stream.IntStream;
 
 import static org.mark.chess.enums.Color.WHITE;
 
-@Component
+@Service
 public class GridLogic {
     static final         int        NUMBER_OF_COLUMNS_AND_ROWS = 8;
     private static final int        MAXIMUM_SQUARE_ID          = 63;
@@ -29,7 +28,6 @@ public class GridLogic {
     private final        MoveLogic  moveLogic;
 
     @Lazy
-    @Autowired
     public GridLogic(FieldLogic fieldLogic, CheckLogic checkLogic, MoveLogic moveLogic) {
         this.fieldLogic = fieldLogic;
         this.checkLogic = checkLogic;

@@ -144,7 +144,7 @@ class ColorLogicTest {
         Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
         Field from = new Field(null);
 
-        Iterable<Field> validMoves = new ArrayList<>();
+        Collection<Field> validMoves = new ArrayList<>();
         Collection<Field> allValidMoves = List.of(new Field(null).setId(8), new Field(null).setId(9), new Field(null).setId(10));
 
         colorLogic.setValidMoveColors(grid, from, validMoves, allValidMoves);
