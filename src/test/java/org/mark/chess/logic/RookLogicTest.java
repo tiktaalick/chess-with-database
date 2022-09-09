@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.enums.Color;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
@@ -36,16 +34,10 @@ class RookLogicTest {
     private RookLogic rookLogic;
 
     @Mock
-    private PieceLogicFactory opponentFactory;
-
-    @Mock
     private GridLogic gridLogic;
 
     @Mock
     private CheckLogic checkLogic;
-
-    @Mock
-    private FieldLogic fieldLogic;
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -65,7 +57,7 @@ class RookLogicTest {
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Rook(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -77,7 +69,7 @@ class RookLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field(new Rook(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(rookLogic).isFriendlyFire(from.getPiece(), to);
@@ -89,7 +81,7 @@ class RookLogicTest {
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field(new Rook(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -100,7 +92,7 @@ class RookLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field(new Rook(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(rookLogic).isJumping(grid, from, to);

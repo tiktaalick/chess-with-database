@@ -5,16 +5,14 @@ import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Human;
 import org.mark.chess.swing.Board;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
-@Component
+@Service
 public class GameLogic {
-    private GridLogic gridLogic;
+    private final GridLogic gridLogic;
 
-    @Autowired
     public GameLogic(GridLogic gridLogic) {
         this.gridLogic = gridLogic;
     }

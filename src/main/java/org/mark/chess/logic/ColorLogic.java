@@ -6,20 +6,18 @@ import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Grid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
-@Component
+@Service
 class ColorLogic {
     private final GameLogic      gameLogic;
     private final GridLogic      gridLogic;
     private final GridValueLogic gridValueLogic;
 
     @Lazy
-    @Autowired
     ColorLogic(GameLogic gameLogic, GridValueLogic gridValueLogic, GridLogic gridLogic) {
         this.gameLogic = gameLogic;
         this.gridLogic = gridLogic;
@@ -48,7 +46,7 @@ class ColorLogic {
         });
     }
 
-    void setValidMoveColors(Grid grid, Field from, Iterable<Field> validMoves, Collection<Field> allValidMoves) {
+    void setValidMoveColors(Grid grid, Field from, Collection<Field> validMoves, Collection<Field> allValidMoves) {
         grid.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
         allValidMoves.forEach(to -> gridValueLogic.createAbsoluteFieldValues(grid, from, to));
         gridValueLogic.createRelativeFieldValues(validMoves, allValidMoves, from);

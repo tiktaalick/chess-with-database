@@ -1,16 +1,15 @@
 package org.mark.chess.logic;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Queen;
-import org.mark.chess.service.GameService;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -29,26 +28,17 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PieceLogicTest {
-    private static final char DELIMITER     = ';';
-    private static final int  MAX_SQUARE_ID = 63;
-
-    @Spy
-    private PieceLogic pieceLogic;
-
-    @Mock
-    private PieceLogicFactory opponentFactory;
-
-    @Mock
-    private GameService gameService;
+    private static final int MAX_SQUARE_ID = 63;
 
     @Mock
     private GridLogic gridLogic;
 
-    @Mock
-    private CheckLogic checkLogic;
+    private PieceLogic pieceLogic;
 
-    @Mock
-    private FieldLogic fieldLogic;
+    @BeforeEach
+    void beforeEach() {
+        pieceLogic = Mockito.mock(PieceLogic.class, Mockito.CALLS_REAL_METHODS);
+    }
 
     @Test
     void testGetAbsoluteHorizontalMove() {
@@ -69,7 +59,7 @@ class PieceLogicTest {
         Field from = new Field(null).setCoordinates(new Coordinates(0, 0));
         Field invalidTo = new Field(null).setCoordinates(new Coordinates(2, 2));
 
-        Grid grid = Grid.createGrid(Arrays.asList(from, invalidTo), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(from, invalidTo), gridLogic);
 
         when(pieceLogic.isValidMove(grid, from, from, false)).thenReturn(false);
         when(pieceLogic.isValidMove(grid, from, invalidTo, false)).thenReturn(false);
@@ -85,7 +75,7 @@ class PieceLogicTest {
         Field validTo = new Field(null).setCoordinates(new Coordinates(1, 1));
         Field invalidTo = new Field(null).setCoordinates(new Coordinates(2, 2));
 
-        Grid grid = Grid.createGrid(Arrays.asList(from, validTo, invalidTo), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(from, validTo, invalidTo), gridLogic);
 
         when(pieceLogic.isValidMove(grid, from, from, false)).thenReturn(false);
         when(pieceLogic.isValidMove(grid, from, validTo, false)).thenReturn(true);
@@ -98,7 +88,7 @@ class PieceLogicTest {
 
     @Test
     void testHasEmptyParameters_WhenEmptyFrom_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), null, new Field(null)));
+        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic), null, new Field(null)));
     }
 
     @Test
@@ -108,12 +98,12 @@ class PieceLogicTest {
 
     @Test
     void testHasEmptyParameters_WhenEmptyTo_ThenTrue() {
-        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), new Field(null), null));
+        assertTrue(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic), new Field(null), null));
     }
 
     @Test
     void testHasEmptyParameters_WhenNoEmptyParameters_ThenFalse() {
-        assertFalse(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic), new Field(null), new Field(null)));
+        assertFalse(pieceLogic.hasEmptyParameters(Grid.createGrid(new ArrayList<>(), gridLogic), new Field(null), new Field(null)));
     }
 
     @Test
@@ -134,8 +124,7 @@ class PieceLogicTest {
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndDoesNotJumpOverAPiece_ThenReturnFalse() {
         Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                gridLogic,
-                fieldLogic);
+                gridLogic);
 
         Field from = grid
                 .getFields()
@@ -153,8 +142,7 @@ class PieceLogicTest {
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndEndsOnAPiece_ThenReturnFalse() {
         Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                gridLogic,
-                fieldLogic);
+                gridLogic);
 
         Field from = grid
                 .getFields()
@@ -174,8 +162,7 @@ class PieceLogicTest {
     @Test
     void testIsJumping_WhenWhitePawnMovesTwoStepsAndJumpsOverAPiece_ThenReturnTrue() {
         Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                gridLogic,
-                fieldLogic);
+                gridLogic);
 
         Field from = grid
                 .getFields()

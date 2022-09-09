@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.enums.Color;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
@@ -40,16 +39,10 @@ class PawnLogicTest {
     private PawnLogic pawnLogic;
 
     @Mock
-    private PieceLogicFactory opponentFactory;
-
-    @Mock
     private GridLogic gridLogic;
 
     @Mock
     private CheckLogic checkLogic;
-
-    @Mock
-    private FieldLogic fieldLogic;
 
     @Test
     void testIsPawnBeingPromoted_WhenBlackPawnEndsAtTheLastRow_ThenReturnTrue() {
@@ -108,7 +101,7 @@ class PawnLogicTest {
     void testIsValidMove_BasicLineMovesBlack(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         boolean actual = pawnLogic.isValidMove(grid, from, to, false);
         assertEquals(expected, actual);
@@ -131,7 +124,7 @@ class PawnLogicTest {
     void testIsValidMove_BasicLineMovesWhite(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -153,7 +146,7 @@ class PawnLogicTest {
     void testIsValidMove_BasicMovesBlack(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -178,7 +171,7 @@ class PawnLogicTest {
     void testIsValidMove_BasicMovesWhite(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -193,11 +186,9 @@ class PawnLogicTest {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 4));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
         Grid grid = Grid.createGrid(Arrays.asList(new Field(new Pawn(WHITE)
-                                .setMayBeCapturedEnPassant(true)
-                                .setColor(Color.WHITE)).setCoordinates(new Coordinates(3, 4)),
-                        new Field(new Pawn(WHITE).setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(5, 4))),
-                gridLogic,
-                fieldLogic);
+                        .setMayBeCapturedEnPassant(true)
+                        .setColor(Color.WHITE)).setCoordinates(new Coordinates(3, 4)),
+                new Field(new Pawn(WHITE).setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(5, 4))), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -219,7 +210,7 @@ class PawnLogicTest {
     void testIsValidMove_WhenBlackCapturesWhite_ThenReturnTrue(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -231,7 +222,7 @@ class PawnLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(pawnLogic).isFriendlyFire(from.getPiece(), to);
@@ -243,7 +234,7 @@ class PawnLogicTest {
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -254,7 +245,7 @@ class PawnLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(pawnLogic).isJumping(grid, from, to);
@@ -273,11 +264,8 @@ class PawnLogicTest {
     void testIsValidMove_WhenWhiteCapturesBlackEnPassant_ThenReturnTrue(int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 4));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(Arrays.asList(new Field(new Pawn(BLACK)
-                                .setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(3, 4)),
-                        new Field(new Pawn(BLACK).setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(5, 4))),
-                gridLogic,
-                fieldLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(new Field(new Pawn(BLACK).setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(3, 4)),
+                new Field(new Pawn(BLACK).setMayBeCapturedEnPassant(true)).setCoordinates(new Coordinates(5, 4))), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -299,7 +287,7 @@ class PawnLogicTest {
     void testIsValidMove_WhenWhiteCapturesBlack_ThenReturnTrue(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -311,9 +299,7 @@ class PawnLogicTest {
     void testMayBeCapturedEnPassant_WhenBlackMovesNextToWhite_ThenReturnTrue() {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(3, 7));
         Field to = new Field(null).setCoordinates(new Coordinates(3, 5));
-        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 5))),
-                gridLogic,
-                fieldLogic);
+        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 5))), gridLogic);
 
         Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -324,9 +310,7 @@ class PawnLogicTest {
     void testMayBeCapturedEnPassant_WhenWhiteMovesNextToBlack_ThenReturnTrue() {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(3, 2));
         Field to = new Field(null).setCoordinates(new Coordinates(3, 4));
-        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 4))),
-                gridLogic,
-                fieldLogic);
+        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 4))), gridLogic);
 
         Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 

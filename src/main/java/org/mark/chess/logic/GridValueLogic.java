@@ -3,28 +3,24 @@ package org.mark.chess.logic;
 import org.mark.chess.factory.BackgroundColorFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 import static org.mark.chess.factory.BackgroundColorFactory.MAX_COLOR_VALUE;
 import static org.mark.chess.factory.BackgroundColorFactory.MIN_COLOR_VALUE;
 
-@Component
+@Service
 public class GridValueLogic {
-    private final FieldLogic fieldLogic;
-    private final GridLogic  gridLogic;
+    private final GridLogic gridLogic;
 
-    @Autowired
-    public GridValueLogic(GridLogic gridLogic, FieldLogic fieldLogic) {
+    public GridValueLogic(GridLogic gridLogic) {
         this.gridLogic = gridLogic;
-        this.fieldLogic = fieldLogic;
     }
 
     void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
         if (from != null && from.getPiece() != null) {
-            var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic, fieldLogic);
+            var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic);
 
             to.setValue(gridAfterMovement.getGridValue());
             from.setValue(from.getValue() == null
@@ -33,7 +29,7 @@ public class GridValueLogic {
         }
     }
 
-    void createRelativeFieldValues(Iterable<Field> validMoves, Collection<Field> allValidMoves, Field from) {
+    void createRelativeFieldValues(Collection<Field> validMoves, Collection<Field> allValidMoves, Field from) {
         int minValue = getMinValue(allValidMoves);
         int maxValue = getMaxValue(allValidMoves);
         validMoves.forEach((Field gridField) -> {

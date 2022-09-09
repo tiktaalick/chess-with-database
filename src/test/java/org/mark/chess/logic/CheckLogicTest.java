@@ -3,11 +3,11 @@ package org.mark.chess.logic;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.factory.PieceLogicFactory;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Pawn;
+import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Queen;
 import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
@@ -47,16 +47,13 @@ class CheckLogicTest {
     private GridLogic gridLogic;
 
     @Mock
-    private PieceLogicFactory pieceLogicFactory;
+    private PieceTypeLogic pieceTypeLogic;
 
     @Mock
     private QueenLogic queenLogic;
 
     @Mock
     private ColorLogic colorLogic;
-
-    @Mock
-    private FieldLogic fieldLogic;
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -121,11 +118,11 @@ class CheckLogicTest {
                 .orElse(null);
         Field toField = fields.stream().filter(field -> field.getCode().equals(toCode)).findFirst().orElse(fromField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic).setKingField(kingFieldBeforeMove);
+        Grid grid = Grid.createGrid(fields, gridLogic).setKingField(kingFieldBeforeMove);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic, fieldLogic)).thenReturn(grid);
-            when(pieceLogicFactory.getLogic(QUEEN)).thenReturn(queenLogic);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic)).thenReturn(grid);
+            when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
             when(queenLogic.isValidMove(any(Grid.class), any(Field.class), any(Field.class), eq(true))).thenReturn(expectedOutcome);
 
             assertEquals(expectedOutcome, checkLogic.isInCheckNow(grid, fromField, toField, isOpponent));
@@ -199,11 +196,11 @@ class CheckLogicTest {
                 .orElse(null);
         Field toField = fields.stream().filter(field -> field.getCode().equals(toCode)).findFirst().orElse(fromField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic).setKingField(kingFieldBeforeMove);
+        Grid grid = Grid.createGrid(fields, gridLogic).setKingField(kingFieldBeforeMove);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic, fieldLogic)).thenReturn(grid);
-            when(pieceLogicFactory.getLogic(QUEEN)).thenReturn(queenLogic);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic)).thenReturn(grid);
+            when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
             when(queenLogic.isValidMove(any(Grid.class), any(Field.class), any(Field.class), eq(true))).thenReturn(expectedOutcome);
 
             assertEquals(expectedOutcome, checkLogic.isMovingIntoCheck(grid, fromField, toField, isOpponent, gridLogic));

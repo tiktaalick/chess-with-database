@@ -7,15 +7,14 @@ import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Piece;
 import org.mark.chess.model.Rook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-@Component
-public class KingLogic implements PieceLogic {
+@Service
+public class KingLogic extends PieceLogic {
     static final         int KING_X_LEFT       = 3;
     static final         int KING_X_RIGHT      = 7;
     static final         int ROOK_X_LEFT_FROM  = 1;
@@ -24,14 +23,9 @@ public class KingLogic implements PieceLogic {
     static final         int ROOK_X_RIGHT_TO   = 6;
     private static final int KING_INITIAL_X    = 5;
 
-    private GridLogic  gridLogic;
-    private CheckLogic checkLogic;
-
-    @Autowired
     @Lazy
-    public KingLogic(GridLogic gridLogic, CheckLogic checkLogic) {
-        this.gridLogic = gridLogic;
-        this.checkLogic = checkLogic;
+    protected KingLogic(CheckLogic checkLogic, GridLogic gridLogic) {
+        super(checkLogic, gridLogic);
     }
 
     @Override

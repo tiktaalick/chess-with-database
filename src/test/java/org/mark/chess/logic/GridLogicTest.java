@@ -12,7 +12,6 @@ import org.mark.chess.model.Grid;
 import org.mark.chess.model.Human;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Pawn;
-import org.mark.chess.model.Piece;
 import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
 import org.mark.chess.swing.Board;
@@ -33,15 +32,12 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,9 +47,6 @@ class GridLogicTest {
 
     @InjectMocks
     private GridLogic gridLogic;
-
-    @Mock
-    private FieldLogic fieldLogic;
 
     @Mock
     private Board board;
@@ -76,6 +69,9 @@ class GridLogicTest {
     @Mock
     private MoveLogic moveLogic;
 
+    @Mock
+    private Field field;
+
     @Test
     void testCalculateGridValue() {
         Field field1 = new Field(new Queen(BLACK)).setCoordinates(new Coordinates(0, 0)).setId(0);
@@ -83,7 +79,7 @@ class GridLogicTest {
         Field field3 = new Field(new Rook(WHITE)).setCoordinates(new Coordinates(2, 2)).setId(2);
         Field field4 = new Field(new King(WHITE)).setCoordinates(new Coordinates(3, 3)).setId(3);
 
-        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic);
 
         assertEquals(-4, gridLogic.calculateGridValue(grid, WHITE));
         assertEquals(4, gridLogic.calculateGridValue(grid, BLACK));
@@ -107,7 +103,7 @@ class GridLogicTest {
         Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1.setButton(button1),
                 field2.setButton(button2),
                 field3.setButton(button3),
-                field4)), gridLogic, fieldLogic);
+                field4)), gridLogic);
 
         assertEquals(field1, gridLogic.getField(grid, button1));
         assertEquals(field2, gridLogic.getField(grid, button2));
@@ -127,7 +123,7 @@ class GridLogicTest {
         Field field3 = new Field(null).setCoordinates(coordinates3);
         Field field4 = new Field(null).setCoordinates(coordinates4);
 
-        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic);
 
         assertEquals(field1, gridLogic.getField(grid, coordinates1));
         assertEquals(field2, gridLogic.getField(grid, coordinates2));
@@ -142,7 +138,7 @@ class GridLogicTest {
         Field field3 = new Field(null).setCoordinates(new Coordinates(2, 2)).setId(2);
         Field field4 = new Field(new King(WHITE)).setCoordinates(new Coordinates(3, 3)).setId(3);
 
-        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(Arrays.asList(field1, field2, field3, field4)), gridLogic);
 
         assertEquals(field2, gridLogic.getKingField(grid, BLACK));
         assertEquals(field4, gridLogic.getKingField(grid, WHITE));
@@ -153,16 +149,21 @@ class GridLogicTest {
     void testInitializeGrid() {
         Game game = new Game().setPlayers(Arrays.asList(new Human(), new Computer())).setHumanPlayerColor(WHITE);
 
-        try (MockedStatic<InitialPieceFactory> initialPieceFactory = Mockito.mockStatic(InitialPieceFactory.class)) {
-            initialPieceFactory.when(() -> InitialPieceFactory.getInitialPiece(anyInt())).thenReturn(new Pawn(WHITE));
-
-            when(fieldLogic.addChessPiece(any(Field.class), any(Piece.class))).thenReturn(new Field(null));
-            when(fieldLogic.initializeField(eq(board), anyInt())).thenReturn(new Field(null));
+        try (MockedStatic<InitialPieceFactory> initialPieceFactoryMockedStatic = Mockito.mockStatic(InitialPieceFactory.class)) {
+            initialPieceFactoryMockedStatic.when(() -> InitialPieceFactory.getInitialPiece(anyInt())).thenReturn(new Pawn(WHITE));
 
             Grid grid = gridLogic.initializeGrid(game, board);
 
             assertEquals(TOTAL_NUMBER_OF_SQUARES, grid.getFields().size());
-            verify(fieldLogic, times(TOTAL_NUMBER_OF_SQUARES)).initializeField(eq(board), anyInt());
+            Field field63 = grid.getFields().stream().filter(field -> field.getId() == MAX_SQUARE_ID).findFirst().orElse(null);
+            assertNotNull(field63);
+            assertEquals(63, field63.getId());
+            assertEquals("h1", field63.getCode());
+            assertEquals(8, field63.getCoordinates().getX());
+            assertEquals(1, field63.getCoordinates().getY());
+            assertNotNull(field63.getButton());
+            assertEquals("white", field63.getPiece().getColor().getName());
+            assertEquals("pawn", field63.getPiece().getPieceType().getName());
         }
     }
 
@@ -173,14 +174,14 @@ class GridLogicTest {
             return field.setButton(button1);
         }).collect(Collectors.toList());
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(fields, gridLogic);
         Game game = new Game().setGrid(grid);
 
         Field kingField = new Field(new King(BLACK));
 
         Collection<Field> allValidMoves = List.of(new Field(null).setId(8), new Field(null).setId(9), new Field(null).setId(10));
 
-        when(checkLogic.isInCheckNow(grid,kingField,kingField,false)).thenReturn(true);
+        when(checkLogic.isInCheckNow(grid, kingField, kingField, false)).thenReturn(true);
         when(moveLogic.isNotAbleToMove(game, kingField, allValidMoves)).thenReturn(true);
 
         gridLogic.setKingFieldFlags(game, allValidMoves, kingField);
@@ -196,14 +197,14 @@ class GridLogicTest {
             return field.setButton(button1);
         }).collect(Collectors.toList());
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(fields, gridLogic);
         Game game = new Game().setGrid(grid);
 
         Field kingField = new Field(new King(BLACK));
 
         Collection<Field> allValidMoves = List.of(new Field(null).setId(8), new Field(null).setId(9), new Field(null).setId(10));
 
-        when(checkLogic.isInCheckNow(grid,kingField,kingField,false)).thenReturn(false);
+        when(checkLogic.isInCheckNow(grid, kingField, kingField, false)).thenReturn(false);
         when(moveLogic.isNotAbleToMove(game, kingField, allValidMoves)).thenReturn(true);
 
         gridLogic.setKingFieldFlags(game, allValidMoves, kingField);

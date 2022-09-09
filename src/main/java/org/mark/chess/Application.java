@@ -4,15 +4,13 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.service.GameService;
 import org.mark.chess.swing.Board;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
 
-    private GameService gameService;
+    private final GameService gameService;
 
-    @Autowired
     public Application(GameService gameService) {
         this.gameService = gameService;
     }

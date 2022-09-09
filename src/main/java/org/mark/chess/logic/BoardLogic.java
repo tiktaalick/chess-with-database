@@ -4,27 +4,24 @@ import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Move;
 import org.mark.chess.swing.Button;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
 
-@Component
+@Service
 public class BoardLogic {
-    private static final int HEIGHT       = 870;
-    private static final int LEFT_CLICK   = 1;
-    private static final int RIGHT_CLICK  = 3;
-    private static final int SPLIT_IN_TWO = 2;
-    private static final int WIDTH        = 828;
+    private static final int        HEIGHT       = 870;
+    private static final int        LEFT_CLICK   = 1;
+    private static final int        RIGHT_CLICK  = 3;
+    private static final int        SPLIT_IN_TWO = 2;
+    private static final int        WIDTH        = 828;
+    private final        ColorLogic colorLogic;
+    private final        GridLogic  gridLogic;
+    private final        MoveLogic  moveLogic;
 
-    private MoveLogic  moveLogic;
-    private GridLogic  gridLogic;
-    private ColorLogic colorLogic;
-
-    @Autowired
     public BoardLogic(MoveLogic moveLogic, GridLogic gridLogic, ColorLogic colorLogic) {
         this.moveLogic = moveLogic;
         this.gridLogic = gridLogic;

@@ -5,24 +5,19 @@ import org.mark.chess.enums.PieceType;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class PawnLogic implements PieceLogic {
-    private static final int        TWO_STEPS_FORWARD_FROM_BASELINE = 2;
-    private              GridLogic  gridLogic;
-    private              CheckLogic checkLogic;
+@Service
+public class PawnLogic extends PieceLogic {
+    private static final int TWO_STEPS_FORWARD_FROM_BASELINE = 2;
 
-    @Autowired
     @Lazy
-    public PawnLogic(GridLogic gridLogic, CheckLogic checkLogic) {
-        this.gridLogic = gridLogic;
-        this.checkLogic = checkLogic;
+    protected PawnLogic(CheckLogic checkLogic, GridLogic gridLogic) {
+        super(checkLogic, gridLogic);
     }
 
     @Override

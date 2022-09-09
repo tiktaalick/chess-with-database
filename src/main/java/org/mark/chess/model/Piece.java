@@ -7,7 +7,7 @@ import org.mark.chess.enums.PieceType;
 
 @Data
 @Accessors(chain = true)
-public abstract class Piece {
+public class Piece {
     private PieceType pieceType;
     private Color     color;
     private boolean   kickedOff;
