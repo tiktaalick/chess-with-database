@@ -55,9 +55,6 @@ class CheckLogicTest {
     @Mock
     private ColorLogic colorLogic;
 
-    @Mock
-    private FieldLogic fieldLogic;
-
     @ParameterizedTest
     @CsvSource(value = {
             "true;d3;e2;h2;king;e2;false",
@@ -121,10 +118,10 @@ class CheckLogicTest {
                 .orElse(null);
         Field toField = fields.stream().filter(field -> field.getCode().equals(toCode)).findFirst().orElse(fromField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic).setKingField(kingFieldBeforeMove);
+        Grid grid = Grid.createGrid(fields, gridLogic).setKingField(kingFieldBeforeMove);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic, fieldLogic)).thenReturn(grid);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic)).thenReturn(grid);
             when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
             when(queenLogic.isValidMove(any(Grid.class), any(Field.class), any(Field.class), eq(true))).thenReturn(expectedOutcome);
 
@@ -199,10 +196,10 @@ class CheckLogicTest {
                 .orElse(null);
         Field toField = fields.stream().filter(field -> field.getCode().equals(toCode)).findFirst().orElse(fromField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic).setKingField(kingFieldBeforeMove);
+        Grid grid = Grid.createGrid(fields, gridLogic).setKingField(kingFieldBeforeMove);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic, fieldLogic)).thenReturn(grid);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, fromField, toField, gridLogic)).thenReturn(grid);
             when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
             when(queenLogic.isValidMove(any(Grid.class), any(Field.class), any(Field.class), eq(true))).thenReturn(expectedOutcome);
 

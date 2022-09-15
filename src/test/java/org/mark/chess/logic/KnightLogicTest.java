@@ -40,9 +40,6 @@ class KnightLogicTest {
     @Mock
     private CheckLogic checkLogic;
 
-    @Mock
-    private FieldLogic fieldLogic;
-
     @ParameterizedTest
     @CsvSource(value = {
             "3;3;3;3;false",
@@ -61,7 +58,7 @@ class KnightLogicTest {
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new Knight(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -73,7 +70,7 @@ class KnightLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field(new Knight(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(knightLogic).isFriendlyFire(from.getPiece(), to);
@@ -85,7 +82,7 @@ class KnightLogicTest {
     void testIsValidMove_WhenInCheck_ThenReturnFalse() {
         Field from = new Field(new Knight(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
 
@@ -96,7 +93,7 @@ class KnightLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnTrue() {
         Field from = new Field(new Knight(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         Mockito.doReturn(false).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
         Mockito.doReturn(true).when(knightLogic).isJumping(grid, from, to);

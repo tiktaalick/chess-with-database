@@ -24,13 +24,11 @@ import static org.mark.chess.enums.PieceType.PAWN;
 @Service
 public class MoveLogic {
     private final ColorLogic     colorLogic;
-    private final FieldLogic     fieldLogic;
     private final GridLogic      gridLogic;
     private final KingLogic      kingLogic;
     private final PieceTypeLogic pieceTypeLogic;
 
-    public MoveLogic(FieldLogic fieldLogic, GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
-        this.fieldLogic = fieldLogic;
+    public MoveLogic(GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
         this.gridLogic = gridLogic;
         this.kingLogic = kingLogic;
         this.pieceTypeLogic = pieceTypeLogic;
@@ -112,7 +110,7 @@ public class MoveLogic {
             pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
 
             if (pawn.isPawnBeingPromoted()) {
-                fieldLogic.addChessPiece(to, from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
+                to.addChessPiece(from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
             ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
@@ -156,7 +154,7 @@ public class MoveLogic {
     }
 
     private List<Field> getValidMoves(Game game, Field from) {
-        return fieldLogic.isActivePlayerField(game, from)
+        return from.isActivePlayerField(game)
                 ? from.getPiece().getPieceType().getLogic(pieceTypeLogic).getValidMoves(game.getGrid(), from)
                 : new ArrayList<>();
     }

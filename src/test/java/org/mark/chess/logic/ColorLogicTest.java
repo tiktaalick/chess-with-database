@@ -48,9 +48,6 @@ class ColorLogicTest {
     private Button button;
 
     @Mock
-    private FieldLogic fieldLogic;
-
-    @Mock
     private GameLogic gameLogic;
 
     @Mock
@@ -63,7 +60,7 @@ class ColorLogicTest {
             return field.setButton(button);
         }).collect(Collectors.toList());
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(fields, gridLogic);
 
         Field opponentKingField = fields
                 .stream()
@@ -103,7 +100,7 @@ class ColorLogicTest {
             return field.setButton(button);
         }).collect(Collectors.toList());
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(fields, gridLogic);
         Game game = new Game().setGrid(grid);
 
         Field opponentKingField = fields
@@ -141,7 +138,7 @@ class ColorLogicTest {
             return field.setButton(button);
         }).collect(Collectors.toList());
 
-        Grid grid = Grid.createGrid(fields, gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(fields, gridLogic);
         Field from = new Field(null);
 
         Collection<Field> validMoves = new ArrayList<>();

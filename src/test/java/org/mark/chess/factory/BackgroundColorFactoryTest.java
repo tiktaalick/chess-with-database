@@ -2,9 +2,7 @@ package org.mark.chess.factory;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.logic.FieldLogic;
 import org.mark.chess.model.Field;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,9 +12,6 @@ import static org.mark.chess.enums.Color.STALEMATE;
 
 @ExtendWith(MockitoExtension.class)
 class BackgroundColorFactoryTest {
-
-    @Mock
-    private FieldLogic fieldLogic;
 
     @Test
     void testGetBackgroundColor_WhenAttacking_ReturnAttackingColor() {

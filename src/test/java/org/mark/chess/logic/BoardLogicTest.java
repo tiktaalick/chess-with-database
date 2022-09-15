@@ -72,9 +72,6 @@ class BoardLogicTest {
     private Button button;
 
     @Mock
-    private FieldLogic fieldLogic;
-
-    @Mock
     private ColorLogic colorLogic;
 
     @Test
@@ -121,7 +118,7 @@ class BoardLogicTest {
     void testHandleButtonClick_WhenMoveTo_ThenSetToAndMovePiece() {
         Field fieldClick = new Field(null).setValidMove(true);
 
-        Game game = new Game().setInProgress(true).setGrid(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic));
+        Game game = new Game().setInProgress(true).setGrid(Grid.createGrid(new ArrayList<>(), gridLogic));
 
         Move move = new Move().setFrom(new Field(null).setCoordinates(new Coordinates(0, 0)));
 
@@ -160,7 +157,7 @@ class BoardLogicTest {
     void testHandleButtonClick_WhenRightClick_ThenResetValidMoves() {
         Field fieldClick = new Field(null);
 
-        Game game = new Game().setInProgress(true).setGrid(Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic));
+        Game game = new Game().setInProgress(true).setGrid(Grid.createGrid(new ArrayList<>(), gridLogic));
 
         Move move = new Move().setFrom(new Field(null).setCoordinates(new Coordinates(0, 0)));
 

@@ -67,9 +67,6 @@ class KingLogicTest {
     @Mock
     private Button button;
 
-    @Mock
-    private FieldLogic fieldLogic;
-
     @Test
     void testIsValidCastling_CastlingLeft_Valid() {
         Field from = new Field(new King(WHITE)).setCoordinates(new Coordinates(5, 1));
@@ -78,7 +75,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(1, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -93,7 +90,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -108,7 +105,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -123,7 +120,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -138,7 +135,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -159,7 +156,7 @@ class KingLogicTest {
         rookField.setButton(button);
         opponentField.setButton(button);
 
-        Grid grid = Grid.createGrid(Arrays.asList(rookField, opponentField), gridLogic, fieldLogic).setOpponentKingField(opponentField);
+        Grid grid = Grid.createGrid(Arrays.asList(rookField, opponentField), gridLogic).setOpponentKingField(opponentField);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
         when(ROOK.getLogic(pieceTypeLogic)).thenReturn(rookLogic);
@@ -177,7 +174,7 @@ class KingLogicTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE).setHasMovedAtLeastOnce(true)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createGrid(List.of(rookField), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(List.of(rookField), gridLogic);
 
         when(gridLogic.getField(grid, rookCoordinates)).thenReturn(rookField);
 
@@ -201,7 +198,7 @@ class KingLogicTest {
     void testIsValidMove_BasicMoves(int fromX, int fromY, int toX, int toY, boolean expected) {
         Field from = new Field(new King(WHITE)).setCoordinates(new Coordinates(fromX, fromY));
         Field to = new Field(null).setCoordinates(new Coordinates(toX, toY));
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(Boolean.FALSE);
 
@@ -213,7 +210,7 @@ class KingLogicTest {
     void testIsValidMove_WhenFriendlyFire_ThenReturnFalse() {
         Field from = new Field(new King(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(Boolean.FALSE);
         when(kingLogic.isFriendlyFire(from.getPiece(), to)).thenReturn(Boolean.TRUE);
@@ -228,7 +225,7 @@ class KingLogicTest {
 
         Field opponentField = new Field(new Queen(BLACK)).setCoordinates(new Coordinates(4, 4));
         opponentField.setButton(button);
-        Grid grid = Grid.createGrid(Arrays.asList(opponentField, from, to), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(Arrays.asList(opponentField, from, to), gridLogic);
 
         when(QUEEN.getLogic(pieceTypeLogic)).thenReturn(queenLogic);
         when(queenLogic.isValidMove(any(Grid.class), eq(opponentField), any(Field.class), eq(true))).thenReturn(Boolean.TRUE);
@@ -241,7 +238,7 @@ class KingLogicTest {
     void testIsValidMove_WhenJumping_ThenReturnFalse() {
         Field from = new Field(new King(WHITE)).setCoordinates(VALID_MOVE_COORDINATES_FROM);
         Field to = new Field(null).setCoordinates(VALID_MOVE_COORDINATES_TO);
-        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic, fieldLogic);
+        Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
 
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(Boolean.FALSE);
         when(kingLogic.isJumping(grid, from, to)).thenReturn(Boolean.TRUE);

@@ -3,16 +3,13 @@ package org.mark.chess.model;
 import com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.factory.BackgroundColorFactory;
-import org.mark.chess.logic.ButtonLogic;
-import org.mark.chess.logic.FieldLogic;
+import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 
 public class Field implements Comparable<Field> {
     private static final String  CODE_UNKNOWN         = "xx";
     private static final int     ID_UNKNOWN           = -1;
     private static final Integer VALUE_NOT_CALCULATED = null;
-
-    private final FieldLogic fieldLogic = new FieldLogic(new ButtonLogic());
 
     private int         id            = ID_UNKNOWN;
     private String      code          = CODE_UNKNOWN;
@@ -32,50 +29,13 @@ public class Field implements Comparable<Field> {
         this.piece = piece;
     }
 
+    public Field addChessPiece(Piece piece) {
+        return this.setPiece(piece).setButton(Button.initialize(this));
+    }
+
     @Override
     public int compareTo(@NotNull Field other) {
         return this.id - other.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id,
-                code,
-                coordinates,
-                button,
-                piece,
-                value,
-                relativeValue,
-                isValidFrom,
-                isValidMove,
-                isAttacking,
-                isUnderAttack,
-                isCheckMate,
-                isStaleMate);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        var field = (Field) o;
-        return id == field.id &&
-               isValidFrom == field.isValidFrom &&
-               isValidMove == field.isValidMove &&
-               isAttacking == field.isAttacking &&
-               isUnderAttack == field.isUnderAttack &&
-               isCheckMate == field.isCheckMate &&
-               isStaleMate == field.isStaleMate &&
-               Objects.equal(code, field.code) &&
-               Objects.equal(coordinates, field.coordinates) &&
-               Objects.equal(button, field.button) &&
-               Objects.equal(piece, field.piece) &&
-               Objects.equal(value, field.value) &&
-               Objects.equal(relativeValue, field.relativeValue);
     }
 
     public Button getButton() {
@@ -92,9 +52,9 @@ public class Field implements Comparable<Field> {
     }
 
     public Field setCode(String code) {
-        this.id = fieldLogic.createId(code);
+        this.id = Coordinates.createId(code);
         this.code = code;
-        this.coordinates = fieldLogic.createCoordinates(code);
+        this.coordinates = Coordinates.create(code);
 
         return this;
     }
@@ -104,8 +64,8 @@ public class Field implements Comparable<Field> {
     }
 
     public Field setCoordinates(Coordinates coordinates) {
-        this.id = fieldLogic.createId(coordinates);
-        this.code = fieldLogic.createCode(coordinates);
+        this.id = Coordinates.createId(coordinates);
+        this.code = Coordinates.createCode(coordinates);
         this.coordinates = coordinates;
         return this;
     }
@@ -116,8 +76,8 @@ public class Field implements Comparable<Field> {
 
     public Field setId(int id) {
         this.id = id;
-        this.code = fieldLogic.createCode(id);
-        this.coordinates = fieldLogic.createCoordinates(id);
+        this.code = Coordinates.createCode(id);
+        this.coordinates = Coordinates.create(id);
 
         return this;
     }
@@ -147,6 +107,59 @@ public class Field implements Comparable<Field> {
     public Field setValue(Integer value) {
         this.value = value;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id,
+                code,
+                coordinates,
+                button,
+                piece,
+                value,
+                relativeValue,
+                isValidFrom,
+                isValidMove,
+                isAttacking,
+                isUnderAttack,
+                isCheckMate,
+                isStaleMate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        var field = (Field) o;
+        return id == field.id &&
+                isValidFrom == field.isValidFrom &&
+                isValidMove == field.isValidMove &&
+                isAttacking == field.isAttacking &&
+                isUnderAttack == field.isUnderAttack &&
+                isCheckMate == field.isCheckMate &&
+                isStaleMate == field.isStaleMate &&
+                Objects.equal(code, field.code) &&
+                Objects.equal(coordinates, field.coordinates) &&
+                Objects.equal(button, field.button) &&
+                Objects.equal(piece, field.piece) &&
+                Objects.equal(value, field.value) &&
+                Objects.equal(relativeValue, field.relativeValue);
+    }
+
+    public Field initialize(Board board, int id) {
+        this.setId(id);
+        this.setButton(new Button(board, this));
+        board.add(this.getButton());
+
+        return this;
+    }
+
+    public boolean isActivePlayerField(Game game) {
+        return this.getPiece() != null && this.getPiece().getColor() == game.getCurrentPlayerColor();
     }
 
     public boolean isAttacking() {

@@ -21,15 +21,14 @@ import static org.mark.chess.enums.Color.WHITE;
 
 @Service
 public class GridLogic {
-    static final         int        NUMBER_OF_COLUMNS_AND_ROWS = 8;
-    private static final int        MAXIMUM_SQUARE_ID          = 63;
-    private final        CheckLogic checkLogic;
-    private final        FieldLogic fieldLogic;
-    private final        MoveLogic  moveLogic;
+    public static final  int NUMBER_OF_COLUMNS_AND_ROWS = 8;
+    private static final int MAXIMUM_SQUARE_ID          = 63;
+
+    private final CheckLogic checkLogic;
+    private final MoveLogic  moveLogic;
 
     @Lazy
-    public GridLogic(FieldLogic fieldLogic, CheckLogic checkLogic, MoveLogic moveLogic) {
-        this.fieldLogic = fieldLogic;
+    public GridLogic(CheckLogic checkLogic, MoveLogic moveLogic) {
         this.checkLogic = checkLogic;
         this.moveLogic = moveLogic;
     }
@@ -80,8 +79,8 @@ public class GridLogic {
                 .map(id -> (game.getHumanPlayerColor() == WHITE)
                         ? id
                         : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> fieldLogic.addChessPiece(fieldLogic.initializeField(board, id), InitialPieceFactory.getInitialPiece(id)))
-                .collect(Collectors.toList()), this, fieldLogic);
+                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceFactory.getInitialPiece(id)))
+                .collect(Collectors.toList()), this);
     }
 
     void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {

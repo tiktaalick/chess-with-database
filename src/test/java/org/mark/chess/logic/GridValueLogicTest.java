@@ -35,27 +35,21 @@ class GridValueLogicTest {
     private GridLogic gridLogic;
 
     @Mock
-    private FieldLogic fieldLogic;
-
-    @Mock
     private Button button;
 
     @Test
     void testCreateAbsoluteFieldValues_WhenEarlierPossibleMovementIsHigher_ThenFromFieldGetEarlierValueAndToFieldGetsFirstPossibleGridValue() {
         Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                gridLogic,
-                fieldLogic);
+                gridLogic);
         Grid gridAfterMovement = Grid
-                .createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                        gridLogic,
-                        fieldLogic)
+                .createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()), gridLogic)
                 .setGridValue(GRID_VALUE);
 
         Field from = new Field(new Pawn(WHITE)).setValue(HIGHER_FROM_VALUE);
         Field to = new Field(null);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, from, to, gridLogic, fieldLogic)).thenReturn(gridAfterMovement);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, from, to, gridLogic)).thenReturn(gridAfterMovement);
 
             gridValueLogic.createAbsoluteFieldValues(grid, from, to);
 
@@ -67,19 +61,16 @@ class GridValueLogicTest {
     @Test
     void testCreateAbsoluteFieldValues_WhenFirstPossibleMovement_ThenFromFieldAndToFieldGetFirstPossibleGridValue() {
         Grid grid = Grid.createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                gridLogic,
-                fieldLogic);
+                gridLogic);
         Grid gridAfterMovement = Grid
-                .createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()),
-                        gridLogic,
-                        fieldLogic)
+                .createGrid(IntStream.rangeClosed(0, MAX_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()), gridLogic)
                 .setGridValue(GRID_VALUE);
 
         Field from = new Field(new Pawn(WHITE));
         Field to = new Field(null);
 
         try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
-            gridMockedStatic.when(() -> Grid.createGrid(grid, from, to, gridLogic, fieldLogic)).thenReturn(gridAfterMovement);
+            gridMockedStatic.when(() -> Grid.createGrid(grid, from, to, gridLogic)).thenReturn(gridAfterMovement);
 
             gridValueLogic.createAbsoluteFieldValues(grid, from, to);
 

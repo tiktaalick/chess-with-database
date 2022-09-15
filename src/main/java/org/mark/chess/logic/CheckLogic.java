@@ -11,13 +11,11 @@ import java.util.stream.Collectors;
 @Service
 public class CheckLogic {
     private final ColorLogic     colorLogic;
-    private final FieldLogic     fieldLogic;
     private final PieceTypeLogic pieceTypeLogic;
 
-    public CheckLogic(PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic, FieldLogic fieldLogic) {
+    public CheckLogic(PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
         this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
-        this.fieldLogic = fieldLogic;
     }
 
     public boolean isInCheckNow(Grid grid, Field from, Field to, boolean isOpponent) {
@@ -45,7 +43,7 @@ public class CheckLogic {
             return false;
         }
 
-        var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic, fieldLogic);
+        var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
