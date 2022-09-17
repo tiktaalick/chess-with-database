@@ -3,7 +3,7 @@ package org.mark.chess.rulesengine;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.rulesengine.rule.piecetype.BishopIsValidBasicMoveRule;
-import org.mark.chess.rulesengine.rule.piecetype.IsEmptyParametersRule;
+import org.mark.chess.rulesengine.rule.piecetype.HasEmptyParametersRule;
 import org.mark.chess.rulesengine.rule.piecetype.IsFriendlyFireRule;
 import org.mark.chess.rulesengine.rule.piecetype.IsJumpingRule;
 import org.mark.chess.rulesengine.rule.piecetype.IsMovingIntoCheckRule;
@@ -20,7 +20,7 @@ class BishopIsValidMoveRulesEngineTest {
 
     @Test
     void testRules() {
-        assertTrue(bishopIsValidMoveRulesEngine.rules.get(0) instanceof IsEmptyParametersRule);
+        assertTrue(bishopIsValidMoveRulesEngine.rules.get(0) instanceof HasEmptyParametersRule);
         assertTrue(bishopIsValidMoveRulesEngine.rules.get(1) instanceof IsFriendlyFireRule);
         assertTrue(bishopIsValidMoveRulesEngine.rules.get(2) instanceof IsJumpingRule);
         assertTrue(bishopIsValidMoveRulesEngine.rules.get(3) instanceof IsMovingIntoCheckRule);
