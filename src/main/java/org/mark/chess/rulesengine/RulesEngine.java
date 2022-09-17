@@ -1,4 +1,6 @@
-package org.mark.chess.rule;
+package org.mark.chess.rulesengine;
+
+import org.mark.chess.rulesengine.rule.Rule;
 
 import java.util.ArrayList;
 import java.util.List;

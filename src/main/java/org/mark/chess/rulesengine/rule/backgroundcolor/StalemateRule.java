@@ -1,7 +1,7 @@
-package org.mark.chess.rule.backgroundcolor;
+package org.mark.chess.rulesengine.rule.backgroundcolor;
 
 import org.mark.chess.model.Field;
-import org.mark.chess.rule.Rule;
+import org.mark.chess.rulesengine.rule.Rule;
 
 import java.awt.Color;
 
