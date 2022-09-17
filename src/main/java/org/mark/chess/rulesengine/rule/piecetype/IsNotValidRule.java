@@ -3,7 +3,7 @@ package org.mark.chess.rulesengine.rule.piecetype;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.rulesengine.rule.Rule;
 
-public class IsNotValidRule extends PieceTypeHelper implements Rule<IsValidMoveParameter, Boolean> {
+public class IsNotValidRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
     public Boolean create() {

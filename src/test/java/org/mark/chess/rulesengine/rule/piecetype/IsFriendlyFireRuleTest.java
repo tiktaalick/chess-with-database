@@ -60,7 +60,7 @@ class IsFriendlyFireRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertTrue(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(isFriendlyFireRule.isValidMove);
+        assertFalse(isFriendlyFireRule.isValidMove());
     }
 
     @Test
@@ -74,6 +74,6 @@ class IsFriendlyFireRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertFalse(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(isFriendlyFireRule.isValidMove);
+        assertTrue(isFriendlyFireRule.isValidMove());
     }
 }

@@ -58,7 +58,7 @@ class KnightIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertFalse(knightIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(knightIsValidBasicMoveRule.isValidMove);
+        assertFalse(knightIsValidBasicMoveRule.isValidMove());
     }
 
     @Test
@@ -71,6 +71,6 @@ class KnightIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertTrue(knightIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(knightIsValidBasicMoveRule.isValidMove);
+        assertTrue(knightIsValidBasicMoveRule.isValidMove());
     }
 }

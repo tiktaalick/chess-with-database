@@ -6,16 +6,19 @@ import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.rulesengine.rule.Rule;
 
-public class IsJumpingRule extends PieceTypeHelper implements Rule<IsValidMoveParameter, Boolean> {
+public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     @Override
     public Boolean create() {
-        return this.isValidMove;
+        return isValidMove();
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
-        this.isValidMove = !isJumping(isValidMoveParameter.getGrid(), isValidMoveParameter.getFrom(), isValidMoveParameter.getTo());
-        return !this.isValidMove;
+        setParameter(isValidMoveParameter);
+
+        setValidMove(!isJumping(getGrid(), getFrom(), getTo()));
+
+        return !isValidMove();
     }
 
     boolean isJumping(Grid grid, Field from, Field to) {
