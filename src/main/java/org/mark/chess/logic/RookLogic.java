@@ -1,10 +1,12 @@
 package org.mark.chess.logic;
 
-import org.jetbrains.annotations.NotNull;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
+import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import static org.mark.chess.enums.PieceType.ROOK;
 
 @Service
 public class RookLogic extends PieceLogic {
@@ -16,16 +18,6 @@ public class RookLogic extends PieceLogic {
 
     @Override
     public boolean isValidMove(Grid grid, Field from, Field to, boolean isOpponent) {
-        return !hasEmptyParameters(grid, from, to) &&
-                isValidBasicMove(from, to) &&
-                !isFriendlyFire(from.getPiece(), to) &&
-                !isJumping(grid, from, to) &&
-                !checkLogic.isMovingIntoCheck(grid, from, to, isOpponent, gridLogic);
-    }
-
-    private boolean isValidBasicMove(Field from, Field to) {
-        int horizontalMove = getAbsoluteHorizontalMove(from, to);
-        int verticalMove = getAbsoluteVerticalMove(from, to);
-        return (horizontalMove != 0 && verticalMove == 0) || (horizontalMove == 0 && verticalMove != 0);
+        return ROOK.isValidMove(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, isOpponent));
     }
 }

@@ -68,7 +68,7 @@ class IsMovingIntoCheckRuleTest {
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(true);
 
         assertTrue(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(isMovingIntoCheckRule.isValidMove);
+        assertFalse(isMovingIntoCheckRule.isValidMove());
     }
 
     @Test
@@ -87,6 +87,6 @@ class IsMovingIntoCheckRuleTest {
         when(checkLogic.isMovingIntoCheck(grid, from, to, false, gridLogic)).thenReturn(false);
 
         assertFalse(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(isMovingIntoCheckRule.isValidMove);
+        assertTrue(isMovingIntoCheckRule.isValidMove());
     }
 }
