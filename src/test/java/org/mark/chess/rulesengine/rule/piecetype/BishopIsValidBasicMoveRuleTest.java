@@ -3,6 +3,8 @@ package org.mark.chess.rulesengine.rule.piecetype;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.logic.CheckLogic;
 import org.mark.chess.logic.GridLogic;
 import org.mark.chess.model.Field;
@@ -24,7 +26,8 @@ import static org.mark.chess.enums.PieceType.BISHOP;
 
 @ExtendWith(MockitoExtension.class)
 class BishopIsValidBasicMoveRuleTest {
-    private static final int LAST_SQUARE_ON_THE_BOARD_ID = 63;
+    private static final char DELIMITER                   = ';';
+    private static final int  LAST_SQUARE_ON_THE_BOARD_ID = 63;
 
     @InjectMocks
     private BishopIsValidBasicMoveRule bishopIsValidBasicMoveRule;
@@ -61,10 +64,11 @@ class BishopIsValidBasicMoveRuleTest {
         assertFalse(bishopIsValidBasicMoveRule.isValidMove());
     }
 
-    @Test
-    void testRule_WhenValidBasicMove_ThenReturnTrue() {
-        Field from = new Field(BISHOP.createPiece(WHITE)).setCode("e3");
-        Field to = new Field(null).setCode("c1");
+    @ParameterizedTest
+    @CsvSource(value = {"e3;c1", "e3;g1"}, delimiter = DELIMITER)
+    void testRule_WhenValidBasicMove_ThenReturnTrue(String codeFrom, String codeTo) {
+        Field from = new Field(BISHOP.createPiece(WHITE)).setCode(codeFrom);
+        Field to = new Field(null).setCode(codeTo);
 
         fields.set(from.getId(), from);
 
