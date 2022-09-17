@@ -1,4 +1,4 @@
-package org.mark.chess.rule;
+package org.mark.chess.rulesengine.rule;
 
 import java.util.function.Predicate;
 

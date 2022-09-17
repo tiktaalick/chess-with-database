@@ -1,5 +1,6 @@
 package org.mark.chess.logic;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.springframework.context.annotation.Lazy;

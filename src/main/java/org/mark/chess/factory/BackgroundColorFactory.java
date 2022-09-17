@@ -2,7 +2,7 @@ package org.mark.chess.factory;
 
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.model.Field;
-import org.mark.chess.rule.backgroundcolor.BackgroundColorRulesEngine;
+import org.mark.chess.rulesengine.BackgroundColorRulesEngine;
 
 public final class BackgroundColorFactory {
     public static final int MAX_COLOR_VALUE = 255;
