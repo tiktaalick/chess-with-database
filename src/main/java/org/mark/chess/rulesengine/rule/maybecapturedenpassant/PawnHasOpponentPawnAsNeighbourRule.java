@@ -13,7 +13,7 @@ public class PawnHasOpponentPawnAsNeighbourRule extends PieceTypeSharedRules imp
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
-        this.setParameter(isValidMoveParameter);
+        setParameter(isValidMoveParameter);
 
         return !neighbourFieldsWithOpponentPawns(getGrid(), getTo(), getFrom().getPiece().getColor()).isEmpty();
     }

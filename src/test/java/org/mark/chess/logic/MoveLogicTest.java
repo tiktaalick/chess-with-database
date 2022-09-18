@@ -11,10 +11,10 @@ import org.mark.chess.model.King;
 import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
-import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Rook;
 import org.mark.chess.rulesengine.PawnMayBeCapturedEnPassantRulesEngine;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
+import org.mark.chess.rulesengine.rule.isvalidmove.KingIsValidCastlingRule;
 import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,16 +46,10 @@ class MoveLogicTest {
     private MoveLogic moveLogic;
 
     @Mock
+    private CheckLogic checkLogic;
+
+    @Mock
     private GridLogic gridLogic;
-
-    @Mock
-    private KingLogic kingLogic;
-
-    @Mock
-    private PawnLogic pawnLogic;
-
-    @Mock
-    private PieceTypeLogic pieceTypeLogic;
 
     @Mock
     private Button button;
@@ -64,13 +58,10 @@ class MoveLogicTest {
     private ColorLogic colorLogic;
 
     @Mock
-    private Pawn pawn;
-
-    @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
     private PawnMayBeCapturedEnPassantRulesEngine pawnMayBeCapturedEnPassantRulesEngine;
+
+    @Mock
+    private KingIsValidCastlingRule kingIsValidCastlingRule;
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
@@ -157,7 +148,14 @@ class MoveLogicTest {
         Field rookTo = new Field(null).setCoordinates(new Coordinates(4, 1));
         rookTo.setButton(button);
 
-        when(kingLogic.isValidCastling(game.getGrid(), kingFrom, kingTo, kingTo.getCoordinates().getX(), false, true)).thenReturn(true);
+        when(kingIsValidCastlingRule.isValidCastling(game.getGrid(),
+                kingFrom,
+                kingTo,
+                kingTo.getCoordinates().getX(),
+                false,
+                true,
+                checkLogic,
+                gridLogic)).thenReturn(true);
         when(gridLogic.getField(grid, rookFrom.getCoordinates())).thenReturn(rookFrom);
         when(gridLogic.getField(grid, rookTo.getCoordinates())).thenReturn(rookTo);
 

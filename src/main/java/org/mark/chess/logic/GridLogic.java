@@ -44,6 +44,16 @@ public class GridLogic {
                 .sum();
     }
 
+    public Field getField(Grid grid, Coordinates coordinates) {
+        return grid
+                .getFields()
+                .stream()
+                .filter(field -> field.getCoordinates().getX() == coordinates.getX())
+                .filter(field -> field.getCoordinates().getY() == coordinates.getY())
+                .findFirst()
+                .orElse(null);
+    }
+
     public Field getKingField(Grid grid, Color color) {
         return grid
                 .getFields()
@@ -61,16 +71,6 @@ public class GridLogic {
 
     Field getField(Grid grid, Button button) {
         return grid.getFields().stream().filter(field -> button.equals(field.getButton())).findFirst().orElse(null);
-    }
-
-    Field getField(Grid grid, Coordinates coordinates) {
-        return grid
-                .getFields()
-                .stream()
-                .filter(field -> field.getCoordinates().getX() == coordinates.getX())
-                .filter(field -> field.getCoordinates().getY() == coordinates.getY())
-                .findFirst()
-                .orElse(null);
     }
 
     Grid initializeGrid(Game game, Board board) {

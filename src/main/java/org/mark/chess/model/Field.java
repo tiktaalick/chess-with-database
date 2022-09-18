@@ -37,7 +37,7 @@ public class Field implements Comparable<Field> {
     }
 
     public Field addChessPiece(Piece piece) {
-        return this.setPiece(piece).setButton(Button.initialize(this));
+        return setPiece(piece).setButton(Button.initialize(this));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Field implements Comparable<Field> {
     }
 
     public boolean isActivePlayerField(Game game) {
-        return this.getPiece() != null && this.getPiece().getColor() == game.getCurrentPlayerColor();
+        return getPiece() != null && getPiece().getColor() == game.getCurrentPlayerColor();
     }
 
     public Field setCode(String code) {

@@ -10,6 +10,7 @@ import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Rook;
+import org.mark.chess.rulesengine.rule.isvalidmove.KingIsValidCastlingRule;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,18 +24,22 @@ import static org.mark.chess.enums.PieceType.PAWN;
 
 @Service
 public class MoveLogic {
-    private final ColorLogic     colorLogic;
-    private final CheckLogic     checkLogic;
-    private final GridLogic      gridLogic;
-    private final KingLogic      kingLogic;
-    private final PieceTypeLogic pieceTypeLogic;
+    private final ColorLogic              colorLogic;
+    private final CheckLogic              checkLogic;
+    private final GridLogic               gridLogic;
+    private final PieceTypeLogic          pieceTypeLogic;
+    private final KingIsValidCastlingRule kingIsValidCastlingRule;
 
-    public MoveLogic(GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic, CheckLogic checkLogic) {
+    public MoveLogic(GridLogic gridLogic,
+            PieceTypeLogic pieceTypeLogic,
+            ColorLogic colorLogic,
+            CheckLogic checkLogic,
+            KingIsValidCastlingRule kingIsValidCastlingRule) {
         this.gridLogic = gridLogic;
-        this.kingLogic = kingLogic;
         this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
         this.checkLogic = checkLogic;
+        this.kingIsValidCastlingRule = kingIsValidCastlingRule;
     }
 
     void changeTurn(Game game) {
@@ -63,17 +68,17 @@ public class MoveLogic {
 
     void moveRookWhenCastling(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PieceType.KING &&
-                kingLogic.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true)) {
+                kingIsValidCastlingRule.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true, checkLogic, gridLogic)) {
 
-            var rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingLogic.KING_X_LEFT
-                    ? KingLogic.ROOK_X_LEFT_FROM
-                    : KingLogic.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
+            var rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingIsValidCastlingRule.KING_X_LEFT
+                    ? KingIsValidCastlingRule.ROOK_X_LEFT_FROM
+                    : KingIsValidCastlingRule.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
             var rookFromField = gridLogic.getField(game.getGrid(), rookCoordinates);
             var rookToField = gridLogic.getField(game.getGrid(),
-                    rookCoordinates.setX(to.getCoordinates().getX() == KingLogic.KING_X_LEFT
-                            ? KingLogic.ROOK_X_LEFT_TO
-                            : KingLogic.ROOK_X_RIGHT_TO));
+                    rookCoordinates.setX(to.getCoordinates().getX() == KingIsValidCastlingRule.KING_X_LEFT
+                            ? KingIsValidCastlingRule.ROOK_X_LEFT_TO
+                            : KingIsValidCastlingRule.ROOK_X_RIGHT_TO));
 
             moveRock(game.getGrid(), rookFromField, rookToField);
         }

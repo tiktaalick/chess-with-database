@@ -11,7 +11,7 @@ public class PawnIsValidBaselineMoveRule extends PieceTypeSharedRules implements
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
-        this.setParameter(isValidMoveParameter);
+        setParameter(isValidMoveParameter);
 
         return pawnIsValidBaselineMove();
     }
