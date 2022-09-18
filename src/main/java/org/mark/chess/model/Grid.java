@@ -3,34 +3,40 @@ package org.mark.chess.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.mark.chess.enums.Color;
-import org.mark.chess.logic.GridLogic;
+import org.mark.chess.enums.PieceType;
+import org.mark.chess.factory.InitialPieceFactory;
+import org.mark.chess.swing.Board;
+import org.mark.chess.swing.Button;
 
+import java.awt.GridLayout;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.mark.chess.enums.Color.WHITE;
 
 @Data
 @Accessors(chain = true)
-
 public final class Grid {
-    private GridLogic   gridLogic;
+    public static final  int NUMBER_OF_COLUMNS_AND_ROWS = 8;
+    private static final int MAXIMUM_SQUARE_ID          = 63;
+
     private List<Field> fields;
     private Field       kingField;
     private Field       opponentKingField;
     private int         gridValue;
 
-    private Grid(List<Field> fields, GridLogic gridLogic) {
-        this.fields = Collections.unmodifiableList(fields);
-        this.gridLogic = gridLogic;
-        this.kingField = gridLogic.getKingField(this, Color.WHITE);
-        this.opponentKingField = gridLogic.getKingField(this, Color.BLACK);
-        this.gridValue = gridLogic.calculateGridValue(this, Color.WHITE);
+    private Grid(List<Field> fields) {
+        this.fields = fields;
+        this.kingField = getKingField(this, Color.WHITE);
+        this.opponentKingField = getKingField(this, Color.BLACK);
+        this.gridValue = calculateGridValue(this, Color.WHITE);
     }
 
-    private Grid(Grid gridBeforeTheMove, Field from, Field to, GridLogic gridLogic) {
-        this.gridLogic = gridLogic;
+    private Grid(Grid gridBeforeTheMove, Field from, Field to) {
         this.fields = gridBeforeTheMove
                 .getFields()
                 .stream()
@@ -48,16 +54,83 @@ public final class Grid {
 
         this.fields.addAll(movementList);
 
-        this.kingField = gridLogic.getKingField(this, from.getPiece().getColor());
-        this.opponentKingField = gridLogic.getKingField(this, from.getPiece().getColor().getOpposite());
-        this.gridValue = gridLogic.calculateGridValue(this, from.getPiece().getColor());
+        this.kingField = getKingField(this, from.getPiece().getColor());
+        this.opponentKingField = getKingField(this, from.getPiece().getColor().getOpposite());
+        this.gridValue = calculateGridValue(this, from.getPiece().getColor());
     }
 
-    public static Grid createGrid(Grid gridBeforeTheMove, Field from, Field to, GridLogic gridLogic) {
-        return new Grid(gridBeforeTheMove, from, to, gridLogic);
+    public static Grid create(Board board, Color humanPlayerColor) {
+        return new Grid(IntStream
+                .rangeClosed(0, MAXIMUM_SQUARE_ID)
+                .map(id -> (humanPlayerColor == WHITE)
+                        ? id
+                        : (MAXIMUM_SQUARE_ID - id))
+                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceFactory.getInitialPiece(id)))
+                .collect(Collectors.toList()));
     }
 
-    public static Grid createGrid(List<Field> fields, GridLogic gridLogic) {
-        return new Grid(fields, gridLogic);
+    public static Grid createAfterMovement(Grid gridBeforeTheMove, Field from, Field to) {
+        return new Grid(gridBeforeTheMove, from, to);
+    }
+
+    public static Grid createEmpty(Board board, Color humanPlayerColor) {
+        return new Grid(IntStream
+                .rangeClosed(0, MAXIMUM_SQUARE_ID)
+                .map(id -> (humanPlayerColor == WHITE)
+                        ? id
+                        : (MAXIMUM_SQUARE_ID - id))
+                .mapToObj(id -> new Field(null).initialize(board, id))
+                .collect(Collectors.toList()));
+    }
+
+    public static GridLayout createGridLayout() {
+        return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
+    }
+
+    public static void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {
+        boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
+        kingField
+                .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
+                .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
+    }
+
+    public int calculateGridValue(Grid grid, Color activePlayerColor) {
+        return grid
+                .getFields()
+                .stream()
+                .filter(field -> field.getPiece() != null)
+                .mapToInt(field -> field.getPiece().getColor() == activePlayerColor
+                        ? field.getPiece().getPieceType().getValue()
+                        : -field.getPiece().getPieceType().getValue())
+                .sum();
+    }
+
+    public Field getField(Coordinates coordinates) {
+        return this
+                .getFields()
+                .stream()
+                .filter(field -> field.getCoordinates().getX() == coordinates.getX())
+                .filter(field -> field.getCoordinates().getY() == coordinates.getY())
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Field getField(String code) {
+        return this.getFields().stream().filter(field -> field.getCode() == code).findFirst().orElse(null);
+    }
+
+    public Field getField(Button button) {
+        return this.getFields().stream().filter(field -> button.equals(field.getButton())).findFirst().orElse(null);
+    }
+
+    public Field getKingField(Grid grid, Color color) {
+        return grid
+                .getFields()
+                .stream()
+                .filter(field -> field.getPiece() != null)
+                .filter(field -> field.getPiece().getColor() == color)
+                .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
+                .findFirst()
+                .orElse(null);
     }
 }
