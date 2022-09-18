@@ -159,7 +159,7 @@ public class MoveLogic {
 
     private List<Field> getValidMoves(Game game, Field from) {
         return from.isActivePlayerField(game)
-                ? from.getPiece().getPieceType().getLogic(pieceTypeLogic).getValidMoves(game.getGrid(), from)
+                ? pieceTypeLogic.getValidMoves(game.getGrid(), from)
                 : new ArrayList<>();
     }
 

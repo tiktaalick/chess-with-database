@@ -1,21 +1,32 @@
 package org.mark.chess.model;
 
 import lombok.Data;
-import org.mark.chess.logic.BishopLogic;
-import org.mark.chess.logic.KingLogic;
-import org.mark.chess.logic.KnightLogic;
-import org.mark.chess.logic.PawnLogic;
-import org.mark.chess.logic.QueenLogic;
-import org.mark.chess.logic.RookLogic;
+import org.mark.chess.logic.CheckLogic;
+import org.mark.chess.logic.GridLogic;
+import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Component
 public class PieceTypeLogic {
-    private final BishopLogic bishopLogic;
-    private final KingLogic   kingLogic;
-    private final KnightLogic knightLogic;
-    private final PawnLogic   pawnLogic;
-    private final QueenLogic  queenLogic;
-    private final RookLogic   rookLogic;
+    private final CheckLogic checkLogic;
+    private final GridLogic  gridLogic;
+
+    @Lazy
+    public PieceTypeLogic(CheckLogic checkLogic, GridLogic gridLogic) {
+        this.checkLogic = checkLogic;
+        this.gridLogic = gridLogic;
+    }
+
+    public List<Field> getValidMoves(Grid grid, Field from) {
+        return grid
+                .getFields()
+                .stream()
+                .filter(to -> from.getPiece().getPieceType().isValidMove(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)))
+                .collect(Collectors.toList());
+    }
 }

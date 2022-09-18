@@ -1,18 +1,10 @@
 package org.mark.chess.enums;
 
-import org.mark.chess.logic.BishopLogic;
-import org.mark.chess.logic.KingLogic;
-import org.mark.chess.logic.KnightLogic;
-import org.mark.chess.logic.PawnLogic;
-import org.mark.chess.logic.PieceLogic;
-import org.mark.chess.logic.QueenLogic;
-import org.mark.chess.logic.RookLogic;
 import org.mark.chess.model.Bishop;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Knight;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
-import org.mark.chess.model.PieceTypeLogic;
 import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
 import org.mark.chess.rulesengine.BishopIsValidMoveRulesEngine;
@@ -29,9 +21,6 @@ public enum PieceType {
         public King createPiece(Color color) { return new King(color); }
 
         @Override
-        public KingLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getKingLogic(); }
-
-        @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return kingIsValidMoveRulesEngine.process(isValidMoveParameter);
         }
@@ -39,9 +28,6 @@ public enum PieceType {
     PAWN("pawn", 1) {
         @Override
         public Pawn createPiece(Color color) { return new Pawn(color); }
-
-        @Override
-        public PawnLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getPawnLogic(); }
 
         @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
@@ -53,9 +39,6 @@ public enum PieceType {
         public Queen createPiece(Color color) { return new Queen(color); }
 
         @Override
-        public QueenLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getQueenLogic(); }
-
-        @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return queenIsValidMoveRulesEngine.process(isValidMoveParameter);
         }
@@ -63,9 +46,6 @@ public enum PieceType {
     ROOK("rook", 5) {
         @Override
         public Rook createPiece(Color color) { return new Rook(color); }
-
-        @Override
-        public RookLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getRookLogic(); }
 
         @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
@@ -77,9 +57,6 @@ public enum PieceType {
         public Bishop createPiece(Color color) { return new Bishop(color); }
 
         @Override
-        public BishopLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getBishopLogic(); }
-
-        @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return bishopIsValidMoveRulesEngine.process(isValidMoveParameter);
         }
@@ -87,9 +64,6 @@ public enum PieceType {
     KNIGHT("knight", 3) {
         @Override
         public Knight createPiece(Color color) { return new Knight(color); }
-
-        @Override
-        public KnightLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getKnightLogic(); }
 
         @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
@@ -114,10 +88,6 @@ public enum PieceType {
 
     public Piece createPiece(Color color) {
         return new Queen(color);
-    }
-
-    public PieceLogic getLogic(PieceTypeLogic pieceTypeLogic) {
-        return QUEEN.getLogic(pieceTypeLogic);
     }
 
     public String getName() {

@@ -2,7 +2,7 @@ package org.mark.chess.logic;
 
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
-import org.mark.chess.model.PieceTypeLogic;
+import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class CheckLogic {
-    private final ColorLogic     colorLogic;
-    private final PieceTypeLogic pieceTypeLogic;
+    private final ColorLogic colorLogic;
+    private final GridLogic  gridLogic;
 
-    public CheckLogic(PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
-        this.pieceTypeLogic = pieceTypeLogic;
+    public CheckLogic(ColorLogic colorLogic, GridLogic gridLogic) {
         this.colorLogic = colorLogic;
+        this.gridLogic = gridLogic;
     }
 
     public boolean isInCheckNow(Grid grid, Field from, Field to, boolean isOpponent) {
@@ -30,7 +30,10 @@ public class CheckLogic {
                 .stream()
                 .filter(opponentField -> null != opponentField.getPiece())
                 .filter(opponentField -> opponentField.getPiece().getColor() != from.getPiece().getColor())
-                .filter(opponentField -> opponentField.getPiece().getPieceType().getLogic(pieceTypeLogic).isValidMove(grid, opponentField, to, true))
+                .filter(opponentField -> opponentField
+                        .getPiece()
+                        .getPieceType()
+                        .isValidMove(new IsValidMoveParameter(grid, opponentField, to, this, gridLogic, true)))
                 .collect(Collectors.toList());
 
         attackers.forEach((Field field) -> colorLogic.setAttacking(grid, field));
@@ -60,7 +63,6 @@ public class CheckLogic {
         return opponentField
                 .getPiece()
                 .getPieceType()
-                .getLogic(pieceTypeLogic)
-                .isValidMove(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true);
+                .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), this, gridLogic, true));
     }
 }
