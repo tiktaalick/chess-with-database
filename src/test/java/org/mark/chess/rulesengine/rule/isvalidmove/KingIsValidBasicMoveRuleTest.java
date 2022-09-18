@@ -15,40 +15,40 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mark.chess.enums.PieceType.KNIGHT;
+import static org.mark.chess.enums.PieceType.BISHOP;
 
 @ExtendWith(MockitoExtension.class)
-class KnightIsValidBasicMoveRuleTest {
+class KingIsValidBasicMoveRuleTest {
     private static final char DELIMITER                   = ';';
     private static final int  LAST_SQUARE_ON_THE_BOARD_ID = 63;
 
     @InjectMocks
-    private KnightIsValidBasicMoveRule knightIsValidBasicMoveRule;
+    private KingIsValidBasicMoveRule kingIsValidBasicMoveRule;
 
     @Mock
     private Board board;
 
     @Test
     void testRule_WhenInvalidBasicMove_ThenReturnFalse() {
-        Field from = new Field(KNIGHT.createPiece(WHITE)).setCode("a1");
-        Field to = new Field(null).setCode("b2");
+        Field from = new Field(BISHOP.createPiece(WHITE)).setCode("e3");
+        Field to = new Field(null).setCode("e5");
 
         Grid grid = Grid.createEmpty(board, WHITE);
         grid.getFields().set(from.getId(), from);
 
-        assertFalse(knightIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"e3;d5", "e3;g2"}, delimiter = DELIMITER)
+    @CsvSource(value = {"e3;d4", "e3;e4", "e3;f4", "e3;e2", "e3;e4", "e3;d2", "e3;d3", "e3;d4"}, delimiter = DELIMITER)
     void testRule_WhenValidBasicMove_ThenReturnTrue(String codeFrom, String codeTo) {
-        Field from = new Field(KNIGHT.createPiece(WHITE)).setCode(codeFrom);
+        Field from = new Field(BISHOP.createPiece(WHITE)).setCode(codeFrom);
         Field to = new Field(null).setCode(codeTo);
 
         Grid grid = Grid.createEmpty(board, WHITE);
         grid.getFields().set(from.getId(), from);
 
-        assertTrue(knightIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
-        assertTrue(knightIsValidBasicMoveRule.create());
+        assertTrue(kingIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(kingIsValidBasicMoveRule.create());
     }
 }

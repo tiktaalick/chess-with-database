@@ -11,8 +11,8 @@ public class BishopIsValidBasicMoveRule extends PieceTypeSharedRules implements 
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
-        this.setParameter(isValidMoveParameter);
+        setParameter(isValidMoveParameter);
 
-        return this.getAbsoluteHorizontalMove() == this.getAbsoluteVerticalMove() && this.getAbsoluteHorizontalMove() != 0;
+        return getAbsoluteHorizontalMove() == getAbsoluteVerticalMove() && getAbsoluteHorizontalMove() != 0;
     }
 }

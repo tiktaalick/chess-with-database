@@ -3,7 +3,7 @@ package org.mark.chess.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import static org.mark.chess.logic.GridLogic.NUMBER_OF_COLUMNS_AND_ROWS;
+import static org.mark.chess.model.Grid.NUMBER_OF_COLUMNS_AND_ROWS;
 
 @Data
 @Accessors(chain = true)
