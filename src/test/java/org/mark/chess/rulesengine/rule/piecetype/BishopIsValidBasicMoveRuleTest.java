@@ -61,7 +61,6 @@ class BishopIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertFalse(bishopIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(bishopIsValidBasicMoveRule.isValidMove());
     }
 
     @ParameterizedTest
@@ -75,6 +74,6 @@ class BishopIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertTrue(bishopIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(bishopIsValidBasicMoveRule.isValidMove());
+        assertTrue(bishopIsValidBasicMoveRule.create());
     }
 }

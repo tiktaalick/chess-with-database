@@ -7,20 +7,18 @@ public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule
 
     @Override
     public Boolean create() {
-        return isValidMove();
+        return false;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove(!(isValidMoveParameter == null ||
+        return isValidMoveParameter == null ||
                 getGrid() == null ||
                 getFrom() == null ||
                 getTo() == null ||
                 getCheckLogic() == null ||
-                getGridLogic() == null));
-
-        return !isValidMove();
+                getGridLogic() == null;
     }
 }

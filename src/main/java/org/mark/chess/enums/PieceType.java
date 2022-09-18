@@ -17,6 +17,7 @@ import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
 import org.mark.chess.rulesengine.BishopIsValidMoveRulesEngine;
 import org.mark.chess.rulesengine.KnightIsValidMoveRulesEngine;
+import org.mark.chess.rulesengine.PawnIsValidMoveRulesEngine;
 import org.mark.chess.rulesengine.QueenIsValidMoveRulesEngine;
 import org.mark.chess.rulesengine.RookIsValidMoveRulesEngine;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -35,6 +36,11 @@ public enum PieceType {
 
         @Override
         public PawnLogic getLogic(PieceTypeLogic pieceTypeLogic) { return pieceTypeLogic.getPawnLogic(); }
+
+        @Override
+        public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
+            return pawnIsValidMoveRulesEngine.process(isValidMoveParameter);
+        }
     },
     QUEEN("queen", 9) {
         @Override
@@ -87,6 +93,7 @@ public enum PieceType {
 
     private static final BishopIsValidMoveRulesEngine bishopIsValidMoveRulesEngine = new BishopIsValidMoveRulesEngine();
     private static final KnightIsValidMoveRulesEngine knightIsValidMoveRulesEngine = new KnightIsValidMoveRulesEngine();
+    private static final PawnIsValidMoveRulesEngine   pawnIsValidMoveRulesEngine   = new PawnIsValidMoveRulesEngine();
     private static final QueenIsValidMoveRulesEngine  queenIsValidMoveRulesEngine  = new QueenIsValidMoveRulesEngine();
     private static final RookIsValidMoveRulesEngine   rookIsValidMoveRulesEngine   = new RookIsValidMoveRulesEngine();
     private final        String                       name;

@@ -3,7 +3,7 @@ package org.mark.chess.rulesengine.rule.piecetype;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.rulesengine.rule.Rule;
 
-public class RookIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
+public class PawnIsValidCaptureMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     @Override
     public Boolean create() {
         return true;
@@ -13,7 +13,8 @@ public class RookIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return (getAbsoluteHorizontalMove() != 0 && getAbsoluteVerticalMove() == 0) ||
-                (getAbsoluteHorizontalMove() == 0 && getAbsoluteVerticalMove() != 0);
+        return isCaptureMove(getFrom(), getTo()) &&
+                getAbsoluteHorizontalMove(getFrom(), getTo()) == 1 &&
+                getAbsoluteVerticalMove(getFrom(), getTo()) == 1;
     }
 }

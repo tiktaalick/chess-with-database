@@ -7,15 +7,13 @@ public class IsFriendlyFireRule extends PieceTypeSharedRules implements Rule<IsV
 
     @Override
     public Boolean create() {
-        return isValidMove();
+        return false;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove(!(getTo().getPiece() != null && getTo().getPiece().getColor() == getFrom().getPiece().getColor()));
-
-        return !isValidMove();
+        return getTo().getPiece() != null && getTo().getPiece().getColor() == getFrom().getPiece().getColor();
     }
 }

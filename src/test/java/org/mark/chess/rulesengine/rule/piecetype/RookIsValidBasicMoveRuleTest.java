@@ -61,7 +61,6 @@ class RookIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertFalse(rookIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(rookIsValidBasicMoveRule.isValidMove());
     }
 
     @ParameterizedTest
@@ -75,6 +74,6 @@ class RookIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertTrue(rookIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(rookIsValidBasicMoveRule.isValidMove());
+        assertTrue(rookIsValidBasicMoveRule.create());
     }
 }
