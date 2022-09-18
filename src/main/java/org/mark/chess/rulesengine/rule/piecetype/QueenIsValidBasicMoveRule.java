@@ -6,17 +6,15 @@ import org.mark.chess.rulesengine.rule.Rule;
 public class QueenIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     @Override
     public Boolean create() {
-        return isValidMove();
+        return true;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove((getAbsoluteHorizontalMove() != 0 && getAbsoluteVerticalMove() == 0) ||
+        return (getAbsoluteHorizontalMove() != 0 && getAbsoluteVerticalMove() == 0) ||
                 (getAbsoluteHorizontalMove() == 0 && getAbsoluteVerticalMove() != 0) ||
-                (getAbsoluteHorizontalMove() != 0 && getAbsoluteHorizontalMove() == getAbsoluteVerticalMove()));
-
-        return isValidMove();
+                (getAbsoluteHorizontalMove() != 0 && getAbsoluteHorizontalMove() == getAbsoluteVerticalMove());
     }
 }

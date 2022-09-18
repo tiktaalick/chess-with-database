@@ -9,16 +9,14 @@ import org.mark.chess.rulesengine.rule.Rule;
 public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     @Override
     public Boolean create() {
-        return isValidMove();
+        return false;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove(!isJumping(getGrid(), getFrom(), getTo()));
-
-        return !isValidMove();
+        return isJumping(getGrid(), getFrom(), getTo());
     }
 
     boolean isJumping(Grid grid, Field from, Field to) {

@@ -7,15 +7,13 @@ public class IsMovingIntoCheckRule extends PieceTypeSharedRules implements Rule<
 
     @Override
     public Boolean create() {
-        return isValidMove();
+        return false;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove(!getCheckLogic().isMovingIntoCheck(getGrid(), getFrom(), getTo(), isOpponent(), getGridLogic()));
-
-        return !isValidMove();
+        return getCheckLogic().isMovingIntoCheck(getGrid(), getFrom(), getTo(), isOpponent(), getGridLogic());
     }
 }

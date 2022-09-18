@@ -33,42 +33,41 @@ class HasEmptyParametersRuleTest {
     @Test
     void testProcess_WhenEmptyCheckLogic_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, field, null, gridLogic, false)));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, null, field, checkLogic, gridLogic, false)));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyGridLogic_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, field, checkLogic, null, false)));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyGrid_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(null, field, field, checkLogic, gridLogic, false)));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyParameter_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(null));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyTo_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, null, checkLogic, gridLogic, false)));
-        assertFalse(hasEmptyParametersRule.isValidMove());
+        assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenFilledParameters_ThenReturnFalse() {
         assertFalse(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, field, checkLogic, gridLogic, false)));
-        assertTrue(hasEmptyParametersRule.isValidMove());
     }
 }

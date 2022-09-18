@@ -16,6 +16,10 @@ public class PieceTypeSharedRules {
     private int                  absoluteHorizontalMove;
     private int                  absoluteVerticalMove;
 
+    protected static boolean isCaptureMove(Field from, Field to) {
+        return to.getPiece() != null && to.getPiece().getColor() != from.getPiece().getColor();
+    }
+
     protected int getAbsoluteHorizontalMove(Field from, Field to) {
         return from == null || to == null
                 ? 0

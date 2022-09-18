@@ -16,6 +16,6 @@ class IsNotValidRuleTest {
     @Test
     void testRule_Always_ReturnTrue() {
         assertTrue(isNotValidRule.test(null));
-        assertFalse(isNotValidRule.isValidMove());
+        assertFalse(isNotValidRule.create());
     }
 }

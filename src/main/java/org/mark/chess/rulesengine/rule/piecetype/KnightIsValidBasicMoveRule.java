@@ -9,16 +9,14 @@ public class KnightIsValidBasicMoveRule extends PieceTypeSharedRules implements 
 
     @Override
     public Boolean create() {
-        return isValidMove();
+        return true;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        setValidMove((getAbsoluteHorizontalMove() == ONE_STEP && getAbsoluteVerticalMove() == TWO_STEPS) ||
-                (getAbsoluteHorizontalMove() == TWO_STEPS && getAbsoluteVerticalMove() == ONE_STEP));
-
-        return isValidMove();
+        return (getAbsoluteHorizontalMove() == ONE_STEP && getAbsoluteVerticalMove() == TWO_STEPS) ||
+                (getAbsoluteHorizontalMove() == TWO_STEPS && getAbsoluteVerticalMove() == ONE_STEP);
     }
 }

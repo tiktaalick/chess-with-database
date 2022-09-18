@@ -61,7 +61,6 @@ class QueenIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertFalse(queenIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(queenIsValidBasicMoveRule.isValidMove());
     }
 
     @ParameterizedTest
@@ -75,6 +74,6 @@ class QueenIsValidBasicMoveRuleTest {
         Grid grid = Grid.createGrid(fields, gridLogic);
 
         assertTrue(queenIsValidBasicMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertTrue(queenIsValidBasicMoveRule.isValidMove());
+        assertTrue(queenIsValidBasicMoveRule.create());
     }
 }

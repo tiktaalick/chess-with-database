@@ -6,15 +6,13 @@ import org.mark.chess.rulesengine.rule.Rule;
 public class BishopIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     @Override
     public Boolean create() {
-        return this.isValidMove();
+        return true;
     }
 
     @Override
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         this.setParameter(isValidMoveParameter);
 
-        this.setValidMove(this.getAbsoluteHorizontalMove() == this.getAbsoluteVerticalMove() && this.getAbsoluteHorizontalMove() != 0);
-
-        return this.isValidMove();
+        return this.getAbsoluteHorizontalMove() == this.getAbsoluteVerticalMove() && this.getAbsoluteHorizontalMove() != 0;
     }
 }

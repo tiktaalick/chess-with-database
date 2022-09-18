@@ -21,15 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mark.chess.enums.PieceType.BISHOP;
 import static org.mark.chess.enums.PieceType.PAWN;
 
 @ExtendWith(MockitoExtension.class)
-class IsJumpingRuleTest {
+class PawnIsNotValidDirectionRuleTest {
     private static final int LAST_SQUARE_ON_THE_BOARD_ID = 63;
 
     @InjectMocks
-    private IsJumpingRule isJumpingRule;
+    private PawnIsNotValidDirectionRule pawnIsNotValidDirectionRule;
 
     @Mock
     private CheckLogic checkLogic;
@@ -51,31 +50,28 @@ class IsJumpingRuleTest {
     }
 
     @Test
-    void testProcess_WhenJumping_ThenReturnTrue() {
-        Field from = new Field(BISHOP.createPiece(WHITE)).setCode("a1");
-        Field to = new Field(null).setCode("c3");
-        Field opponent = new Field(PAWN.createPiece(BLACK)).setCode("b2");
+    void testRule_WhenInvalidDirection_ThenReturnTrue() {
+        Field from = new Field(PAWN.createPiece(WHITE)).setCode("e3");
+        Field to = new Field(null).setCode("e2");
 
         fields.set(from.getId(), from);
-        fields.set(opponent.getId(), opponent);
 
         Grid grid = Grid.createGrid(fields, gridLogic);
 
-        assertTrue(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
-        assertFalse(isJumpingRule.create());
+        assertTrue(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertFalse(pawnIsNotValidDirectionRule.create());
     }
 
     @Test
-    void testProcess_WhenNotJumping_ThenReturnFalse() {
-        Field from = new Field(BISHOP.createPiece(WHITE)).setCode("a1");
-        Field to = new Field(null).setCode("c3");
-        Field opponent = new Field(PAWN.createPiece(BLACK)).setCode("d4");
+    void testRule_WhenValidDirection_ThenReturnFalse() {
+        Field from = new Field(PAWN.createPiece(BLACK)).setCode("e3");
+        Field to = new Field(null).setCode("e2");
 
         fields.set(from.getId(), from);
-        fields.set(opponent.getId(), opponent);
 
         Grid grid = Grid.createGrid(fields, gridLogic);
 
-        assertFalse(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertFalse(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertFalse(pawnIsNotValidDirectionRule.create());
     }
 }
