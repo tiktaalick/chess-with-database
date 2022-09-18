@@ -54,6 +54,13 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 isValidCastling(getGrid(), getFrom(), getTo(), KING_X_RIGHT, isOpponent(), false, getCheckLogic(), getGridLogic());
     }
 
+    private static Field getRookField(Grid grid, Field from, int direction, GridLogic gridLogic) {
+        return gridLogic.getField(grid,
+                new Coordinates((direction == KING_X_LEFT
+                        ? ROOK_X_LEFT_FROM
+                        : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline()));
+    }
+
     private static boolean isKingValid(Field from, boolean isNowCastling) {
         return isNowCastling || !((King) from.getPiece()).isHasMovedAtLeastOnce();
     }
@@ -69,22 +76,15 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 to.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
     }
 
+    private static boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling, GridLogic gridLogic) {
+        return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction, gridLogic));
+    }
+
     private static boolean isValidCastlingPositions(Field from, Field to, int direction) {
         return isValidFrom(from) && isValdiTo(from, to, direction);
     }
 
     private static boolean isValidFrom(Field from) {
         return from.getCoordinates().getX() == KING_INITIAL_X && from.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
-    }
-
-    private Field getRookField(Grid grid, Field from, int direction, GridLogic gridLogic) {
-        return gridLogic.getField(grid,
-                new Coordinates((direction == KING_X_LEFT
-                        ? ROOK_X_LEFT_FROM
-                        : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline()));
-    }
-
-    private boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling, GridLogic gridLogic) {
-        return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction, gridLogic));
     }
 }
