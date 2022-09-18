@@ -1,12 +1,12 @@
 package org.mark.chess.rulesengine;
 
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
-import org.mark.chess.rulesengine.rule.piecetype.BishopIsValidBasicMoveRule;
-import org.mark.chess.rulesengine.rule.piecetype.HasEmptyParametersRule;
-import org.mark.chess.rulesengine.rule.piecetype.IsFriendlyFireRule;
-import org.mark.chess.rulesengine.rule.piecetype.IsJumpingRule;
-import org.mark.chess.rulesengine.rule.piecetype.IsMovingIntoCheckRule;
-import org.mark.chess.rulesengine.rule.piecetype.IsNotValidRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.BishopIsValidBasicMoveRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.IsFriendlyFireRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.IsJumpingRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.rulesengine.rule.isvalidmove.IsNotValidRule;
 
 public final class BishopIsValidMoveRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
