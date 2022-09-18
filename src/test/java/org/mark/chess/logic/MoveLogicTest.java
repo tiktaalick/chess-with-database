@@ -12,8 +12,9 @@ import org.mark.chess.model.Move;
 import org.mark.chess.model.Pawn;
 import org.mark.chess.model.Piece;
 import org.mark.chess.model.PieceTypeLogic;
-import org.mark.chess.model.Queen;
 import org.mark.chess.model.Rook;
+import org.mark.chess.rulesengine.PawnMayBeCapturedEnPassantRulesEngine;
+import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mark.chess.enums.PieceType.PAWN;
-import static org.mockito.Mockito.verify;
+import static org.mark.chess.enums.PieceType.QUEEN;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +62,15 @@ class MoveLogicTest {
 
     @Mock
     private ColorLogic colorLogic;
+
+    @Mock
+    private Pawn pawn;
+
+    @Mock
+    private CheckLogic checkLogic;
+
+    @Mock
+    private PawnMayBeCapturedEnPassantRulesEngine pawnMayBeCapturedEnPassantRulesEngine;
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
@@ -182,7 +192,6 @@ class MoveLogicTest {
                                 .findFirst()
                                 .orElse(null)));
 
-//        verify(fieldLogic, times(NUMBER_OF_SQUARES)).isActivePlayerField(eq(game), any(Field.class));
         assertEquals(ALL_BUT_TWO_SQUARES,
                 game.getGrid().getFields().stream().filter(field -> !((Pawn) field.getPiece()).isMayBeCapturedEnPassant()).count());
     }
@@ -204,34 +213,24 @@ class MoveLogicTest {
         Grid grid = Grid.createGrid(new ArrayList<>(), gridLogic);
         Game game = new Game().setGrid(grid);
         Field from = new Field(new Pawn(WHITE)).setButton(button);
-        Field to = new Field(null).setButton(button);
-        Queen queen = new Queen(WHITE);
-
-        when(PAWN.getLogic(pieceTypeLogic)).thenReturn(pawnLogic);
-        when(pawnLogic.isPawnBeingPromoted(from, to)).thenReturn(true);
+        Field to = new Field(null).setButton(button).setCode("e8");
 
         moveLogic.setChessPieceSpecificFields(game, from, to);
 
-        verify(pawnLogic).mayBeCapturedEnPassant(game.getGrid(), from, to);
-        verify(pawnLogic).isPawnBeingPromoted(from, to);
-//        verify(fieldLogic).addChessPiece(to, queen.setColor(WHITE));
-
         assertTrue(from.getPiece().isPawnBeingPromoted());
+        assertEquals(QUEEN, to.getPiece().getPieceType());
+        assertEquals(WHITE, to.getPiece().getColor());
     }
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
         Game game = new Game().setGrid(Grid.createGrid(new ArrayList<>(), gridLogic));
-        Field from = new Field(new Pawn(WHITE));
+        Field from = new Field(new Pawn(WHITE).setPawnMayBeCapturedEnPassantRulesEngine(pawnMayBeCapturedEnPassantRulesEngine));
         Field to = new Field(null);
 
-        when(PAWN.getLogic(pieceTypeLogic)).thenReturn(pawnLogic);
-        when(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to)).thenReturn(true);
+        when(pawnMayBeCapturedEnPassantRulesEngine.process(any(IsValidMoveParameter.class))).thenReturn(true);
 
         moveLogic.setChessPieceSpecificFields(game, from, to);
-
-        verify(pawnLogic).mayBeCapturedEnPassant(game.getGrid(), from, to);
-        verify(pawnLogic).isPawnBeingPromoted(from, to);
 
         assertTrue(((Pawn) from.getPiece()).isMayBeCapturedEnPassant());
     }

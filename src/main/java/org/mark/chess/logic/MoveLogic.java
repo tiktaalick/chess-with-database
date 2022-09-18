@@ -24,15 +24,17 @@ import static org.mark.chess.enums.PieceType.PAWN;
 @Service
 public class MoveLogic {
     private final ColorLogic     colorLogic;
+    private final CheckLogic     checkLogic;
     private final GridLogic      gridLogic;
     private final KingLogic      kingLogic;
     private final PieceTypeLogic pieceTypeLogic;
 
-    public MoveLogic(GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic) {
+    public MoveLogic(GridLogic gridLogic, KingLogic kingLogic, PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic, CheckLogic checkLogic) {
         this.gridLogic = gridLogic;
         this.kingLogic = kingLogic;
         this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
+        this.checkLogic = checkLogic;
     }
 
     void changeTurn(Game game) {
@@ -104,12 +106,9 @@ public class MoveLogic {
 
     void setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PAWN) {
-            var pawn = (Pawn) from.getPiece();
-            var pawnLogic = (PawnLogic) PAWN.getLogic(pieceTypeLogic);
-            pawn.setMayBeCapturedEnPassant(pawnLogic.mayBeCapturedEnPassant(game.getGrid(), from, to));
-            pawn.setPawnBeingPromoted(pawnLogic.isPawnBeingPromoted(from, to));
+            ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to, checkLogic, gridLogic).setPawnBeingPromoted(from, to);
 
-            if (pawn.isPawnBeingPromoted()) {
+            if ((from.getPiece()).isPawnBeingPromoted()) {
                 to.addChessPiece(from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
             }
         } else if (from.getPiece().getPieceType() == PieceType.ROOK) {

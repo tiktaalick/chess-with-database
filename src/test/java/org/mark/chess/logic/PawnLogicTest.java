@@ -19,11 +19,9 @@ import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
 
@@ -43,46 +41,6 @@ class PawnLogicTest {
 
     @Mock
     private CheckLogic checkLogic;
-
-    @Test
-    void testIsPawnBeingPromoted_WhenBlackPawnEndsAtTheLastRow_ThenReturnTrue() {
-        Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
-        Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 1));
-
-        assertTrue(pawnLogic.isPawnBeingPromoted(from, to));
-    }
-
-    @Test
-    void testIsPawnBeingPromoted_WhenBlackPawnStartsAtTheLastRow_ThenReturnTrue() {
-        Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 1));
-        Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
-
-        assertTrue(pawnLogic.isPawnBeingPromoted(from, to));
-    }
-
-    @Test
-    void testIsPawnBeingPromoted_WhenPawnBeingPromoted_ThenReturnTrue() {
-        Field from = new Field(new Pawn(WHITE).setPawnBeingPromoted(true));
-        Field to = new Field(null);
-
-        assertTrue(pawnLogic.isPawnBeingPromoted(from, to));
-    }
-
-    @Test
-    void testIsPawnBeingPromoted_WhenWhitePawnEndsAtTheLastRow_ThenReturnTrue() {
-        Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(6, 6));
-        Field to = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 8));
-
-        assertTrue(pawnLogic.isPawnBeingPromoted(from, to));
-    }
-
-    @Test
-    void testIsPawnBeingPromoted_WhenWhitePawnStartsAtTheLastRow_ThenReturnTrue() {
-        Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 8));
-        Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
-
-        assertTrue(pawnLogic.isPawnBeingPromoted(from, to));
-    }
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -293,27 +251,5 @@ class PawnLogicTest {
 
         boolean actual = pawnLogic.isValidMove(grid, from, to, false);
         assertEquals(expected, actual);
-    }
-
-    @Test
-    void testMayBeCapturedEnPassant_WhenBlackMovesNextToWhite_ThenReturnTrue() {
-        Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(3, 7));
-        Field to = new Field(null).setCoordinates(new Coordinates(3, 5));
-        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 5))), gridLogic);
-
-        Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
-
-        assertTrue(pawnLogic.mayBeCapturedEnPassant(grid, from, to));
-    }
-
-    @Test
-    void testMayBeCapturedEnPassant_WhenWhiteMovesNextToBlack_ThenReturnTrue() {
-        Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(3, 2));
-        Field to = new Field(null).setCoordinates(new Coordinates(3, 4));
-        Grid grid = Grid.createGrid(List.of(new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 4))), gridLogic);
-
-        Mockito.doReturn(true).when(checkLogic).isMovingIntoCheck(grid, from, to, false, gridLogic);
-
-        assertTrue(pawnLogic.mayBeCapturedEnPassant(grid, from, to));
     }
 }
