@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.GridLogic;
+import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.model.Pawn;
@@ -35,10 +35,10 @@ class PawnIsValidEnPassantMoveRuleTest {
     private CheckLogic checkLogic;
 
     @Mock
-    private GridLogic gridLogic;
+    private Button button;
 
     @Mock
-    private Button button;
+    private MoveLogic moveLogic;
 
     private List<Field> fields;
 
@@ -60,9 +60,9 @@ class PawnIsValidEnPassantMoveRuleTest {
         fields.set(to.getId(), to);
         fields.set(opponentField.getId(), opponentField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic);
+        Grid grid = new Grid(fields, checkLogic, moveLogic);
 
-        assertFalse(pawnIsValidEnPassantMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertFalse(pawnIsValidEnPassantMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
     }
 
     @Test
@@ -75,9 +75,9 @@ class PawnIsValidEnPassantMoveRuleTest {
         fields.set(to.getId(), to);
         fields.set(opponentField.getId(), opponentField);
 
-        Grid grid = Grid.createGrid(fields, gridLogic);
+        Grid grid = new Grid(fields, checkLogic, moveLogic);
 
-        assertTrue(pawnIsValidEnPassantMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertTrue(pawnIsValidEnPassantMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
         assertTrue(pawnIsValidEnPassantMoveRule.create());
     }
 }

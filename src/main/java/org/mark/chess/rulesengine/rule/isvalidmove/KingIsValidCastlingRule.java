@@ -2,7 +2,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.GridLogic;
 import org.mark.chess.model.Coordinates;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
@@ -31,18 +30,11 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
         return true;
     }
 
-    public boolean isValidCastling(Grid grid,
-            Field from,
-            Field to,
-            int direction,
-            boolean isOpponent,
-            boolean isNowCastling,
-            CheckLogic checkLogic,
-            GridLogic gridLogic) {
+    public boolean isValidCastling(Grid grid, Field from, Field to, int direction, boolean isOpponent, boolean isNowCastling, CheckLogic checkLogic) {
 
         return !isOpponent &&
                 isValidCastlingPositions(from, to, direction) &&
-                isValidCastlingPieces(grid, from, direction, isNowCastling, gridLogic) &&
+                isValidCastlingPieces(grid, from, direction, isNowCastling) &&
                 !checkLogic.isInCheckNow(grid, from, from, false);
     }
 
@@ -50,15 +42,14 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidCastling(getGrid(), getFrom(), getTo(), KING_X_LEFT, isOpponent(), false, getCheckLogic(), getGridLogic()) ||
-                isValidCastling(getGrid(), getFrom(), getTo(), KING_X_RIGHT, isOpponent(), false, getCheckLogic(), getGridLogic());
+        return isValidCastling(getGrid(), getFrom(), getTo(), KING_X_LEFT, isOpponent(), false, getCheckLogic()) ||
+                isValidCastling(getGrid(), getFrom(), getTo(), KING_X_RIGHT, isOpponent(), false, getCheckLogic());
     }
 
-    private static Field getRookField(Grid grid, Field from, int direction, GridLogic gridLogic) {
-        return gridLogic.getField(grid,
-                new Coordinates((direction == KING_X_LEFT
-                        ? ROOK_X_LEFT_FROM
-                        : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline()));
+    private static Field getRookField(Grid grid, Field from, int direction) {
+        return grid.getField(new Coordinates((direction == KING_X_LEFT
+                ? ROOK_X_LEFT_FROM
+                : ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline()));
     }
 
     private static boolean isKingValid(Field from, boolean isNowCastling) {
@@ -76,8 +67,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 to.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
     }
 
-    private static boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling, GridLogic gridLogic) {
-        return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction, gridLogic));
+    private static boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling) {
+        return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction));
     }
 
     private static boolean isValidCastlingPositions(Field from, Field to, int direction) {

@@ -3,7 +3,6 @@ package org.mark.chess.rulesengine.parameter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.GridLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 
@@ -14,6 +13,5 @@ public class IsValidMoveParameter {
     private final Field      from;
     private final Field      to;
     private final CheckLogic checkLogic;
-    private final GridLogic  gridLogic;
     private final boolean    isOpponent;
 }

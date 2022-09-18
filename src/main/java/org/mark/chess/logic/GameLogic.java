@@ -11,10 +11,12 @@ import java.util.Arrays;
 
 @Service
 public class GameLogic {
-    private final GridLogic gridLogic;
+    private final CheckLogic checkLogic;
+    private final MoveLogic  moveLogic;
 
-    public GameLogic(GridLogic gridLogic) {
-        this.gridLogic = gridLogic;
+    public GameLogic(CheckLogic checkLogic, MoveLogic moveLogic) {
+        this.checkLogic = checkLogic;
+        this.moveLogic = moveLogic;
     }
 
     public Game initializeGame(Board board, Color humanPlayerColor) {
@@ -24,7 +26,7 @@ public class GameLogic {
                 .setHumanPlayerColor(humanPlayerColor)
                 .setCurrentPlayerColor(Color.WHITE);
 
-        return game.setGrid(gridLogic.initializeGrid(game, board));
+        return game.setGrid(game.initializeGrid(game, board, checkLogic, moveLogic));
     }
 
     void setGameProgress(Game game, Field kingField) {

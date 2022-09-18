@@ -11,11 +11,9 @@ import java.util.stream.Collectors;
 @Service
 public class CheckLogic {
     private final ColorLogic colorLogic;
-    private final GridLogic  gridLogic;
 
-    public CheckLogic(ColorLogic colorLogic, GridLogic gridLogic) {
+    public CheckLogic(ColorLogic colorLogic) {
         this.colorLogic = colorLogic;
-        this.gridLogic = gridLogic;
     }
 
     public boolean isInCheckNow(Grid grid, Field from, Field to, boolean isOpponent) {
@@ -33,7 +31,7 @@ public class CheckLogic {
                 .filter(opponentField -> opponentField
                         .getPiece()
                         .getPieceType()
-                        .isValidMove(new IsValidMoveParameter(grid, opponentField, to, this, gridLogic, true)))
+                        .isValidMove(new IsValidMoveParameter(grid, opponentField, to, this, true)))
                 .collect(Collectors.toList());
 
         attackers.forEach((Field field) -> colorLogic.setAttacking(grid, field));
@@ -41,12 +39,12 @@ public class CheckLogic {
         return !attackers.isEmpty();
     }
 
-    public boolean isMovingIntoCheck(Grid grid, Field from, Field to, boolean isOpponent, GridLogic gridLogic) {
+    public boolean isMovingIntoCheck(Grid grid, Field from, Field to, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }
 
-        var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic);
+        var gridAfterMovement = grid.createGrid(grid, from, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
@@ -63,6 +61,6 @@ public class CheckLogic {
         return opponentField
                 .getPiece()
                 .getPieceType()
-                .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), this, gridLogic, true));
+                .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), this, true));
     }
 }

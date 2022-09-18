@@ -14,13 +14,11 @@ import java.util.Collection;
 @Service
 class ColorLogic {
     private final GameLogic      gameLogic;
-    private final GridLogic      gridLogic;
     private final GridValueLogic gridValueLogic;
 
     @Lazy
-    ColorLogic(GameLogic gameLogic, GridValueLogic gridValueLogic, GridLogic gridLogic) {
+    ColorLogic(GameLogic gameLogic, GridValueLogic gridValueLogic) {
         this.gameLogic = gameLogic;
-        this.gridLogic = gridLogic;
         this.gridValueLogic = gridValueLogic;
     }
 
@@ -36,7 +34,7 @@ class ColorLogic {
     void setKingFieldColors(Game game, Collection<Field> allValidMoves) {
         game.getGrid().getFields().stream().filter(field -> field.getPiece() != null).forEach((Field field) -> {
             if (field.getPiece().getPieceType() == PieceType.KING) {
-                gridLogic.setKingFieldFlags(game, allValidMoves, field);
+                game.getGrid().setKingFieldFlags(game, allValidMoves, field);
                 gameLogic.setGameProgress(game, field);
             }
 

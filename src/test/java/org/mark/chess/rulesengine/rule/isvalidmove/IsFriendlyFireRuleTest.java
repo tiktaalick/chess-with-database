@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.GridLogic;
+import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -34,7 +34,7 @@ class IsFriendlyFireRuleTest {
     private CheckLogic checkLogic;
 
     @Mock
-    private GridLogic gridLogic;
+    private MoveLogic moveLogic;
 
     @Mock
     private Button button;
@@ -57,9 +57,9 @@ class IsFriendlyFireRuleTest {
         fields.set(from.getId(), from);
         fields.set(to.getId(), to);
 
-        Grid grid = Grid.createGrid(fields, gridLogic);
+        Grid grid = new Grid(fields, checkLogic, moveLogic);
 
-        assertTrue(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertTrue(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
         assertFalse(isFriendlyFireRule.create());
     }
 
@@ -71,8 +71,8 @@ class IsFriendlyFireRuleTest {
         fields.set(from.getId(), from);
         fields.set(to.getId(), to);
 
-        Grid grid = Grid.createGrid(fields, gridLogic);
+        Grid grid = new Grid(fields, checkLogic, moveLogic);
 
-        assertFalse(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, gridLogic, false)));
+        assertFalse(isFriendlyFireRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
     }
 }

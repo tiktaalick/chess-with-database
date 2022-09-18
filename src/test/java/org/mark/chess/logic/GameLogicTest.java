@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.enums.PlayerType;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Player;
 import org.mark.chess.swing.Board;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
 import static org.mark.chess.enums.Color.WHITE;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class GameLogicTest {
@@ -25,10 +25,10 @@ class GameLogicTest {
     private GameLogic gameLogic;
 
     @Mock
-    private GridLogic gridLogic;
+    private Board board;
 
     @Mock
-    private Board board;
+    private Grid grid;
 
     @Test
     void testIinitializeGame() {
@@ -40,7 +40,7 @@ class GameLogicTest {
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> WHITE == color));
         assertTrue(game.getPlayers().stream().map(Player::getColor).anyMatch(color -> BLACK == color));
 
-        verify(gridLogic).initializeGrid(game, board);
+//        verify(game).initializeGrid(game, board);
     }
 
     @Test

@@ -12,15 +12,10 @@ import static org.mark.chess.factory.BackgroundColorFactory.MIN_COLOR_VALUE;
 
 @Service
 public class GridValueLogic {
-    private final GridLogic gridLogic;
-
-    public GridValueLogic(GridLogic gridLogic) {
-        this.gridLogic = gridLogic;
-    }
 
     void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
         if (from != null && from.getPiece() != null) {
-            var gridAfterMovement = Grid.createGrid(grid, from, to, gridLogic);
+            var gridAfterMovement = grid.createGrid(grid, from, to);
 
             to.setValue(gridAfterMovement.getGridValue());
             from.setValue(from.getValue() == null

@@ -3,7 +3,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 import lombok.Data;
 import org.mark.chess.enums.Color;
 import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.GridLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -78,10 +77,6 @@ public class PieceTypeSharedRules {
 
     CheckLogic getCheckLogic() {
         return isValidMoveParameter.getCheckLogic();
-    }
-
-    GridLogic getGridLogic() {
-        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getGridLogic).orElse(null);
     }
 
     boolean isOpponent() {

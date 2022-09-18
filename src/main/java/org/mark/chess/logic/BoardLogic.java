@@ -2,6 +2,7 @@ package org.mark.chess.logic;
 
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.model.Game;
+import org.mark.chess.model.Grid;
 import org.mark.chess.model.Move;
 import org.mark.chess.swing.Button;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,15 @@ public class BoardLogic {
     private static final int        SPLIT_IN_TWO = 2;
     private static final int        WIDTH        = 828;
     private final        ColorLogic colorLogic;
-    private final        GridLogic  gridLogic;
     private final        MoveLogic  moveLogic;
 
-    public BoardLogic(MoveLogic moveLogic, GridLogic gridLogic, ColorLogic colorLogic) {
+    public BoardLogic(MoveLogic moveLogic, ColorLogic colorLogic) {
         this.moveLogic = moveLogic;
-        this.gridLogic = gridLogic;
         this.colorLogic = colorLogic;
     }
 
     public void handleButtonClick(Game game, Window board, Move move, int buttonClick, Button button) {
-        var fieldClick = gridLogic.getField(game.getGrid(), button);
+        var fieldClick = game.getGrid().getField(button);
 
         if (!game.isInProgress()) {
             board.dispose();
@@ -51,7 +50,7 @@ public class BoardLogic {
 
     public void initializeBoard(Game game, Frame board, Move move) {
         board.setSize(WIDTH, HEIGHT);
-        board.setLayout(GridLogic.createGridLayout());
+        board.setLayout(Grid.createGridLayout());
         board.setVisible(true);
         board.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

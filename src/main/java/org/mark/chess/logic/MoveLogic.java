@@ -26,20 +26,18 @@ import static org.mark.chess.enums.PieceType.PAWN;
 public class MoveLogic {
     private final ColorLogic              colorLogic;
     private final CheckLogic              checkLogic;
-    private final GridLogic               gridLogic;
     private final PieceTypeLogic          pieceTypeLogic;
     private final KingIsValidCastlingRule kingIsValidCastlingRule;
 
-    public MoveLogic(GridLogic gridLogic,
-            PieceTypeLogic pieceTypeLogic,
-            ColorLogic colorLogic,
-            CheckLogic checkLogic,
-            KingIsValidCastlingRule kingIsValidCastlingRule) {
-        this.gridLogic = gridLogic;
+    public MoveLogic(PieceTypeLogic pieceTypeLogic, ColorLogic colorLogic, CheckLogic checkLogic, KingIsValidCastlingRule kingIsValidCastlingRule) {
         this.pieceTypeLogic = pieceTypeLogic;
         this.colorLogic = colorLogic;
         this.checkLogic = checkLogic;
         this.kingIsValidCastlingRule = kingIsValidCastlingRule;
+    }
+
+    public boolean isNotAbleToMove(Game game, Field field, Collection<Field> allValidMoves) {
+        return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
     void changeTurn(Game game) {
@@ -62,21 +60,18 @@ public class MoveLogic {
                 fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
     }
 
-    boolean isNotAbleToMove(Game game, Field field, Collection<Field> allValidMoves) {
-        return game.getCurrentPlayerColor() == field.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
-    }
-
     void moveRookWhenCastling(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PieceType.KING &&
-                kingIsValidCastlingRule.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true, checkLogic, gridLogic)) {
+                kingIsValidCastlingRule.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true, checkLogic)) {
 
             var rookCoordinates = new Coordinates((to.getCoordinates().getX() == KingIsValidCastlingRule.KING_X_LEFT
                     ? KingIsValidCastlingRule.ROOK_X_LEFT_FROM
                     : KingIsValidCastlingRule.ROOK_X_RIGHT_FROM), from.getPiece().getColor().getBaseline());
 
-            var rookFromField = gridLogic.getField(game.getGrid(), rookCoordinates);
-            var rookToField = gridLogic.getField(game.getGrid(),
-                    rookCoordinates.setX(to.getCoordinates().getX() == KingIsValidCastlingRule.KING_X_LEFT
+            var rookFromField = game.getGrid().getField(rookCoordinates);
+            var rookToField = game
+                    .getGrid()
+                    .getField(rookCoordinates.setX(to.getCoordinates().getX() == KingIsValidCastlingRule.KING_X_LEFT
                             ? KingIsValidCastlingRule.ROOK_X_LEFT_TO
                             : KingIsValidCastlingRule.ROOK_X_RIGHT_TO));
 
@@ -111,7 +106,7 @@ public class MoveLogic {
 
     void setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PAWN) {
-            ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to, checkLogic, gridLogic).setPawnBeingPromoted(from, to);
+            ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to, checkLogic).setPawnBeingPromoted(from, to);
 
             if ((from.getPiece()).isPawnBeingPromoted()) {
                 to.addChessPiece(from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
@@ -154,7 +149,7 @@ public class MoveLogic {
     }
 
     private void captureEnPassant(Grid grid, Field from, Field to) {
-        resetField(gridLogic.getField(grid, new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
+        resetField(grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
     }
 
     private List<Field> getValidMoves(Game game, Field from) {
