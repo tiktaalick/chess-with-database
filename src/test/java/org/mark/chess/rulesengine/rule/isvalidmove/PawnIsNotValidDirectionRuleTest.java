@@ -3,8 +3,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -31,12 +29,6 @@ class PawnIsNotValidDirectionRuleTest {
     private PawnIsNotValidDirectionRule pawnIsNotValidDirectionRule;
 
     @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
-    private MoveLogic moveLogic;
-
-    @Mock
     private Button button;
 
     private List<Field> fields;
@@ -56,9 +48,9 @@ class PawnIsNotValidDirectionRuleTest {
 
         fields.set(from.getId(), from);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertTrue(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertTrue(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertFalse(pawnIsNotValidDirectionRule.create());
     }
 
@@ -69,9 +61,9 @@ class PawnIsNotValidDirectionRuleTest {
 
         fields.set(from.getId(), from);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertFalse(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertFalse(pawnIsNotValidDirectionRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertFalse(pawnIsNotValidDirectionRule.create());
     }
 }

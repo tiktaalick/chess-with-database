@@ -9,23 +9,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CheckLogicTest {
-    private static final char DELIMITER     = ';';
-    private static final int  MAX_SQUARE_ID = 63;
-
-    @InjectMocks
-    private CheckLogic checkLogic;
-
-    @Mock
-    private Button button;
-
-    @Mock
-    private MoveLogic moveLogic;
-
-    @Mock
-    private PieceType pieceType;
-
-    @Mock
-    private ColorLogic colorLogic;
+//    private static final char DELIMITER     = ';';
+//    private static final int  MAX_SQUARE_ID = 63;
+//
+//    @InjectMocks
+//    private CheckLogic checkLogic;
+//
+//    @Mock
+//    private Button button;
+//
+//    @Mock
+//    private MoveLogic moveLogic;
+//
+//    @Mock
+//    private PieceType pieceType;
+//
+//    @Mock
+//    private ColorLogic colorLogic;
 
 //    @ParameterizedTest
 //    @CsvSource(value = {

@@ -3,8 +3,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -31,12 +29,6 @@ class PawnIsValidCaptureMoveRuleTest {
     private PawnIsValidCaptureMoveRule pawnIsValidCaptureMoveRule;
 
     @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
-    private MoveLogic moveLogic;
-
-    @Mock
     private Button button;
 
     private List<Field> fields;
@@ -57,9 +49,9 @@ class PawnIsValidCaptureMoveRuleTest {
         fields.set(from.getId(), from);
         fields.set(to.getId(), to);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertFalse(pawnIsValidCaptureMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertFalse(pawnIsValidCaptureMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
     }
 
     @Test
@@ -70,9 +62,9 @@ class PawnIsValidCaptureMoveRuleTest {
         fields.set(from.getId(), from);
         fields.set(to.getId(), to);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertTrue(pawnIsValidCaptureMoveRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertTrue(pawnIsValidCaptureMoveRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertTrue(pawnIsValidCaptureMoveRule.create());
     }
 }

@@ -6,8 +6,13 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.factory.BackgroundColorFactory;
+import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -69,6 +74,66 @@ public class Field implements Comparable<Field> {
         return getPiece() != null && getPiece().getColor() == game.getCurrentPlayerColor();
     }
 
+    public boolean isInCheckNow(Grid grid, boolean isOpponent) {
+        if (isOpponent) {
+            return false;
+        }
+
+        grid.getFields().forEach(field -> field.setUnderAttack(false));
+
+        List<Field> attackers = grid
+                .getFields()
+                .stream()
+                .filter(opponentField -> null != opponentField.getPiece())
+                .filter(opponentField -> opponentField.getPiece().getColor() != this.getPiece().getColor())
+                .filter(opponentField -> opponentField
+                        .getPiece()
+                        .getPieceType()
+                        .isValidMove(new IsValidMoveParameter(grid, opponentField, this, true)))
+                .collect(Collectors.toList());
+
+        attackers.forEach((Field field) -> field.setAttacking(grid));
+
+        return !attackers.isEmpty();
+    }
+
+    public boolean isMovingIntoCheck(Grid grid, Field to, boolean isOpponent) {
+        if (isOpponent) {
+            return false;
+        }
+
+        var gridAfterMovement = grid.createGrid(grid, this, to);
+
+        List<Field> attackers = gridAfterMovement
+                .getFields()
+                .stream()
+                .filter(opponentField -> opponentField.getPiece() != null)
+                .filter(opponentField -> opponentField.getPiece().getColor() != this.getPiece().getColor())
+                .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
+                .collect(Collectors.toList());
+
+        return !attackers.isEmpty();
+    }
+
+    public boolean isNotAbleToMove(Game game, Collection<Field> allValidMoves) {
+        return game.getCurrentPlayerColor() == this.getPiece().getColor() && game.isInProgress() && allValidMoves.isEmpty();
+    }
+
+    public Field setAttacking(boolean isAttacking) {
+        this.isAttacking = isAttacking;
+        return this;
+    }
+
+    public void setAttacking(Grid grid) {
+        this.isAttacking = true;
+        this.getButton().setBackground(BackgroundColorFactory.getBackgroundColor(this));
+        grid
+                .getOpponentKingField()
+                .setUnderAttack(true)
+                .getButton()
+                .setBackground(BackgroundColorFactory.getBackgroundColor(grid.getOpponentKingField()));
+    }
+
     public Field setCode(String code) {
         this.id = Coordinates.createId(code);
         this.code = code;
@@ -92,5 +157,12 @@ public class Field implements Comparable<Field> {
         }
 
         return this;
+    }
+
+    private boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
+        return opponentField
+                .getPiece()
+                .getPieceType()
+                .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true));
     }
 }

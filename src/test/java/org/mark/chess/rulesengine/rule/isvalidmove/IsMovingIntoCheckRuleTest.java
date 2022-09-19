@@ -3,8 +3,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -34,12 +32,6 @@ class IsMovingIntoCheckRuleTest {
     private IsMovingIntoCheckRule isMovingIntoCheckRule;
 
     @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
-    private MoveLogic moveLogic;
-
-    @Mock
     private Button button;
 
     private List<Field> fields;
@@ -63,11 +55,11 @@ class IsMovingIntoCheckRuleTest {
         fields.set(opponentField.getId(), opponentField);
         fields.set(kingField.getId(), kingField);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        when(checkLogic.isMovingIntoCheck(grid, from, to, false)).thenReturn(true);
+        when(from.isMovingIntoCheck(grid, to, false)).thenReturn(true);
 
-        assertTrue(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertTrue(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertFalse(isMovingIntoCheckRule.create());
     }
 
@@ -82,10 +74,10 @@ class IsMovingIntoCheckRuleTest {
         fields.set(opponentField.getId(), opponentField);
         fields.set(kingField.getId(), kingField);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        when(checkLogic.isMovingIntoCheck(grid, from, to, false)).thenReturn(false);
+        when(from.isMovingIntoCheck(grid, to, false)).thenReturn(false);
 
-        assertFalse(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertFalse(isMovingIntoCheckRule.test(new IsValidMoveParameter(grid, from, to, false)));
     }
 }

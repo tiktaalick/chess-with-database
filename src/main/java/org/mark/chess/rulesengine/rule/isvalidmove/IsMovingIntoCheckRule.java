@@ -14,6 +14,6 @@ public class IsMovingIntoCheckRule extends PieceTypeSharedRules implements Rule<
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return getCheckLogic().isMovingIntoCheck(getGrid(), getFrom(), getTo(), isOpponent());
+        return getFrom().isMovingIntoCheck(getGrid(), getTo(), isOpponent());
     }
 }

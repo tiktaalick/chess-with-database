@@ -14,6 +14,6 @@ public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule
     public boolean test(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidMoveParameter == null || getGrid() == null || getFrom() == null || getTo() == null || getCheckLogic() == null;
+        return isValidMoveParameter == null || getGrid() == null || getFrom() == null || getTo() == null;
     }
 }

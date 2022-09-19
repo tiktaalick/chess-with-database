@@ -3,8 +3,6 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.logic.CheckLogic;
-import org.mark.chess.logic.MoveLogic;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
@@ -32,12 +30,6 @@ class IsJumpingRuleTest {
     private IsJumpingRule isJumpingRule;
 
     @Mock
-    private CheckLogic checkLogic;
-
-    @Mock
-    private MoveLogic moveLogic;
-
-    @Mock
     private Button button;
 
     private List<Field> fields;
@@ -59,9 +51,9 @@ class IsJumpingRuleTest {
         fields.set(from.getId(), from);
         fields.set(opponent.getId(), opponent);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertTrue(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertTrue(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertFalse(isJumpingRule.create());
     }
 
@@ -74,8 +66,8 @@ class IsJumpingRuleTest {
         fields.set(from.getId(), from);
         fields.set(opponent.getId(), opponent);
 
-        Grid grid = new Grid(fields, checkLogic, moveLogic);
+        Grid grid = new Grid(fields);
 
-        assertFalse(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, checkLogic, false)));
+        assertFalse(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, false)));
     }
 }
