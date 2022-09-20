@@ -1,6 +1,8 @@
 package org.mark.chess.enums;
 
 import org.mark.chess.model.Bishop;
+import org.mark.chess.model.Field;
+import org.mark.chess.model.Game;
 import org.mark.chess.model.King;
 import org.mark.chess.model.Knight;
 import org.mark.chess.model.Pawn;
@@ -24,6 +26,11 @@ public enum PieceType {
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return kingIsValidMoveRulesEngine.process(isValidMoveParameter);
         }
+
+        @Override
+        public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+            ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
+        }
     },
     PAWN("pawn", 1) {
         @Override
@@ -32,6 +39,15 @@ public enum PieceType {
         @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return pawnIsValidMoveRulesEngine.process(isValidMoveParameter);
+        }
+
+        @Override
+        public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+            ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
+
+            if ((from.getPiece()).isPawnBeingPromoted()) {
+                to.addChessPiece(getNextPawnPromotion().createPiece(from.getPiece().getColor()));
+            }
         }
     },
     QUEEN("queen", 9) {
@@ -50,6 +66,11 @@ public enum PieceType {
         @Override
         public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
             return rookIsValidMoveRulesEngine.process(isValidMoveParameter);
+        }
+
+        @Override
+        public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+            ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
     },
     BISHOP("bishop", 3) {
@@ -106,5 +127,9 @@ public enum PieceType {
 
     public boolean isValidMove(IsValidMoveParameter isValidMoveParameter) {
         return queenIsValidMoveRulesEngine.process(isValidMoveParameter);
+    }
+
+    public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+        // As a default, no piece-type specific fields are set.
     }
 }

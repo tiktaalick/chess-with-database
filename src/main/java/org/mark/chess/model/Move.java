@@ -68,27 +68,10 @@ public class Move {
         return this;
     }
 
-    public Move resetField(Field field) {
+    public void resetField(Field field) {
         field.setPiece(null);
         field.getButton().setText(field.getCode());
         field.getButton().setIcon(null);
-
-        return this;
-    }
-
-    public Move setChessPieceSpecificFields(Game game, Field from, Field to) {
-        if (from.getPiece().getPieceType() == PAWN) {
-            ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
-
-            if ((from.getPiece()).isPawnBeingPromoted()) {
-                to.addChessPiece(from.getPiece().getPieceType().getNextPawnPromotion().createPiece(from.getPiece().getColor()));
-            }
-        } else if (from.getPiece().getPieceType() == PieceType.ROOK) {
-            ((Rook) from.getPiece()).setHasMovedAtLeastOnce(true);
-        } else if (from.getPiece().getPieceType() == PieceType.KING) {
-            ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
-        }
-        return this;
     }
 
     public Move setFrom(Field from) {
@@ -97,6 +80,12 @@ public class Move {
         this.to = null;
 
         from.setValidFrom(true);
+
+        return this;
+    }
+
+    public Move setPieceTypeSpecificFields(Game game, Field from, Field to) {
+        from.getPiece().getPieceType().setPieceTypeSpecificFields(game, from, to);
 
         return this;
     }

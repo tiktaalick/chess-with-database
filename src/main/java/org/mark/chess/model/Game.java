@@ -76,7 +76,7 @@ public class Game {
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
             this.move
                     .setTo(this.getGrid(), fieldClick)
-                    .setChessPieceSpecificFields(this, move.getFrom(), fieldClick)
+                    .setPieceTypeSpecificFields(this, move.getFrom(), fieldClick)
                     .moveRookWhenCastling(this, move.getFrom(), fieldClick)
                     .changeTurn(this)
                     .resetField(move.getFrom());
