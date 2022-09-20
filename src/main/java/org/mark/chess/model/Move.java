@@ -17,17 +17,27 @@ public class Move {
     private Field from;
     private Field to;
 
-    public void changeTurn(Game game) {
+    public Move(Field from) {
+        this.piece = from.getPiece();
+        this.from = from;
+    }
+
+    public Move changeTurn(Game game) {
         game.setCurrentPlayerColor(game.getCurrentPlayerColor().getOpposite());
+        return this;
+    }
+
+    public boolean duringAMove(Field field) {
+        return from != null && to != null && Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode());
     }
 
     public void enableValidMoves(Game game, Field from) {
         game.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
 
         List<Field> validMoves = game.getValidMoves(from);
-        validMoves.forEach((Field to) -> {
+        validMoves.forEach((Field validMove) -> {
             from.setValidFrom(true);
-            to.setValidMove(true);
+            validMove.setValidMove(true);
         });
         game.setValidMoveColors(game.getGrid(), from, validMoves, validMoves);
     }
@@ -37,7 +47,7 @@ public class Move {
                 fieldClick.getPiece().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
     }
 
-    public void moveRookWhenCastling(Game game, Field from, Field to) {
+    public Move moveRookWhenCastling(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PieceType.KING &&
                 KingIsValidCastlingRule.isValidCastling(game.getGrid(), from, to, to.getCoordinates().getX(), false, true)) {
 
@@ -52,17 +62,21 @@ public class Move {
                             ? KingIsValidCastlingRule.ROOK_X_LEFT_TO
                             : KingIsValidCastlingRule.ROOK_X_RIGHT_TO));
 
-            moveRock(game.getGrid(), rookFromField, rookToField);
+            moveRook(game.getGrid(), rookFromField, rookToField);
         }
+
+        return this;
     }
 
-    public void resetField(Field field) {
+    public Move resetField(Field field) {
         field.setPiece(null);
         field.getButton().setText(field.getCode());
         field.getButton().setIcon(null);
+
+        return this;
     }
 
-    public void setChessPieceSpecificFields(Game game, Field from, Field to) {
+    public Move setChessPieceSpecificFields(Game game, Field from, Field to) {
         if (from.getPiece().getPieceType() == PAWN) {
             ((Pawn) from.getPiece()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
 
@@ -74,30 +88,29 @@ public class Move {
         } else if (from.getPiece().getPieceType() == PieceType.KING) {
             ((King) from.getPiece()).setHasMovedAtLeastOnce(true);
         }
+        return this;
     }
 
-    public void setFrom(Move move, Field from) {
-        move.setPiece(from.getPiece());
-        move.setFrom(from);
-        move.setTo(null);
+    public Move setFrom(Field from) {
+        this.piece = from.getPiece();
+        this.from = from;
+        this.to = null;
 
         from.setValidFrom(true);
+
+        return this;
     }
 
-    public void setTo(Grid grid, Move move, Field to) {
-        if (isCaptureEnPassant(move, to)) {
-            captureEnPassant(grid, move.getFrom(), to);
+    public Move setTo(Grid grid, Field to) {
+        if (isCaptureEnPassant(this, to)) {
+            captureEnPassant(grid, from, to);
         }
-        move.setTo(to);
-        move.getTo().setPiece(move.getFrom().getPiece());
-        move.getTo().getButton().setText(null);
-        move.getTo().getButton().setIcon(move.getFrom().getButton().getIcon());
-    }
 
-    boolean duringAMove(Field field) {
-        return this.getFrom() != null &&
-                this.getTo() != null &&
-                Arrays.asList(this.getFrom().getCode(), this.getTo().getCode()).contains(field.getCode());
+        setTo(to.setPiece(from.getPiece()));
+        to.getButton().setText(null);
+        to.getButton().setIcon(from.getButton().getIcon());
+
+        return this;
     }
 
     private static boolean isCaptureEnPassant(Move move, Field to) {
@@ -110,10 +123,8 @@ public class Move {
         resetField(grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())));
     }
 
-    private void moveRock(Grid grid, Field from, Field to) {
-        var rookMove = new Move();
-        setFrom(rookMove, from);
-        setTo(grid, rookMove, to);
+    private void moveRook(Grid grid, Field from, Field to) {
+        var rookMove = new Move(from).setTo(grid, to);
         resetField(rookMove.getFrom());
     }
 }

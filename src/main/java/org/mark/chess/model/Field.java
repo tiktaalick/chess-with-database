@@ -102,7 +102,7 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = grid.createAfterMovement(grid, this, to);
+        var gridAfterMovement = Grid.createAfterMovement(grid, this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
@@ -159,7 +159,7 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    private boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
+    private static boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
         return opponentField
                 .getPiece()
                 .getPieceType()

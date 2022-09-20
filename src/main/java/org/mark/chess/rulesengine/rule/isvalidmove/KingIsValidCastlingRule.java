@@ -9,12 +9,10 @@ import org.mark.chess.model.Piece;
 import org.mark.chess.model.Rook;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.rulesengine.rule.Rule;
-import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-@Service
 public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
     public static final  int KING_X_LEFT       = 3;
     public static final  int KING_X_RIGHT      = 7;
@@ -60,21 +58,21 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 !((Rook) rookField.getPiece()).isHasMovedAtLeastOnce();
     }
 
-    private static boolean isValdiTo(Field from, Field to, int direction) {
-        return Arrays.asList(KING_X_LEFT, KING_X_RIGHT).contains(direction) &&
-                to.getCoordinates().getX() == direction &&
-                to.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
-    }
-
     private static boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling) {
         return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction));
     }
 
     private static boolean isValidCastlingPositions(Field from, Field to, int direction) {
-        return isValidFrom(from) && isValdiTo(from, to, direction);
+        return isValidFrom(from) && isValidTo(from, to, direction);
     }
 
     private static boolean isValidFrom(Field from) {
         return from.getCoordinates().getX() == KING_INITIAL_X && from.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
+    }
+
+    private static boolean isValidTo(Field from, Field to, int direction) {
+        return Arrays.asList(KING_X_LEFT, KING_X_RIGHT).contains(direction) &&
+                to.getCoordinates().getX() == direction &&
+                to.getCoordinates().getY() == from.getPiece().getColor().getBaseline();
     }
 }

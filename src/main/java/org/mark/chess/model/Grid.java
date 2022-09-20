@@ -87,6 +87,13 @@ public final class Grid {
         return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
+    public static void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {
+        boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
+        kingField
+                .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
+                .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
+    }
+
     public int calculateGridValue(Grid grid, Color activePlayerColor) {
         return grid
                 .getFields()
@@ -121,12 +128,5 @@ public final class Grid {
                 .filter(field -> field.getPiece().getPieceType() == PieceType.KING)
                 .findFirst()
                 .orElse(null);
-    }
-
-    public void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {
-        boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
-        kingField
-                .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
-                .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
     }
 }

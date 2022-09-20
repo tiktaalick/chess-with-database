@@ -36,10 +36,11 @@ public class Game {
     private Color        humanPlayerColor;
     private Color        currentPlayerColor;
     private Grid         grid;
+    private Move         move = new Move(new Field(null));
 
     public Game(boolean inProgress, List<Player> players, Color humanPlayerColor, Color currentPlayerColor, Grid grid) {
         this.inProgress = inProgress;
-        this.players = players;
+        this.players = Collections.unmodifiableList(players);
         this.humanPlayerColor = humanPlayerColor;
         this.currentPlayerColor = currentPlayerColor;
         this.grid = grid;
@@ -64,28 +65,28 @@ public class Game {
                 : new ArrayList<>();
     }
 
-    public void handleButtonClick(Window board, Move move, int buttonClick, Button button) {
+    public void handleButtonClick(Window board, int buttonClick, Button button) {
         var fieldClick = this.getGrid().getField(button);
 
         if (!this.isInProgress()) {
             board.dispose();
             ApplicationFactory.getInstance().startApplication(this.getHumanPlayerColor().getOpposite());
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
-            move.setFrom(move, fieldClick);
-            move.enableValidMoves(this, fieldClick);
+            this.move.setFrom(fieldClick).enableValidMoves(this, fieldClick);
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
-            move.setTo(this.getGrid(), move, fieldClick);
-            move.setChessPieceSpecificFields(this, move.getFrom(), fieldClick);
-            move.moveRookWhenCastling(this, move.getFrom(), fieldClick);
-            move.changeTurn(this);
-            move.resetField(move.getFrom());
-            this.setKingFieldColors(this.resetValidMoves(move));
+            this.move
+                    .setTo(this.getGrid(), fieldClick)
+                    .setChessPieceSpecificFields(this, move.getFrom(), fieldClick)
+                    .moveRookWhenCastling(this, move.getFrom(), fieldClick)
+                    .changeTurn(this)
+                    .resetField(move.getFrom());
+            this.setKingFieldColors(this.resetValidMoves());
         } else if (buttonClick == RIGHT_CLICK) {
-            this.setKingFieldColors(this.resetValidMoves(move));
+            this.setKingFieldColors(this.resetValidMoves());
         }
     }
 
-    public List<Field> resetValidMoves(Move move) {
+    public List<Field> resetValidMoves() {
         Map<Field, List<Field>> allValidFromsAndValidMoves = new HashMap<>();
         List<Field> allValidMoves = new ArrayList<>();
 
@@ -99,7 +100,7 @@ public class Game {
             }
         });
 
-        allValidFromsAndValidMoves.forEach((from, validMoves) -> setValidMoveColors(this.getGrid(), from, validMoves, allValidMoves));
+        allValidFromsAndValidMoves.forEach((from, validMoves) -> setValidMoveColors(getGrid(), from, validMoves, allValidMoves));
 
         return allValidMoves;
     }
@@ -113,7 +114,7 @@ public class Game {
     public void setKingFieldColors(Collection<Field> allValidMoves) {
         this.getGrid().getFields().stream().filter(field -> field.getPiece() != null).forEach((Field field) -> {
             if (field.getPiece().getPieceType() == PieceType.KING) {
-                this.getGrid().setKingFieldFlags(this, allValidMoves, field);
+                Grid.setKingFieldFlags(this, allValidMoves, field);
                 this.setGameProgress(field);
             }
 
@@ -131,7 +132,7 @@ public class Game {
 
     void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
         if (from != null && from.getPiece() != null) {
-            var gridAfterMovement = grid.createAfterMovement(grid, from, to);
+            var gridAfterMovement = Grid.createAfterMovement(grid, from, to);
 
             to.setValue(gridAfterMovement.getGridValue());
             from.setValue(from.getValue() == null

@@ -2,7 +2,6 @@ package org.mark.chess.service;
 
 import org.mark.chess.enums.Color;
 import org.mark.chess.model.Game;
-import org.mark.chess.model.Move;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,11 @@ public class GameService {
         return Game.create(board, humanPlayerColor);
     }
 
-    public void handleButtonClick(Game game, Board board, Move move, int buttonClick, Button button) {
-        game.handleButtonClick(board, move, buttonClick, button);
+    public void handleButtonClick(Game game, Board board, int buttonClick, Button button) {
+        game.handleButtonClick(board, buttonClick, button);
+    }
+
+    public void resetValidMoves(Game game) {
+        game.resetValidMoves();
     }
 }

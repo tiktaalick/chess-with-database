@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import org.mark.chess.enums.Color;
 import org.mark.chess.model.Game;
 import org.mark.chess.model.Grid;
-import org.mark.chess.model.Move;
 import org.mark.chess.service.GameService;
 
 import javax.swing.JFrame;
@@ -26,15 +25,13 @@ public class Board extends JFrame implements ActionListener, MouseListener {
     private static final int WIDTH        = 828;
 
     private final transient Game game;
-    private transient       Move move;
 
     private transient GameService gameService;
 
     public Board(GameService gameService, Color humanPlayerColor) {
         this.gameService = gameService;
         this.game = gameService.createGame(this, humanPlayerColor);
-        this.move = new Move();
-        this.initialize(game, move);
+        this.initialize(game);
     }
 
     @Override
@@ -49,7 +46,7 @@ public class Board extends JFrame implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent event) {
-        gameService.handleButtonClick(game, this, move, event.getButton(), (Button) event.getSource());
+        gameService.handleButtonClick(game, this, event.getButton(), (Button) event.getSource());
     }
 
     @Override
@@ -67,13 +64,13 @@ public class Board extends JFrame implements ActionListener, MouseListener {
         // Ignored
     }
 
-    private void initialize(Game game, Move move) {
+    private void initialize(Game game) {
         this.setSize(WIDTH, HEIGHT);
         this.setLayout(Grid.createGridLayout());
         this.setVisible(true);
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / SPLIT_IN_TWO - WIDTH / SPLIT_IN_TWO, dim.height / SPLIT_IN_TWO - HEIGHT / SPLIT_IN_TWO);
-        game.resetValidMoves(move);
+        gameService.resetValidMoves(game);
     }
 }
