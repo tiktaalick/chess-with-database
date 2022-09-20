@@ -11,8 +11,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.enums.Color.BLACK;
@@ -36,7 +34,7 @@ class FieldTest {
 
     @Test
     void testIsActivePlayerField_WhenActivePlayerField_ThenReturnTrue() {
-        Game game = new Game(true, Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK)), WHITE, WHITE, grid);
+        Game game = new Game(true, WHITE, grid);
 
         field.initialize(board, FIELD_ID_C5).setPiece(new Pawn(WHITE));
 
@@ -45,7 +43,7 @@ class FieldTest {
 
     @Test
     void testIsActivePlayerField_WhenEmptyField_ThenReturnFalse() {
-        Game game = new Game(true, Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK)), WHITE, WHITE, grid);
+        Game game = new Game(true, WHITE, grid);
 
         field.initialize(board, FIELD_ID_C5);
 
@@ -54,7 +52,7 @@ class FieldTest {
 
     @Test
     void testIsActivePlayerField_WhenOpponentField_ThenReturnFalse() {
-        Game game = new Game(true, Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK)), WHITE, WHITE, grid);
+        Game game = new Game(true, WHITE, grid);
 
         field.initialize(board, FIELD_ID_C5).setPiece(new Pawn(BLACK));
 

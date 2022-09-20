@@ -14,12 +14,13 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.mark.chess.enums.Color.BLACK;
+import static org.mark.chess.enums.Color.WHITE;
 import static org.mark.chess.enums.PieceType.PAWN;
 import static org.mark.chess.factory.BackgroundColorFactory.MAX_COLOR_VALUE;
 import static org.mark.chess.factory.BackgroundColorFactory.MIN_COLOR_VALUE;
@@ -32,26 +33,20 @@ public class Game {
     private static final int RIGHT_CLICK       = 3;
 
     private boolean      inProgress;
-    private List<Player> players;
+    private List<Player> players            = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
     private Color        humanPlayerColor;
-    private Color        currentPlayerColor;
+    private Color        currentPlayerColor = WHITE;
     private Grid         grid;
-    private Move         move = new Move(new Field(null));
+    private Move         move               = new Move(new Field(null));
 
-    public Game(boolean inProgress, List<Player> players, Color humanPlayerColor, Color currentPlayerColor, Grid grid) {
+    public Game(boolean inProgress, Color humanPlayerColor, Grid grid) {
         this.inProgress = inProgress;
-        this.players = Collections.unmodifiableList(players);
         this.humanPlayerColor = humanPlayerColor;
-        this.currentPlayerColor = currentPlayerColor;
         this.grid = grid;
     }
 
     public static Game create(Board board, Color humanPlayerColor) {
-        return new Game(true,
-                Collections.unmodifiableList(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))),
-                humanPlayerColor,
-                Color.WHITE,
-                Grid.create(board, humanPlayerColor));
+        return new Game(true, humanPlayerColor, Grid.create(board, humanPlayerColor));
     }
 
     public List<Field> getValidMoves(Field from) {

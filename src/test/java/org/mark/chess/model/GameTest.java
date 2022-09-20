@@ -60,7 +60,7 @@ class GameTest {
 
     @Spy
     @InjectMocks
-    private Game game = new Game(true, new ArrayList<>(), WHITE, WHITE, grid);
+    private Game game = new Game(true, WHITE, grid);
 
     @Test
     void testCreate() {

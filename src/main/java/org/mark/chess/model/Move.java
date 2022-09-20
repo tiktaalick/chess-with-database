@@ -16,6 +16,7 @@ public class Move {
     private Piece piece;
     private Field from;
     private Field to;
+    private Move  rookMove;
 
     public Move(Field from) {
         this.piece = from.getPiece();
@@ -113,7 +114,7 @@ public class Move {
     }
 
     private void moveRook(Grid grid, Field from, Field to) {
-        var rookMove = new Move(from).setTo(grid, to);
+        this.rookMove = new Move(from).setTo(grid, to);
         resetField(rookMove.getFrom());
     }
 }
