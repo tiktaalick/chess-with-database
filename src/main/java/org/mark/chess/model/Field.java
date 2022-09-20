@@ -126,7 +126,9 @@ public class Field implements Comparable<Field> {
 
     public void setAttacking(Grid grid) {
         this.isAttacking = true;
+
         this.getButton().setBackground(BackgroundColorFactory.getBackgroundColor(this));
+
         grid
                 .getOpponentKingField()
                 .setUnderAttack(true)
