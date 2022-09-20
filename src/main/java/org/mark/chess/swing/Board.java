@@ -32,8 +32,8 @@ public class Board extends JFrame implements ActionListener, MouseListener {
 
     public Board(GameService gameService, Color humanPlayerColor) {
         this.gameService = gameService;
-        game = gameService.createGame(this, humanPlayerColor);
-        move = new Move();
+        this.game = gameService.createGame(this, humanPlayerColor);
+        this.move = new Move();
         this.initialize(game, move);
     }
 

@@ -6,7 +6,6 @@ import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
 import org.mark.chess.factory.ApplicationFactory;
 import org.mark.chess.factory.BackgroundColorFactory;
-import org.mark.chess.factory.InitialPieceFactory;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
@@ -15,13 +14,12 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static org.mark.chess.enums.Color.WHITE;
 import static org.mark.chess.enums.PieceType.PAWN;
 import static org.mark.chess.factory.BackgroundColorFactory.MAX_COLOR_VALUE;
 import static org.mark.chess.factory.BackgroundColorFactory.MIN_COLOR_VALUE;
@@ -34,19 +32,25 @@ public class Game {
     private static final int RIGHT_CLICK       = 3;
 
     private boolean      inProgress;
+    private List<Player> players;
     private Color        humanPlayerColor;
     private Color        currentPlayerColor;
     private Grid         grid;
-    private List<Player> players;
+
+    public Game(boolean inProgress, List<Player> players, Color humanPlayerColor, Color currentPlayerColor, Grid grid) {
+        this.inProgress = inProgress;
+        this.players = players;
+        this.humanPlayerColor = humanPlayerColor;
+        this.currentPlayerColor = currentPlayerColor;
+        this.grid = grid;
+    }
 
     public static Game create(Board board, Color humanPlayerColor) {
-        var game = new Game()
-                .setInProgress(true)
-                .setPlayers(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK)))
-                .setHumanPlayerColor(humanPlayerColor)
-                .setCurrentPlayerColor(Color.WHITE);
-
-        return game.setGrid(game.initializeGrid(board));
+        return new Game(true,
+                Collections.unmodifiableList(Arrays.asList(new Human().setColor(Color.WHITE), new Human().setColor(Color.BLACK))),
+                humanPlayerColor,
+                Color.WHITE,
+                Grid.create(board, humanPlayerColor));
     }
 
     public List<Field> getValidMoves(Field from) {
@@ -79,16 +83,6 @@ public class Game {
         } else if (buttonClick == RIGHT_CLICK) {
             this.setKingFieldColors(this.resetValidMoves(move));
         }
-    }
-
-    public Grid initializeGrid(Board board) {
-        return new Grid(IntStream
-                .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .map(id -> (this.getHumanPlayerColor() == WHITE)
-                        ? id
-                        : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceFactory.getInitialPiece(id)))
-                .collect(Collectors.toList()));
     }
 
     public List<Field> resetValidMoves(Move move) {
@@ -137,7 +131,7 @@ public class Game {
 
     void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
         if (from != null && from.getPiece() != null) {
-            var gridAfterMovement = grid.createGrid(grid, from, to);
+            var gridAfterMovement = grid.createAfterMovement(grid, from, to);
 
             to.setValue(gridAfterMovement.getGridValue());
             from.setValue(from.getValue() == null

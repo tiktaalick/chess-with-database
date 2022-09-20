@@ -1,19 +1,14 @@
 package org.mark.chess.rulesengine.rule.isvalidmove;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.model.Field;
 import org.mark.chess.model.Grid;
 import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
-import org.mark.chess.swing.Button;
+import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,28 +25,17 @@ class IsJumpingRuleTest {
     private IsJumpingRule isJumpingRule;
 
     @Mock
-    private Button button;
-
-    private List<Field> fields;
-
-    @BeforeEach
-    void beforeEach() {
-        fields = IntStream.rangeClosed(0, LAST_SQUARE_ON_THE_BOARD_ID).mapToObj(id -> {
-            Field field = new Field(null).setId(id).setValidMove(false);
-            return field.setButton(button);
-        }).collect(Collectors.toList());
-    }
+    private Board board;
 
     @Test
     void testProcess_WhenJumping_ThenReturnTrue() {
         Field from = new Field(BISHOP.createPiece(WHITE)).setCode("a1");
         Field to = new Field(null).setCode("c3");
-        Field opponent = new Field(PAWN.createPiece(BLACK)).setCode("b2");
+        Field opponentField = new Field(PAWN.createPiece(BLACK)).setCode("b2");
 
-        fields.set(from.getId(), from);
-        fields.set(opponent.getId(), opponent);
-
-        Grid grid = new Grid(fields);
+        Grid grid = Grid.createEmpty(board, WHITE);
+        grid.getFields().set(from.getId(), from);
+        grid.getFields().set(opponentField.getId(), opponentField);
 
         assertTrue(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, false)));
         assertFalse(isJumpingRule.create());
@@ -61,12 +45,11 @@ class IsJumpingRuleTest {
     void testProcess_WhenNotJumping_ThenReturnFalse() {
         Field from = new Field(BISHOP.createPiece(WHITE)).setCode("a1");
         Field to = new Field(null).setCode("c3");
-        Field opponent = new Field(PAWN.createPiece(BLACK)).setCode("d4");
+        Field opponentField = new Field(PAWN.createPiece(BLACK)).setCode("d4");
 
-        fields.set(from.getId(), from);
-        fields.set(opponent.getId(), opponent);
-
-        Grid grid = new Grid(fields);
+        Grid grid = Grid.createEmpty(board, WHITE);
+        grid.getFields().set(from.getId(), from);
+        grid.getFields().set(opponentField.getId(), opponentField);
 
         assertFalse(isJumpingRule.test(new IsValidMoveParameter(grid, from, to, false)));
     }

@@ -102,7 +102,7 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = grid.createGrid(grid, this, to);
+        var gridAfterMovement = grid.createAfterMovement(grid, this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()

@@ -23,12 +23,6 @@ class HasEmptyParametersRuleTest {
     private Grid grid;
 
     @Test
-    void testProcess_WhenEmptyCheckLogic_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, field, false)));
-        assertFalse(hasEmptyParametersRule.create());
-    }
-
-    @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
         assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, null, field, false)));
         assertFalse(hasEmptyParametersRule.create());

@@ -4,20 +4,22 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.mark.chess.enums.Color;
 import org.mark.chess.enums.PieceType;
+import org.mark.chess.factory.InitialPieceFactory;
+import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.mark.chess.enums.Color.WHITE;
 
 @Data
 @Accessors(chain = true)
-
 public final class Grid {
     public static final  int NUMBER_OF_COLUMNS_AND_ROWS = 8;
     private static final int MAXIMUM_SQUARE_ID          = 63;
@@ -27,9 +29,8 @@ public final class Grid {
     private Field       opponentKingField;
     private int         gridValue;
 
-    @Autowired
-    public Grid(List<Field> fields) {
-        this.fields = Collections.unmodifiableList(fields);
+    private Grid(List<Field> fields) {
+        this.fields = fields;
         this.kingField = getKingField(this, Color.WHITE);
         this.opponentKingField = getKingField(this, Color.BLACK);
         this.gridValue = calculateGridValue(this, Color.WHITE);
@@ -58,6 +59,30 @@ public final class Grid {
         this.gridValue = calculateGridValue(this, from.getPiece().getColor());
     }
 
+    public static Grid create(Board board, Color humanPlayerColor) {
+        return new Grid(IntStream
+                .rangeClosed(0, MAXIMUM_SQUARE_ID)
+                .map(id -> (humanPlayerColor == WHITE)
+                        ? id
+                        : (MAXIMUM_SQUARE_ID - id))
+                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceFactory.getInitialPiece(id)))
+                .collect(Collectors.toList()));
+    }
+
+    public static Grid createAfterMovement(Grid gridBeforeTheMove, Field from, Field to) {
+        return new Grid(gridBeforeTheMove, from, to);
+    }
+
+    public static Grid createEmpty(Board board, Color humanPlayerColor) {
+        return new Grid(IntStream
+                .rangeClosed(0, MAXIMUM_SQUARE_ID)
+                .map(id -> (humanPlayerColor == WHITE)
+                        ? id
+                        : (MAXIMUM_SQUARE_ID - id))
+                .mapToObj(id -> new Field(null).initialize(board, id))
+                .collect(Collectors.toList()));
+    }
+
     public static GridLayout createGridLayout() {
         return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
     }
@@ -71,10 +96,6 @@ public final class Grid {
                         ? field.getPiece().getPieceType().getValue()
                         : -field.getPiece().getPieceType().getValue())
                 .sum();
-    }
-
-    public Grid createGrid(Grid gridBeforeTheMove, Field from, Field to) {
-        return new Grid(gridBeforeTheMove, from, to);
     }
 
     public Field getField(Coordinates coordinates) {
