@@ -115,6 +115,10 @@ public final class Grid {
                 .orElse(null);
     }
 
+    public Field getField(String code) {
+        return this.getFields().stream().filter(field -> field.getCode() == code).findFirst().orElse(null);
+    }
+
     public Field getField(Button button) {
         return this.getFields().stream().filter(field -> button.equals(field.getButton())).findFirst().orElse(null);
     }
