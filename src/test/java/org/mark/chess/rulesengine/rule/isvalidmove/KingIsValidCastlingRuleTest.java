@@ -2,12 +2,13 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.model.Coordinates;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.Grid;
-import org.mark.chess.model.King;
-import org.mark.chess.model.Rook;
-import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
+import org.mark.chess.board.Coordinates;
+import org.mark.chess.board.Grid;
+import org.mark.chess.board.Field;
+import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.King;
+import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
+import org.mark.chess.piece.Rook;
 import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,13 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mark.chess.enums.Color.WHITE;
-import static org.mark.chess.enums.PieceType.KING;
+import static org.mark.chess.player.PlayerColor.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class KingIsValidCastlingRuleTest {
-    private static final int LAST_SQUARE_ON_THE_BOARD_ID = 63;
-
     @InjectMocks
     private KingIsValidCastlingRule kingIsValidCastlingRule;
 
@@ -40,7 +38,7 @@ class KingIsValidCastlingRuleTest {
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(rookField.getId(), rookField);
 
-        assertTrue(kingIsValidCastlingRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
         assertTrue(kingIsValidCastlingRule.create());
     }
 
@@ -56,7 +54,7 @@ class KingIsValidCastlingRuleTest {
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(rookField.getId(), rookField);
 
-        assertTrue(kingIsValidCastlingRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
         assertTrue(kingIsValidCastlingRule.create());
     }
 
@@ -72,7 +70,7 @@ class KingIsValidCastlingRuleTest {
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(rookField.getId(), rookField);
 
-        assertFalse(kingIsValidCastlingRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
     }
 
     @Test
@@ -87,17 +85,17 @@ class KingIsValidCastlingRuleTest {
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(rookField.getId(), rookField);
 
-        assertFalse(kingIsValidCastlingRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
     }
 
     @Test
     void testRule_WhenInvalidCastling_ThenReturnFalse() {
-        Field from = new Field(KING.createPiece(WHITE)).setCode("e1");
+        Field from = new Field(new King(WHITE)).setCode("e1");
         Field to = new Field(null).setCode("d1");
 
         Grid grid = Grid.createEmpty(board, WHITE);
         grid.getFields().set(from.getId(), from);
 
-        assertFalse(kingIsValidCastlingRule.test(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
     }
 }

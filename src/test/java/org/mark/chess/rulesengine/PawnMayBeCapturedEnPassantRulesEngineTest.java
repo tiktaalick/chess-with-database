@@ -2,9 +2,10 @@ package org.mark.chess.rulesengine;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.rulesengine.rule.maybecapturedenpassant.PawnHasOpponentPawnAsNeighbourRule;
-import org.mark.chess.rulesengine.rule.maybecapturedenpassant.PawnIsNotValidBaselineMoveRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.maybecapturedenpassant.PawnMayBeCapturedEnPassantRulesEngine;
+import org.mark.chess.piece.maybecapturedenpassant.PawnHasOpponentPawnAsNeighbourRule;
+import org.mark.chess.piece.maybecapturedenpassant.PawnIsNotValidBaselineMoveRule;
+import org.mark.chess.piece.isvalidmove.IsNotValidRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
