@@ -2,9 +2,10 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.Grid;
-import org.mark.chess.rulesengine.parameter.IsValidMoveParameter;
+import org.mark.chess.board.Grid;
+import org.mark.chess.board.Field;
+import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,30 +25,30 @@ class HasEmptyParametersRuleTest {
 
     @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, null, field, false)));
+        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, null, field, false)));
         assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyGrid_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(null, field, field, false)));
+        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(null, field, field, false)));
         assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyParameter_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.test(null));
+        assertTrue(hasEmptyParametersRule.isApplicable(null));
         assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenEmptyTo_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, null, false)));
+        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, null, false)));
         assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenFilledParameters_ThenReturnFalse() {
-        assertFalse(hasEmptyParametersRule.test(new IsValidMoveParameter(grid, field, field, false)));
+        assertFalse(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, field, false)));
     }
 }
