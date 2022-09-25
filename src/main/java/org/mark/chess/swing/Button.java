@@ -3,10 +3,10 @@ package org.mark.chess.swing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.mark.chess.enums.Color;
-import org.mark.chess.factory.BackgroundColorFactory;
-import org.mark.chess.model.Field;
-import org.mark.chess.model.Piece;
+import org.mark.chess.board.Field;
+import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
+import org.mark.chess.piece.PieceType;
+import org.mark.chess.player.PlayerColor;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -19,9 +19,11 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 public final class Button extends JButton {
-    public static final  int    FIELD_WIDTH_AND_HEIGHT = 75;
-    private static final String EXTENSION              = ".png";
-    private static final String UNDERSCORE             = "_";
+
+    public static final  int                        FIELD_WIDTH_AND_HEIGHT     = 75;
+    private static final String                     EXTENSION                  = ".png";
+    private static final String                     UNDERSCORE                 = "_";
+    private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
 
     public Button(Board board, Field field) {
         this.setText(String.valueOf(field.getCode()));
@@ -31,19 +33,19 @@ public final class Button extends JButton {
                 FIELD_WIDTH_AND_HEIGHT);
         this.addActionListener(board);
         this.addMouseListener(board);
-        this.setBackground(BackgroundColorFactory.getBackgroundColor(field));
+        this.setBackground(backgroundColorRulesEngine.process(field));
     }
 
     public static Button initialize(Field field) {
         var button = field.getButton();
 
-        if (field.getPiece() == null) {
+        if (field.getPieceType() == null) {
             return button;
         }
 
         try {
             button.setText(null);
-            button.setIcon(new ImageIcon(getResource(getIconPath(field.getPiece(), field.getPiece().getColor()))
+            button.setIcon(new ImageIcon(getResource(getIconPath(field.getPieceType(), field.getPieceType().getColor()))
                     .getImage()
                     .getScaledInstance(FIELD_WIDTH_AND_HEIGHT, FIELD_WIDTH_AND_HEIGHT, Image.SCALE_SMOOTH)));
         }
@@ -55,8 +57,8 @@ public final class Button extends JButton {
         return button;
     }
 
-    private static String getIconPath(Piece piece, Color color) {
-        return new StringBuilder(color.getName()).append(UNDERSCORE).append(piece.getPieceType().getName()).append(EXTENSION).toString();
+    private static String getIconPath(PieceType pieceType, PlayerColor color) {
+        return color.getName() + UNDERSCORE + pieceType.getName() + EXTENSION;
     }
 
     private static ImageIcon getResource(String iconPath) throws IOException {

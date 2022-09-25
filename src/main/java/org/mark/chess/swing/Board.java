@@ -3,10 +3,10 @@ package org.mark.chess.swing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.mark.chess.enums.Color;
-import org.mark.chess.model.Game;
-import org.mark.chess.model.Grid;
-import org.mark.chess.service.GameService;
+import org.mark.chess.board.Grid;
+import org.mark.chess.game.Game;
+import org.mark.chess.game.GameService;
+import org.mark.chess.player.PlayerColor;
 
 import javax.swing.JFrame;
 import java.awt.Dimension;
@@ -16,10 +16,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Class for the front-end chessboard.
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class Board extends JFrame implements ActionListener, MouseListener {
+
     private static final int HEIGHT       = 870;
     private static final int SPLIT_IN_TWO = 2;
     private static final int WIDTH        = 828;
@@ -28,7 +32,13 @@ public class Board extends JFrame implements ActionListener, MouseListener {
 
     private transient GameService gameService;
 
-    public Board(GameService gameService, Color humanPlayerColor) {
+    /**
+     * Constructor.
+     *
+     * @param gameService      A service class for the front-end.
+     * @param humanPlayerColor The piece-type color used by the human player.
+     */
+    public Board(GameService gameService, PlayerColor humanPlayerColor) {
         this.gameService = gameService;
         this.game = gameService.createGame(this, humanPlayerColor);
         this.initialize(game);
@@ -44,6 +54,11 @@ public class Board extends JFrame implements ActionListener, MouseListener {
         // Ignored
     }
 
+    /**
+     * Handles the user input.
+     *
+     * @param event The mouse event.
+     */
     @Override
     public void mousePressed(MouseEvent event) {
         gameService.handleButtonClick(game, this, event.getButton(), (Button) event.getSource());

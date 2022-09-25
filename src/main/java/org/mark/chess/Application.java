@@ -1,25 +1,44 @@
 package org.mark.chess;
 
-import org.mark.chess.enums.Color;
-import org.mark.chess.factory.ApplicationFactory;
-import org.mark.chess.service.GameService;
+import org.mark.chess.game.GameService;
+import org.mark.chess.player.PlayerColor;
 import org.mark.chess.swing.Board;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import static org.mark.chess.player.PlayerColor.WHITE;
+
+/**
+ * Main application class.
+ */
 @SpringBootApplication
 public class Application {
 
     private final GameService gameService;
 
+    /**
+     * Constructor for the main application class.
+     *
+     * @param gameService A service class for the front-end.
+     */
     public Application(GameService gameService) {
         this.gameService = gameService;
     }
 
+    /**
+     * Main method for this main application class. Creates the application.
+     *
+     * @param args Ignored parameter.
+     */
     public static void main(String[] args) {
-        ApplicationFactory.getInstance().startApplication(Color.WHITE);
+        ApplicationRepository.getInstance().startApplication(WHITE);
     }
 
-    public void startApplication(Color humanPlayerColor) {
+    /**
+     * Starts the application.
+     *
+     * @param humanPlayerColor The piece-type color used by the human player.
+     */
+    public void startApplication(PlayerColor humanPlayerColor) {
         new Board(gameService, humanPlayerColor);
     }
 }

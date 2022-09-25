@@ -2,13 +2,14 @@ package org.mark.chess.rulesengine;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.rulesengine.rule.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsFriendlyFireRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsJumpingRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsNotValidRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.KingIsValidBasicMoveRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.KingIsValidCastlingRule;
+import org.mark.chess.piece.isvalidmove.KingIsValidMoveRulesEngine;
+import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.isvalidmove.IsFriendlyFireRule;
+import org.mark.chess.piece.isvalidmove.IsJumpingRule;
+import org.mark.chess.piece.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.piece.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.isvalidmove.KingIsValidBasicMoveRule;
+import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 

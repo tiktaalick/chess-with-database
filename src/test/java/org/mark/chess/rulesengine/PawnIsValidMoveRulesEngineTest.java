@@ -2,16 +2,17 @@ package org.mark.chess.rulesengine;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.rulesengine.rule.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsFriendlyFireRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsJumpingRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.IsNotValidRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.PawnIsNotValidDirectionRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.PawnIsValidBaselineMoveRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.PawnIsValidBasicMoveRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.PawnIsValidCaptureMoveRule;
-import org.mark.chess.rulesengine.rule.isvalidmove.PawnIsValidEnPassantMoveRule;
+import org.mark.chess.piece.isvalidmove.PawnIsValidMoveRulesEngine;
+import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.isvalidmove.IsFriendlyFireRule;
+import org.mark.chess.piece.isvalidmove.IsJumpingRule;
+import org.mark.chess.piece.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.piece.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.isvalidmove.PawnIsNotValidDirectionRule;
+import org.mark.chess.piece.isvalidmove.PawnIsValidBaselineMoveRule;
+import org.mark.chess.piece.isvalidmove.PawnIsValidBasicMoveRule;
+import org.mark.chess.piece.isvalidmove.PawnIsValidCaptureMoveRule;
+import org.mark.chess.piece.isvalidmove.PawnIsValidEnPassantMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
