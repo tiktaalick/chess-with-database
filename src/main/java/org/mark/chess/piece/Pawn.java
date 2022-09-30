@@ -49,7 +49,7 @@ public class Pawn extends PieceType {
     }
 
     @Override
-    public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+    public void setPieceTypeSpecificAttributes(Game game, Field from, Field to) {
         ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
 
         if ((from.getPieceType()).isPawnBeingPromoted()) {

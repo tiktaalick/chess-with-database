@@ -36,9 +36,10 @@ public class Application {
     /**
      * Starts the application.
      *
-     * @param humanPlayerColor The piece-type color used by the human player.
+     * @param humanPlayerColor The piece-type color with which the human plays.
+     * @return The just created chessboard.
      */
-    public void startApplication(PlayerColor humanPlayerColor) {
-        new Board(gameService, humanPlayerColor);
+    public Board startApplication(PlayerColor humanPlayerColor) {
+        return Board.createBoard(gameService, humanPlayerColor);
     }
 }

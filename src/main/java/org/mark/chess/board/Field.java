@@ -14,8 +14,14 @@ import org.mark.chess.swing.Button;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.mark.chess.piece.PieceType.KING;
+
+/**
+ * Contains methods that are Field related.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -85,15 +91,9 @@ public class Field implements Comparable<Field> {
 
         grid.getFields().forEach(field -> field.setUnderAttack(false));
 
-        List<Field> attackers = grid
-                .getFields()
-                .stream()
-                .filter(opponentField -> null != opponentField.getPieceType())
-                .filter(opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor())
-                .filter(opponentField -> opponentField.getPieceType().isValidMove(new IsValidMoveParameter(grid, opponentField, this, true)))
-                .collect(Collectors.toList());
+        List<Field> attackers = grid.getFields().stream().filter(isAttacking(grid)).collect(Collectors.toList());
 
-        attackers.forEach((Field field) -> field.setAttacking(grid));
+        attackers.forEach((Field field) -> field.setAttackingColors(grid));
 
         return !attackers.isEmpty();
     }
@@ -120,17 +120,29 @@ public class Field implements Comparable<Field> {
         return game.getCurrentPlayerColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
-    public Field setAttacking(boolean isAttacking) {
-        this.isAttacking = isAttacking;
+    /**
+     * Clears the field.
+     *
+     * @return The field.
+     */
+    public Field resetField() {
+        this.setPieceType(null);
+        this.getButton().setText(this.getCode());
+        this.getButton().setIcon(null);
+
         return this;
     }
 
-    public void setAttacking(Grid grid) {
-        this.isAttacking = true;
+    public Field setAttacking(boolean isAttacking) {
+        this.isAttacking = isAttacking;
 
-        this.getButton().setBackground(backgroundColorRulesEngine.process(this));
+        return this;
+    }
 
-        grid.getOpponentKingField().setUnderAttack(true).getButton().setBackground(backgroundColorRulesEngine.process(grid.getOpponentKingField()));
+    public void setAttackingColors(Grid grid) {
+        this.setAttacking(true).getButton().setBackground(backgroundColorRulesEngine.process(this));
+
+        grid.getFields().stream().filter(isUnderAttack(this)).forEach(Field::setUnderAttackColor);
     }
 
     public Field setCode(String code) {
@@ -158,9 +170,27 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
+    @NotNull
+    private static Predicate<Field> isUnderAttack(Field attacking) {
+        return field -> null != field.getPieceType() &&
+                field.getPieceType().getName().equals(KING) &&
+                field.getPieceType().getColor() != attacking.getPieceType().getColor();
+    }
+
     private static boolean isValidMove(Grid gridAfterMovement, Field opponentField) {
         return opponentField
                 .getPieceType()
                 .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true));
+    }
+
+    private static void setUnderAttackColor(Field attackedKingField) {
+        attackedKingField.setUnderAttack(true).getButton().setBackground(backgroundColorRulesEngine.process(attackedKingField));
+    }
+
+    @NotNull
+    private Predicate<Field> isAttacking(Grid grid) {
+        return field -> null != field.getPieceType() &&
+                field.getPieceType().getColor() != this.getPieceType().getColor() &&
+                field.getPieceType().isValidMove(new IsValidMoveParameter(grid, field, this, true));
     }
 }

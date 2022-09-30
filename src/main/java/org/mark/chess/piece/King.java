@@ -46,7 +46,7 @@ public class King extends PieceType {
     }
 
     @Override
-    public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+    public void setPieceTypeSpecificAttributes(Game game, Field from, Field to) {
         ((King) from.getPieceType()).setHasMovedAtLeastOnce(true);
     }
 }
