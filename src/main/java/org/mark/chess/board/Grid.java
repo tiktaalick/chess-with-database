@@ -92,6 +92,7 @@ public final class Grid {
 
     public static void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {
         boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
+
         kingField
                 .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
                 .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);

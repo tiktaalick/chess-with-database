@@ -6,6 +6,8 @@ import org.mark.chess.ApplicationRepository;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
+import org.mark.chess.move.Move;
+import org.mark.chess.move.MoveDirector;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.player.Computer;
@@ -36,24 +38,26 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public class Game {
 
-    public static final  int                        MAX_COLOR_VALUE            = 255;
-    public static final  int                        MIN_COLOR_VALUE            = 0;
-    private static final int                        LEFT_CLICK                 = 1;
-    private static final int                        MAXIMUM_SQUARE_ID          = 63;
-    private static final int                        RIGHT_CLICK                = 3;
-    private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
+    public static final  int                        MAX_COLOR_VALUE               = 255;
+    public static final  int                        MIN_COLOR_VALUE               = 0;
+    private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
+    private static final int                        LEFT_CLICK                    = 1;
+    private static final int                        MAXIMUM_SQUARE_ID             = 63;
+    private static final int                        RIGHT_CLICK                   = 3;
 
-    private boolean      inProgress;
+    private static MoveDirector moveDirector = new MoveDirector();
+
+    private Move         move               = new Move(new Field(null));
     private List<Player> players            = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
+    private boolean      inProgress;
     private PlayerColor  humanPlayerColor;
     private PlayerColor  currentPlayerColor = WHITE;
     private Grid         grid;
-    private Move         move               = new Move(new Field(null));
 
     /**
      * Creates a new game.
      *
-     * @param humanPlayerColor The color with which the human player will be playing.
+     * @param humanPlayerColor The piece-type color with which the human plays.
      * @param grid             The backend representation of a chessboard.
      */
     public Game(PlayerColor humanPlayerColor, Grid grid) {
@@ -66,18 +70,31 @@ public class Game {
      * Creates a new game with a frontend chessboard.
      *
      * @param board            The frontend representation of a chessboard.
-     * @param humanPlayerColor The color with which the human player will be playing.
+     * @param humanPlayerColor The piece-type color with which the human plays.
      * @return A new game.
      */
     public static Game create(Board board, PlayerColor humanPlayerColor) {
         return new Game(humanPlayerColor, Grid.create(board, humanPlayerColor));
     }
 
+    public static void setMoveDirector(MoveDirector moveDirector) {
+        Game.moveDirector = moveDirector;
+    }
+
+    /**
+     * Changes the active player.
+     *
+     * @return The game.
+     */
+    public Game changeTurn() {
+        return this.setCurrentPlayerColor(this.getCurrentPlayerColor().getOpposite());
+    }
+
     /**
      * Creates a list of valid moves.
      *
      * @param from The field from which the chess piece moves.
-     * @return A new game.
+     * @return A list of valid moves.
      */
     public List<Field> createValidMoves(Field from) {
         return from.isActivePlayerField(this)
@@ -88,6 +105,23 @@ public class Game {
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(grid, from, to, false)))
                 .collect(Collectors.toList())
                 : new ArrayList<>();
+    }
+
+    /**
+     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
+     *
+     * @param from The field from which the chess piece might be moving.
+     */
+    public void enableValidMoves(Field from) {
+        this.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
+
+        List<Field> validMoves = this.createValidMoves(from);
+        validMoves.forEach((Field validMove) -> {
+            from.setValidFrom(true);
+            validMove.setValidMove(true);
+        });
+
+        this.setValidMoveColors(this.getGrid(), from, validMoves, validMoves);
     }
 
     /**
@@ -104,19 +138,13 @@ public class Game {
             board.dispose();
             ApplicationRepository.getInstance().startApplication(this.getHumanPlayerColor().getOpposite());
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
-            this.move.setFrom(fieldClick).enableValidMoves(this, fieldClick);
+            this.move = moveDirector.performFromMove(this, move, fieldClick);
         } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
-            this.move
-                    .setTo(this.getGrid(), fieldClick)
-                    .setPieceTypeSpecificFields(this, move.getFrom(), fieldClick)
-                    .moveRookWhenCastling(this, move.getFrom(), fieldClick)
-                    .changeTurn(this)
-                    .resetField(move.getFrom());
-            this.setKingFieldColors(this.resetValidMoves());
+            this.move = moveDirector.performToMove(this, move, fieldClick);
         } else if (buttonClick == RIGHT_CLICK) {
-            this.setKingFieldColors(this.resetValidMoves());
+            this.move = moveDirector.performResetMove(this, move);
         } else {
-            // Clicks on fields that aren't occupied by the active player are being ignored.
+            // Clicks on fields that aren't occupied by the active player are ignored.
         }
     }
 
@@ -134,7 +162,7 @@ public class Game {
 
             setValidMoves(allValidFromsAndValidMoves, allValidMoves, from);
 
-            if (!move.duringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
+            if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
                 ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
             }
         });
@@ -144,12 +172,22 @@ public class Game {
         return allValidMoves;
     }
 
+    /**
+     * Determines whether the game is in progress or not.
+     *
+     * @param kingField A king, which might be in checkmate or stalemate.
+     */
     public void setGameProgress(Field kingField) {
         this.setInProgress(this.isInProgress()
                 ? (!kingField.isCheckMate() && !kingField.isStaleMate())
                 : this.isInProgress());
     }
 
+    /**
+     * Colors the field of a king that is in checkmate or stalemate and then marks the game as finished.
+     *
+     * @param allValidMoves All the valid to-fields together.
+     */
     public void setKingFieldColors(Collection<Field> allValidMoves) {
         this.getGrid().getFields().stream().filter(field -> field.getPieceType() != null).forEach((Field field) -> {
             if (field.getPieceType().getName().equals(KING)) {
@@ -158,7 +196,7 @@ public class Game {
             }
 
             if (!this.isInProgress()) {
-                field.getButton().setBackground(backgroundColorRulesEngine.process(field));
+                field.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(field));
             }
         });
     }
@@ -202,10 +240,10 @@ public class Game {
                     ? gridField.getRelativeValue()
                     : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
 
-            gridField.getButton().setBackground(backgroundColorRulesEngine.process(gridField));
+            gridField.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(gridField));
         });
 
-        from.getButton().setBackground(backgroundColorRulesEngine.process(from));
+        from.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(from));
     }
 
     private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {

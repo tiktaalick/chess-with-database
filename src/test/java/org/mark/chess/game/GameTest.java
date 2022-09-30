@@ -4,9 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.Application;
 import org.mark.chess.ApplicationRepository;
-import org.mark.chess.board.Grid;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.PieceType;
+import org.mark.chess.board.Grid;
+import org.mark.chess.move.Move;
+import org.mark.chess.move.MoveDirector;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.swing.Board;
 import org.mark.chess.swing.Button;
@@ -17,8 +18,9 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,8 +32,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GameTest {
-    private static final int LEFT_CLICK  = 1;
-    private static final int RIGHT_CLICK = 3;
+
+    private static final int LEFT_CLICK        = 1;
+    private static final int NUMBER_OF_SQUARES = 64;
+    private static final int RIGHT_CLICK       = 3;
 
     @Mock
     private Board board;
@@ -52,14 +56,29 @@ class GameTest {
     private Move move;
 
     @Mock
-    private PieceType pieceType;
-
-    @Mock
-    private List<Field> fields;
+    private MoveDirector moveDirector;
 
     @Spy
     @InjectMocks
     private Game game = new Game(WHITE, grid);
+
+    @Test
+    void testChangeTurn_WhenBlack_ThenWhite() {
+        Game game = new Game(WHITE, Grid.create(board, WHITE)).setCurrentPlayerColor(BLACK);
+
+        game.changeTurn();
+
+        assertEquals(WHITE, game.getCurrentPlayerColor());
+    }
+
+    @Test
+    void testChangeTurn_WhenWhite_ThenBlack() {
+        Game game = new Game(WHITE, Grid.create(board, WHITE)).setCurrentPlayerColor(WHITE);
+
+        game.changeTurn();
+
+        assertEquals(BLACK, game.getCurrentPlayerColor());
+    }
 
     @Test
     void testCreate() {
@@ -71,6 +90,29 @@ class GameTest {
         assertEquals(64, game.getGrid().getFields().size());
         assertEquals(BLACK, game.getGrid().getFields().get(0).getPieceType().getColor());
         assertEquals("rook", game.getGrid().getFields().get(0).getPieceType().getName());
+    }
+
+    @Test
+    void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
+        Grid grid = Grid.create(board, WHITE);
+        Field from = new Field(new Pawn(WHITE)).initialize(board, 0);
+
+        List<Field> validMovesList = grid
+                .getFields()
+                .stream()
+                .filter(field -> field.getCoordinates().getX() == 4)
+                .filter(field -> Arrays.asList(4, 5).contains(field.getCoordinates().getY()))
+                .collect(Collectors.toList());
+        validMovesList.forEach(field -> field.setValidMove(false));
+
+        when(game.getGrid()).thenReturn(grid);
+        when(game.createValidMoves(from)).thenReturn(validMovesList);
+
+        game.enableValidMoves(from);
+
+        assertEquals(NUMBER_OF_SQUARES, game.getGrid().getFields().size());
+        assertEquals(2L, game.getGrid().getFields().stream().filter(Field::isValidMove).count());
+        assertEquals(validMovesList, game.getGrid().getFields().stream().filter(Field::isValidMove).collect(Collectors.toList()));
     }
 
     @Test
@@ -110,51 +152,38 @@ class GameTest {
         when(game.getGrid()).thenReturn(grid);
         when(grid.getField(button)).thenReturn(field.setValidMove(true));
         when(move.isFrom(game, field)).thenReturn(true);
-        when(move.setFrom(field)).thenReturn(move);
 
+        Game.setMoveDirector(moveDirector);
         game.handleButtonClick(board, LEFT_CLICK, button);
 
-        verify(move).setFrom(field);
-        verify(move).enableValidMoves(game, field);
+        verify(moveDirector).performFromMove(game, move, field);
     }
 
     @Test
     void testHandleButtonClick_WhenLeftClickOnToField_ThenSetTo() {
         Field field = new Field(new Pawn(WHITE));
-        List<Field> list = new ArrayList<>();
 
         when(game.getGrid()).thenReturn(grid);
         when(grid.getField(button)).thenReturn(field.setValidMove(true));
         when(move.isFrom(game, field)).thenReturn(false);
-        when(move.getFrom()).thenReturn(field);
-        when(move.setTo(grid, field)).thenReturn(move);
-        when(move.setPieceTypeSpecificFields(game, field, field)).thenReturn(move);
-        when(move.moveRookWhenCastling(game, field, field)).thenReturn(move);
-        when(move.changeTurn(game)).thenReturn(move);
-        when(game.resetValidMoves()).thenReturn(list);
 
+        Game.setMoveDirector(moveDirector);
         game.handleButtonClick(board, LEFT_CLICK, button);
 
-        verify(move).setTo(grid, field);
-        verify(move).setPieceTypeSpecificFields(game, field, field);
-        verify(move).moveRookWhenCastling(game, field, field);
-        verify(move).changeTurn(game);
-        verify(move).resetField(field);
-        verify(game).setKingFieldColors(list);
+        verify(moveDirector).performToMove(game, move, field);
     }
 
     @Test
     void testHandleButtonClick_WhenRightClickOnToField_ThenResetValidMoves() {
         Field field = new Field(new Pawn(WHITE));
-        List<Field> list = new ArrayList<>();
 
         when(game.getGrid()).thenReturn(grid);
         when(grid.getField(button)).thenReturn(field.setValidMove(true));
-        when(game.resetValidMoves()).thenReturn(list);
 
+        Game.setMoveDirector(moveDirector);
         game.handleButtonClick(board, RIGHT_CLICK, button);
 
-        verify(game).setKingFieldColors(list);
+        verify(moveDirector).performResetMove(game, move);
     }
 
     @Test
