@@ -44,7 +44,7 @@ public class Queen extends PieceType {
     }
 
     @Override
-    public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+    public void setPieceTypeSpecificAttributes(Game game, Field from, Field to) {
         // No specific fields for queen need to be set.
     }
 }

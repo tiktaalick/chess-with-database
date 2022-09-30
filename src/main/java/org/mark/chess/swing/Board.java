@@ -22,7 +22,7 @@ import java.awt.event.MouseListener;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class Board extends JFrame implements ActionListener, MouseListener {
+public final class Board extends JFrame implements ActionListener, MouseListener {
 
     private static final int HEIGHT       = 870;
     private static final int SPLIT_IN_TWO = 2;
@@ -32,16 +32,21 @@ public class Board extends JFrame implements ActionListener, MouseListener {
 
     private transient GameService gameService;
 
-    /**
-     * Constructor.
-     *
-     * @param gameService      A service class for the front-end.
-     * @param humanPlayerColor The piece-type color used by the human player.
-     */
-    public Board(GameService gameService, PlayerColor humanPlayerColor) {
+    private Board(GameService gameService, PlayerColor humanPlayerColor) {
         this.gameService = gameService;
         this.game = gameService.createGame(this, humanPlayerColor);
         this.initialize(game);
+    }
+
+    /**
+     * Creates a new chessboard for the front-end.
+     *
+     * @param gameService      A service class for the front-end.
+     * @param humanPlayerColor The piece-type color with which the human plays.
+     * @return The created chessboard.
+     */
+    public static Board createBoard(GameService gameService, PlayerColor humanPlayerColor) {
+        return new Board(gameService, humanPlayerColor);
     }
 
     @Override

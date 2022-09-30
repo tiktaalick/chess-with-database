@@ -46,7 +46,7 @@ public class Rook extends PieceType {
     }
 
     @Override
-    public void setPieceTypeSpecificFields(Game game, Field from, Field to) {
+    public void setPieceTypeSpecificAttributes(Game game, Field from, Field to) {
         ((Rook) from.getPieceType()).setHasMovedAtLeastOnce(true);
     }
 }

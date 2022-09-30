@@ -42,5 +42,5 @@ public abstract class PieceType {
 
     public abstract boolean isValidMove(IsValidMoveParameter isValidMoveParameter);
 
-    public abstract void setPieceTypeSpecificFields(Game game, Field from, Field to);
+    public abstract void setPieceTypeSpecificAttributes(Game game, Field from, Field to);
 }
