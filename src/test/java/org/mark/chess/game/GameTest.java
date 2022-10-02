@@ -2,15 +2,11 @@ package org.mark.chess.game;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.Application;
-import org.mark.chess.ApplicationRepository;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
 import org.mark.chess.piece.Pawn;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -24,9 +20,13 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,19 +38,7 @@ class GameTest {
     private static final int RIGHT_CLICK       = 3;
 
     @Mock
-    private Board board;
-
-    @Mock
-    private Application application;
-
-    @Mock
-    private Button button;
-
-    @Mock
     private Grid grid;
-
-    @Mock
-    private Field field;
 
     @Mock
     private Move move;
@@ -64,7 +52,7 @@ class GameTest {
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
-        Game game = new Game(WHITE, Grid.create(board, WHITE)).setCurrentPlayerColor(BLACK);
+        Game game = new Game(WHITE, Grid.create()).setCurrentPlayerColor(BLACK);
 
         game.changeTurn();
 
@@ -73,7 +61,7 @@ class GameTest {
 
     @Test
     void testChangeTurn_WhenWhite_ThenBlack() {
-        Game game = new Game(WHITE, Grid.create(board, WHITE)).setCurrentPlayerColor(WHITE);
+        Game game = new Game(WHITE, Grid.create()).setCurrentPlayerColor(WHITE);
 
         game.changeTurn();
 
@@ -82,10 +70,9 @@ class GameTest {
 
     @Test
     void testCreate() {
-        Game game = Game.create(board, WHITE);
+        Game game = Game.create(WHITE);
 
         assertEquals(WHITE, game.getCurrentPlayerColor());
-        assertEquals(WHITE, game.getHumanPlayerColor());
         assertTrue(game.isInProgress());
         assertEquals(64, game.getGrid().getFields().size());
         assertEquals(BLACK, game.getGrid().getFields().get(0).getPieceType().getColor());
@@ -94,8 +81,8 @@ class GameTest {
 
     @Test
     void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
-        Grid grid = Grid.create(board, WHITE);
-        Field from = new Field(new Pawn(WHITE)).initialize(board, 0);
+        Grid grid = Grid.create();
+        Field from = new Field(new Pawn(WHITE)).setId(0);
 
         List<Field> validMovesList = grid
                 .getFields()
@@ -117,7 +104,7 @@ class GameTest {
 
     @Test
     void testGetValidMoves() {
-        Grid grid = Grid.create(board, WHITE);
+        Grid grid = Grid.create();
         Field field = new Field(new Pawn(WHITE)).setCode("d2");
 
         grid.getFields().set(field.getId(), field);
@@ -130,65 +117,48 @@ class GameTest {
     }
 
     @Test
-    void testHandleButtonClick_WhenGameNotInProgress_ThenRestartGame() {
-        game.setInProgress(false);
-        when(game.getGrid()).thenReturn(grid);
-        when(grid.getField(button)).thenReturn(field);
-
-        try (MockedStatic<ApplicationRepository> applicationFactory = Mockito.mockStatic(ApplicationRepository.class)) {
-            applicationFactory.when(ApplicationRepository::getInstance).thenReturn(application);
-
-            game.handleButtonClick(board, LEFT_CLICK, button);
-
-            verify(board).dispose();
-            verify(application).startApplication(BLACK);
-        }
-    }
-
-    @Test
     void testHandleButtonClick_WhenLeftClickOnFromField_ThenSetFrom() {
-        Field field = new Field(new Pawn(WHITE));
+        Grid grid = Grid.create();
+        grid.getFields().get(50).setValidMove(true);
 
         when(game.getGrid()).thenReturn(grid);
-        when(grid.getField(button)).thenReturn(field.setValidMove(true));
-        when(move.isFrom(game, field)).thenReturn(true);
+        when(move.isFrom(eq(game), any(Field.class))).thenReturn(true);
 
         Game.setMoveDirector(moveDirector);
-        game.handleButtonClick(board, LEFT_CLICK, button);
+        game.handleButtonClick(LEFT_CLICK, 50);
 
-        verify(moveDirector).performFromMove(game, move, field);
+        verify(moveDirector).performFromMove(eq(game), eq(move), any(Field.class));
     }
 
     @Test
     void testHandleButtonClick_WhenLeftClickOnToField_ThenSetTo() {
-        Field field = new Field(new Pawn(WHITE));
+        Grid grid = Grid.create();
+        grid.getFields().get(50).setValidMove(true);
 
         when(game.getGrid()).thenReturn(grid);
-        when(grid.getField(button)).thenReturn(field.setValidMove(true));
-        when(move.isFrom(game, field)).thenReturn(false);
+        when(move.isFrom(eq(game), any(Field.class))).thenReturn(false);
 
         Game.setMoveDirector(moveDirector);
-        game.handleButtonClick(board, LEFT_CLICK, button);
+        game.handleButtonClick(LEFT_CLICK, 50);
 
-        verify(moveDirector).performToMove(game, move, field);
+        verify(moveDirector).performToMove(eq(game), eq(move), any(Field.class));
     }
 
     @Test
     void testHandleButtonClick_WhenRightClickOnToField_ThenResetValidMoves() {
-        Field field = new Field(new Pawn(WHITE));
+        Grid grid = Grid.create();
 
         when(game.getGrid()).thenReturn(grid);
-        when(grid.getField(button)).thenReturn(field.setValidMove(true));
 
         Game.setMoveDirector(moveDirector);
-        game.handleButtonClick(board, RIGHT_CLICK, button);
+        game.handleButtonClick(RIGHT_CLICK, 63);
 
         verify(moveDirector).performResetMove(game, move);
     }
 
     @Test
     void testResetValidMoves() {
-        game.setGrid(Grid.create(board, WHITE));
+        game.setGrid(Grid.create());
 
         List<Field> validMoves = game.resetValidMoves();
 
@@ -200,8 +170,15 @@ class GameTest {
     }
 
     @Test
+    void testRestart() {
+        Game newGame = Game.restart(game);
+        assertNotNull(newGame);
+        assertNotEquals(game, newGame);
+    }
+
+    @Test
     void testSetGameProgress_WhenCheckMate_ThenGameIsInNotInProgress() {
-        game.setGrid(Grid.create(board, WHITE));
+        game.setGrid(Grid.create());
 
         game.setGameProgress(game.getGrid().getKingField().setCheckMate(true));
 
@@ -210,7 +187,7 @@ class GameTest {
 
     @Test
     void testSetGameProgress_WhenNoCheckMateNorStaleMate_ThenGameIsInProgress() {
-        game.setGrid(Grid.create(board, WHITE));
+        game.setGrid(Grid.create());
 
         game.setGameProgress(game.getGrid().getKingField());
 
@@ -219,7 +196,7 @@ class GameTest {
 
     @Test
     void testSetGameProgress_WhenStaleMate_ThenGameIsInNotInProgress() {
-        game.setGrid(Grid.create(board, WHITE));
+        game.setGrid(Grid.create());
 
         game.setGameProgress(game.getGrid().getKingField().setStaleMate(true));
 
@@ -228,7 +205,7 @@ class GameTest {
 
     @Test
     void testSetKingFieldColors() {
-        Grid grid = Grid.create(board, WHITE);
+        Grid grid = Grid.create();
         game.setGrid(grid);
         List<Field> fields = game.getGrid().getFields();
 

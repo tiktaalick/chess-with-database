@@ -3,7 +3,7 @@ package org.mark.chess.swing;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.mark.chess.board.Grid;
+import org.mark.chess.Application;
 import org.mark.chess.game.Game;
 import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 /**
  * Class for the front-end chessboard.
@@ -24,19 +25,10 @@ import java.awt.event.MouseListener;
 @Accessors(chain = true)
 public final class Board extends JFrame implements ActionListener, MouseListener {
 
-    private static final int HEIGHT       = 870;
-    private static final int SPLIT_IN_TWO = 2;
-    private static final int WIDTH        = 828;
-
-    private final transient Game game;
-
-    private transient GameService gameService;
-
-    private Board(GameService gameService, PlayerColor humanPlayerColor) {
-        this.gameService = gameService;
-        this.game = gameService.createGame(this, humanPlayerColor);
-        this.initialize(game);
-    }
+    private transient Game         game;
+    private transient GameService  gameService;
+    private           List<Button> buttons;
+    private           Dimension    dimension;
 
     /**
      * Creates a new chessboard for the front-end.
@@ -45,13 +37,22 @@ public final class Board extends JFrame implements ActionListener, MouseListener
      * @param humanPlayerColor The piece-type color with which the human plays.
      * @return The created chessboard.
      */
-    public static Board createBoard(GameService gameService, PlayerColor humanPlayerColor) {
-        return new Board(gameService, humanPlayerColor);
+    public Board(GameService gameService, PlayerColor humanPlayerColor) {
+        this.gameService = gameService;
+        this.game = gameService.createGame(humanPlayerColor);
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         // Ignored
+    }
+
+    public int getDimensionHeight() {
+        return this.dimension.height;
+    }
+
+    public int getDimensionWidth() {
+        return this.dimension.width;
     }
 
     @Override
@@ -66,7 +67,11 @@ public final class Board extends JFrame implements ActionListener, MouseListener
      */
     @Override
     public void mousePressed(MouseEvent event) {
-        gameService.handleButtonClick(game, this, event.getButton(), (Button) event.getSource());
+        this.game = gameService.handleButtonClick(game,
+                event.getButton(),
+                Button.createButtonId(this.game.getHumanPlayerColor(), ((Button) event.getSource()).getId()));
+
+        Application.getBoardBuilder().setBoard(this).updateButtons();
     }
 
     @Override
@@ -84,13 +89,7 @@ public final class Board extends JFrame implements ActionListener, MouseListener
         // Ignored
     }
 
-    private void initialize(Game game) {
-        this.setSize(WIDTH, HEIGHT);
-        this.setLayout(Grid.createGridLayout());
-        this.setVisible(true);
-        this.setResizable(false);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width / SPLIT_IN_TWO - WIDTH / SPLIT_IN_TWO, dim.height / SPLIT_IN_TWO - HEIGHT / SPLIT_IN_TWO);
-        gameService.resetValidMoves(game);
+    public void setDimension() {
+        this.dimension = Toolkit.getDefaultToolkit().getScreenSize();
     }
 }

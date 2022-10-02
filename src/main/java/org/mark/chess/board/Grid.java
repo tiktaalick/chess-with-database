@@ -5,8 +5,6 @@ import lombok.experimental.Accessors;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.InitialPieceRepository;
 import org.mark.chess.player.PlayerColor;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 
 import java.awt.GridLayout;
 import java.util.Arrays;
@@ -62,13 +60,10 @@ public final class Grid {
         this.gridValue = calculateGridValue(this, from.getPieceType().getColor());
     }
 
-    public static Grid create(Board board, PlayerColor humanPlayerColor) {
+    public static Grid create() {
         return new Grid(IntStream
                 .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .map(id -> (humanPlayerColor == WHITE)
-                        ? id
-                        : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceRepository.getInitialPiece(id)))
+                .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceRepository.getInitialPiece(id)))
                 .collect(Collectors.toList()));
     }
 
@@ -76,14 +71,8 @@ public final class Grid {
         return new Grid(gridBeforeTheMove, from, to);
     }
 
-    public static Grid createEmpty(Board board, PlayerColor humanPlayerColor) {
-        return new Grid(IntStream
-                .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .map(id -> (humanPlayerColor == WHITE)
-                        ? id
-                        : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> new Field(null).initialize(board, id))
-                .collect(Collectors.toList()));
+    public static Grid createEmpty() {
+        return new Grid(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
     }
 
     public static GridLayout createGridLayout() {
@@ -121,10 +110,6 @@ public final class Grid {
 
     public Field getField(String code) {
         return this.getFields().stream().filter(field -> field.getCode() == code).findAny().orElse(null);
-    }
-
-    public Field getField(Button button) {
-        return this.getFields().stream().filter(field -> button.equals(field.getButton())).findAny().orElse(null);
     }
 
     public Field getKingField(Grid grid, PlayerColor color) {

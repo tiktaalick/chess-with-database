@@ -3,6 +3,7 @@ package org.mark.chess;
 import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
 import org.mark.chess.swing.Board;
+import org.mark.chess.swing.BoardBuilder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -13,15 +14,15 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @SpringBootApplication
 public class Application {
 
-    private final GameService gameService;
+    private static BoardBuilder boardBuilder = new BoardBuilder();
+    private static GameService  gameService  = new GameService();
 
-    /**
-     * Constructor for the main application class.
-     *
-     * @param gameService A service class for the front-end.
-     */
-    public Application(GameService gameService) {
-        this.gameService = gameService;
+    public static BoardBuilder getBoardBuilder() {
+        return boardBuilder;
+    }
+
+    public static void setBoardBuilder(BoardBuilder builder) {
+        boardBuilder = builder;
     }
 
     /**
@@ -33,6 +34,10 @@ public class Application {
         ApplicationRepository.getInstance().startApplication(WHITE);
     }
 
+    public static void setGameService(GameService gameService) {
+        Application.gameService = gameService;
+    }
+
     /**
      * Starts the application.
      *
@@ -40,6 +45,6 @@ public class Application {
      * @return The just created chessboard.
      */
     public Board startApplication(PlayerColor humanPlayerColor) {
-        return Board.createBoard(gameService, humanPlayerColor);
+        return boardBuilder.setBoard(gameService, humanPlayerColor).createButtons().initialize().updateButtons().build();
     }
 }

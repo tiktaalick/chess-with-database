@@ -89,7 +89,7 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder resetFrom() {
-        move.getFrom().resetField();
+        move.getFrom().setPieceType(null);
 
         return this;
     }

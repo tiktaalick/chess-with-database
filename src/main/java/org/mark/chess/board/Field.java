@@ -9,9 +9,8 @@ import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,8 +35,8 @@ public class Field implements Comparable<Field> {
     private int         id            = ID_UNKNOWN;
     private String      code          = CODE_UNKNOWN;
     private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
-    private Button      button;
     private PieceType   pieceType;
+    private Color       backgroundColor;
     private Integer     value         = VALUE_NOT_CALCULATED;
     private Integer     relativeValue = VALUE_NOT_CALCULATED;
     private boolean     isValidFrom;
@@ -49,10 +48,6 @@ public class Field implements Comparable<Field> {
 
     public Field(PieceType pieceType) {
         this.pieceType = pieceType;
-    }
-
-    public Field addChessPiece(PieceType pieceType) {
-        return setPieceType(pieceType).setButton(Button.initialize(this));
     }
 
     @Override
@@ -68,14 +63,6 @@ public class Field implements Comparable<Field> {
         this.id = id;
         this.code = Coordinates.createCode(id);
         this.coordinates = Coordinates.create(id);
-
-        return this;
-    }
-
-    public Field initialize(Board board, int id) {
-        this.setId(id);
-        this.setButton(new Button(board, this));
-        board.add(this.getButton());
 
         return this;
     }
@@ -120,19 +107,6 @@ public class Field implements Comparable<Field> {
         return game.getCurrentPlayerColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
-    /**
-     * Clears the field.
-     *
-     * @return The field.
-     */
-    public Field resetField() {
-        this.setPieceType(null);
-        this.getButton().setText(this.getCode());
-        this.getButton().setIcon(null);
-
-        return this;
-    }
-
     public Field setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
 
@@ -140,7 +114,7 @@ public class Field implements Comparable<Field> {
     }
 
     public void setAttackingColors(Grid grid) {
-        this.setAttacking(true).getButton().setBackground(backgroundColorRulesEngine.process(this));
+        this.setAttacking(true).setBackgroundColor(backgroundColorRulesEngine.process(this));
 
         grid.getFields().stream().filter(isUnderAttack(this)).forEach(Field::setUnderAttackColor);
     }
@@ -162,10 +136,7 @@ public class Field implements Comparable<Field> {
 
     public Field setValidMove(boolean isValidMove) {
         this.isValidMove = isValidMove;
-
-        if (this.button != null) {
-            this.button.setBackground(backgroundColorRulesEngine.process(this));
-        }
+        this.setBackgroundColor(backgroundColorRulesEngine.process(this));
 
         return this;
     }
@@ -184,7 +155,7 @@ public class Field implements Comparable<Field> {
     }
 
     private static void setUnderAttackColor(Field attackedKingField) {
-        attackedKingField.setUnderAttack(true).getButton().setBackground(backgroundColorRulesEngine.process(attackedKingField));
+        attackedKingField.setUnderAttack(true).setBackgroundColor(backgroundColorRulesEngine.process(attackedKingField));
     }
 
     @NotNull

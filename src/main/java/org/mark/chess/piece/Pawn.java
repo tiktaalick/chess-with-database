@@ -53,7 +53,7 @@ public class Pawn extends PieceType {
         ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
 
         if ((from.getPieceType()).isPawnBeingPromoted()) {
-            to.addChessPiece(getNextPawnPromotion());
+            to.setPieceType(getNextPawnPromotion());
         }
     }
 

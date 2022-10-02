@@ -85,14 +85,12 @@ public class Move {
         }
 
         setTo(to.setPieceType(from.getPieceType()));
-        to.getButton().setText(null);
-        to.getButton().setIcon(from.getButton().getIcon());
 
         return this;
     }
 
     private static void captureEnPassant(Grid grid, Field from, Field to) {
-        grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).resetField();
+        grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
     }
 
     private static boolean isCaptureEnPassant(Move move, Field to) {

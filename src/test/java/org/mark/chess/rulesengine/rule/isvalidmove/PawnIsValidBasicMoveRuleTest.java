@@ -2,10 +2,10 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Grid;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.board.Grid;
 import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.isvalidmove.PawnIsValidBasicMoveRule;
 import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
@@ -18,6 +18,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class PawnIsValidBasicMoveRuleTest {
+
     @InjectMocks
     private PawnIsValidBasicMoveRule pawnIsValidBasicMoveRule;
 
@@ -29,7 +30,7 @@ class PawnIsValidBasicMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e3");
         Field to = new Field(null).setCode("e5");
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(to.getId(), to);
 
@@ -41,7 +42,7 @@ class PawnIsValidBasicMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e3");
         Field to = new Field(null).setCode("e4");
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(to.getId(), to);
 

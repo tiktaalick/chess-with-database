@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.board.Grid;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.board.Grid;
 import org.mark.chess.piece.King;
+import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.isvalidmove.KnightIsValidBasicMoveRule;
 import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
@@ -20,6 +20,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class KnightIsValidBasicMoveRuleTest {
+
     private static final char DELIMITER = ';';
 
     @InjectMocks
@@ -33,7 +34,7 @@ class KnightIsValidBasicMoveRuleTest {
         Field from = new Field(new King(WHITE)).setCode("a1");
         Field to = new Field(null).setCode("b2");
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
 
         assertFalse(knightIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
@@ -45,7 +46,7 @@ class KnightIsValidBasicMoveRuleTest {
         Field from = new Field(new King(WHITE)).setCode(codeFrom);
         Field to = new Field(null).setCode(codeTo);
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
 
         assertTrue(knightIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
