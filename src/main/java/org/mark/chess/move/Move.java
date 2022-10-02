@@ -2,6 +2,7 @@ package org.mark.chess.move;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
@@ -29,7 +30,7 @@ public class Move {
      *
      * @param from The field from which a chess piece will move.
      */
-    public Move(Field from) {
+    public Move(@NotNull Field from) {
         this.pieceType = from.getPieceType();
         this.from = from;
     }
@@ -51,7 +52,7 @@ public class Move {
      * @param field The field.
      * @return True if the field is a from-field.
      */
-    public boolean isFrom(Game game, Field field) {
+    public boolean isFrom(Game game, @NotNull Field field) {
         return field.getPieceType() != null &&
                 field.getPieceType().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
     }
@@ -62,7 +63,7 @@ public class Move {
      * @param from The field.
      * @return The move.
      */
-    public Move setFrom(Field from) {
+    public Move setFrom(@NotNull Field from) {
         this.pieceType = from.getPieceType();
         this.from = from;
         this.to = null;
@@ -85,17 +86,15 @@ public class Move {
         }
 
         setTo(to.setPieceType(from.getPieceType()));
-        to.getButton().setText(null);
-        to.getButton().setIcon(from.getButton().getIcon());
 
         return this;
     }
 
-    private static void captureEnPassant(Grid grid, Field from, Field to) {
-        grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).resetField();
+    private static void captureEnPassant(@NotNull Grid grid, @NotNull Field from, @NotNull Field to) {
+        grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
     }
 
-    private static boolean isCaptureEnPassant(Move move, Field to) {
+    private static boolean isCaptureEnPassant(@NotNull Move move, Field to) {
         return move.getFrom().getPieceType().getName().equals(PAWN) &&
                 move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
                 to.getPieceType() == null;

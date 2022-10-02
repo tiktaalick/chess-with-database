@@ -42,7 +42,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithNoPiece_ThenReturnFalse() {
-        Game game = Game.create(board, WHITE);
+        Game game = Game.create(WHITE);
         Field field = new Field(null);
 
         assertFalse(move.isFrom(game, field));
@@ -50,7 +50,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsBlacksTurn_ThenReturnFalse() {
-        Game game = Game.create(board, WHITE).setCurrentPlayerColor(BLACK);
+        Game game = Game.create(WHITE).setCurrentPlayerColor(BLACK);
         Field field = new Field(new Pawn(WHITE));
 
         assertFalse(move.isFrom(game, field));
@@ -58,7 +58,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsWhitesTurn_ThenReturnTrue() {
-        Game game = Game.create(board, WHITE).setCurrentPlayerColor(WHITE);
+        Game game = Game.create(WHITE).setCurrentPlayerColor(WHITE);
         Field field = new Field(new Pawn(WHITE));
 
         assertTrue(move.isFrom(game, field));
@@ -66,12 +66,12 @@ class MoveTest {
 
     @Test
     void testSetTo() {
-        Grid grid = Grid.create(board, WHITE);
+        Grid grid = Grid.create();
 
         PieceType pieceType = new Pawn(WHITE);
 
-        Field from = new Field(pieceType).setButton(button);
-        Field to = new Field(null).setButton(button);
+        Field from = new Field(pieceType);
+        Field to = new Field(null);
 
         move.setFrom(from);
 

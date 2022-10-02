@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
@@ -46,7 +47,7 @@ public class King extends PieceType {
     }
 
     @Override
-    public void setPieceTypeSpecificAttributes(Game game, Field from, Field to) {
+    public void setPieceTypeSpecificAttributes(Game game, @NotNull Field from, Field to) {
         ((King) from.getPieceType()).setHasMovedAtLeastOnce(true);
     }
 }

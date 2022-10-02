@@ -1,5 +1,6 @@
 package org.mark.chess.board.backgroundcolor;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.rulesengine.Rule;
 
@@ -18,12 +19,12 @@ public class FieldValueRule implements Rule<Field, Color> {
     }
 
     @Override
-    public boolean isApplicable(Field field) {
+    public boolean isApplicable(@NotNull Field field) {
         this.field = field;
         return field.isValidFrom() || field.isValidMove();
     }
 
-    private static Color getValueColor(Field field) {
+    private static @NotNull Color getValueColor(@NotNull Field field) {
         int relativeValue = field.getRelativeValue() == null
                 ? 0
                 : field.getRelativeValue();

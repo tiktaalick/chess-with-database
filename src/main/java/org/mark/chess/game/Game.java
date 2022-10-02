@@ -2,7 +2,7 @@ package org.mark.chess.game;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.mark.chess.ApplicationRepository;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
@@ -14,10 +14,7 @@ import org.mark.chess.player.Computer;
 import org.mark.chess.player.Human;
 import org.mark.chess.player.Player;
 import org.mark.chess.player.PlayerColor;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,11 +44,11 @@ public class Game {
 
     private static MoveDirector moveDirector = new MoveDirector();
 
-    private Move         move               = new Move(new Field(null));
-    private List<Player> players            = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
+    private Move         move    = new Move(new Field(null));
+    private List<Player> players = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
     private boolean      inProgress;
     private PlayerColor  humanPlayerColor;
-    private PlayerColor  currentPlayerColor = WHITE;
+    private PlayerColor  currentPlayerColor;
     private Grid         grid;
 
     /**
@@ -63,20 +60,38 @@ public class Game {
     public Game(PlayerColor humanPlayerColor, Grid grid) {
         this.inProgress = true;
         this.humanPlayerColor = humanPlayerColor;
+        this.currentPlayerColor = WHITE;
         this.grid = grid;
     }
 
     /**
      * Creates a new game with a frontend chessboard.
      *
-     * @param board            The frontend representation of a chessboard.
      * @param humanPlayerColor The piece-type color with which the human plays.
      * @return A new game.
      */
-    public static Game create(Board board, PlayerColor humanPlayerColor) {
-        return new Game(humanPlayerColor, Grid.create(board, humanPlayerColor));
+    public static @NotNull Game create(PlayerColor humanPlayerColor) {
+        return new Game(humanPlayerColor, Grid.create());
     }
 
+    /**
+     * Starts a new game based on the finished game.
+     *
+     * @param oldGame The finished game.
+     * @return The new game.
+     */
+    public static @NotNull Game restart(@NotNull Game oldGame) {
+        Game newGame = Game.create(oldGame.getHumanPlayerColor().getOpposite());
+        newGame.resetValidMoves();
+
+        return newGame;
+    }
+
+    /**
+     * Sets the move director.
+     *
+     * @param moveDirector
+     */
     public static void setMoveDirector(MoveDirector moveDirector) {
         Game.moveDirector = moveDirector;
     }
@@ -96,7 +111,7 @@ public class Game {
      * @param from The field from which the chess piece moves.
      * @return A list of valid moves.
      */
-    public List<Field> createValidMoves(Field from) {
+    public List<Field> createValidMoves(@NotNull Field from) {
         return from.isActivePlayerField(this)
                 ? this
                 .getGrid()
@@ -127,31 +142,30 @@ public class Game {
     /**
      * Handles the input from the frontend.
      *
-     * @param board       The frontend chessboard.
-     * @param buttonClick Indicates which button was clicked.
-     * @param button      The frontend button that was clicked.
+     * @param leftRightClick Indicates which button was clicked.
+     * @param buttonId       The frontend button that was clicked.
+     * @return The game.
      */
-    public void handleButtonClick(Window board, int buttonClick, Button button) {
-        var fieldClick = this.getGrid().getField(button);
+    public Game handleButtonClick(int leftRightClick, int buttonId) {
+        var fieldClick = this.getGrid().getFields().get(buttonId);
 
-        if (!this.isInProgress()) {
-            board.dispose();
-            ApplicationRepository.getInstance().startApplication(this.getHumanPlayerColor().getOpposite());
-        } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
+        if (leftRightClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
             this.move = moveDirector.performFromMove(this, move, fieldClick);
-        } else if (buttonClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
+        } else if (leftRightClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
             this.move = moveDirector.performToMove(this, move, fieldClick);
-        } else if (buttonClick == RIGHT_CLICK) {
+        } else if (leftRightClick == RIGHT_CLICK) {
             this.move = moveDirector.performResetMove(this, move);
         } else {
             // Clicks on fields that aren't occupied by the active player are ignored.
         }
+
+        return this;
     }
 
     /**
      * Resets all valid moves.
      *
-     * @return A list of chessboard fields.
+     * @return The game.
      */
     public List<Field> resetValidMoves() {
         Map<Field, List<Field>> allValidFromsAndValidMoves = new HashMap<>();
@@ -196,7 +210,7 @@ public class Game {
             }
 
             if (!this.isInProgress()) {
-                field.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(field));
+                field.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(field));
             }
         });
     }
@@ -209,7 +223,7 @@ public class Game {
      * @param validMoves    The list of valid moves for the chess piece standing on the from field.
      * @param allValidMoves The list of valid moves for all the chess pieces of the active player.
      */
-    public void setValidMoveColors(Grid grid, Field from, Collection<Field> validMoves, Collection<Field> allValidMoves) {
+    public void setValidMoveColors(@NotNull Grid grid, Field from, Collection<Field> validMoves, @NotNull Collection<Field> allValidMoves) {
         grid.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
         allValidMoves.forEach(to -> createAbsoluteFieldValues(grid, from, to));
         createRelativeFieldValues(validMoves, allValidMoves, from);
@@ -226,7 +240,7 @@ public class Game {
         }
     }
 
-    void createRelativeFieldValues(Collection<Field> validMoves, Collection<Field> allValidMoves, Field from) {
+    void createRelativeFieldValues(@NotNull Collection<Field> validMoves, Collection<Field> allValidMoves, @NotNull Field from) {
         int minValue = getMinValue(allValidMoves);
         int maxValue = getMaxValue(allValidMoves);
         validMoves.forEach((Field gridField) -> {
@@ -240,10 +254,10 @@ public class Game {
                     ? gridField.getRelativeValue()
                     : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
 
-            gridField.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(gridField));
+            gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField));
         });
 
-        from.getButton().setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(from));
+        from.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(from));
     }
 
     private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
@@ -251,7 +265,7 @@ public class Game {
                 getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAX_COLOR_VALUE - MIN_COLOR_VALUE) + MIN_COLOR_VALUE;
     }
 
-    private static int getCurrentFieldValueComparedToMinimumValue(Field gridField, int minValue) {
+    private static int getCurrentFieldValueComparedToMinimumValue(@NotNull Field gridField, int minValue) {
         return gridField.getValue() - minValue;
     }
 
@@ -271,7 +285,7 @@ public class Game {
                 : validMoves.stream().mapToInt(Field::getValue).min().orElse(0);
     }
 
-    private void setValidMoves(Map<Field, List<Field>> allValidFromsAndValidMoves, List<Field> allValidMoves, Field from) {
+    private void setValidMoves(Map<Field, List<Field>> allValidFromsAndValidMoves, @NotNull List<Field> allValidMoves, Field from) {
         List<Field> validMoves = createValidMoves(from);
         from.setValidMove(!validMoves.isEmpty());
         from.setValidFrom(from.isValidMove());

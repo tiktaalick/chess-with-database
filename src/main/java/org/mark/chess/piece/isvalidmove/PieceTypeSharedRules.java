@@ -1,6 +1,7 @@
 package org.mark.chess.piece.isvalidmove;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
 import org.mark.chess.player.PlayerColor;
@@ -27,11 +28,11 @@ public class PieceTypeSharedRules {
     private int                  absoluteHorizontalMove;
     private int                  absoluteVerticalMove;
 
-    protected static boolean isCaptureMove(Field from, Field to) {
+    protected static boolean isCaptureMove(Field from, @NotNull Field to) {
         return to.getPieceType() != null && to.getPieceType().getColor() != from.getPieceType().getColor();
     }
 
-    protected static List<Field> neighbourFieldsWithOpponentPawns(Grid grid, Field playerField, PlayerColor color) {
+    protected static List<Field> neighbourFieldsWithOpponentPawns(@NotNull Grid grid, Field playerField, PlayerColor color) {
         return grid
                 .getFields()
                 .stream()

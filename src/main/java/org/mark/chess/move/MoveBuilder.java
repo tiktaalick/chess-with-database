@@ -1,5 +1,6 @@
 package org.mark.chess.move;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
@@ -32,7 +33,7 @@ public class MoveBuilder {
      * @param game The game.
      * @return The builder.
      */
-    public MoveBuilder changeTurn(Game game) {
+    public MoveBuilder changeTurn(@NotNull Game game) {
         game.changeTurn();
 
         return this;
@@ -45,7 +46,7 @@ public class MoveBuilder {
      * @param field The field for which the valid moves will be searched.
      * @return The builder.
      */
-    public MoveBuilder enableValidMoves(Game game, Field field) {
+    public MoveBuilder enableValidMoves(@NotNull Game game, Field field) {
         game.enableValidMoves(field);
 
         return this;
@@ -89,7 +90,7 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder resetFrom() {
-        move.getFrom().resetField();
+        move.getFrom().setPieceType(null);
 
         return this;
     }
@@ -112,7 +113,7 @@ public class MoveBuilder {
      * @param game The game.
      * @return The builder.
      */
-    public MoveBuilder setKingFieldColors(Game game) {
+    public MoveBuilder setKingFieldColors(@NotNull Game game) {
         game.setKingFieldColors(game.resetValidMoves());
 
         return this;

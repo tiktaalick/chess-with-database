@@ -1,5 +1,6 @@
 package org.mark.chess.piece.isvalidmove;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
@@ -19,7 +20,7 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
         return isJumping(getGrid(), getFrom(), getTo());
     }
 
-    boolean isJumping(Grid grid, Field from, Field to) {
+    boolean isJumping(Grid grid, @NotNull Field from, @NotNull Field to) {
         var step = new Coordinates(Integer.signum(to.getCoordinates().getX() - from.getCoordinates().getX()),
                 Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()));
 
@@ -37,12 +38,12 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
         return mustIJump;
     }
 
-    private static void doNextStep(Coordinates coordinates, Coordinates step) {
+    private static void doNextStep(@NotNull Coordinates coordinates, @NotNull Coordinates step) {
         coordinates.setX(coordinates.getX() + step.getX());
         coordinates.setY(coordinates.getY() + step.getY());
     }
 
-    private static boolean isFieldOccupied(Grid grid, Coordinates currentCoordinates) {
+    private static boolean isFieldOccupied(@NotNull Grid grid, Coordinates currentCoordinates) {
         return grid
                 .getFields()
                 .stream()
@@ -51,7 +52,7 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
                 .anyMatch(field -> field.getPieceType() != null);
     }
 
-    private static boolean movingTowardsDestination(Coordinates currentCoordinates, Coordinates to, Coordinates step) {
+    private static boolean movingTowardsDestination(@NotNull Coordinates currentCoordinates, @NotNull Coordinates to, Coordinates step) {
         return !(currentCoordinates.getX() == to.getX() && currentCoordinates.getY() == to.getY()) &&
                 (step.getX() >= ZERO_STEPS) == (currentCoordinates.getX() <= to.getX()) &&
                 (step.getY() >= ZERO_STEPS) == (currentCoordinates.getY() <= to.getY());

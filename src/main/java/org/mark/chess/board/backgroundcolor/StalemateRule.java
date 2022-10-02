@@ -1,5 +1,6 @@
 package org.mark.chess.board.backgroundcolor;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.rulesengine.Rule;
 
@@ -15,7 +16,7 @@ public class StalemateRule implements Rule<Field, Color> {
     }
 
     @Override
-    public boolean isApplicable(Field field) {
+    public boolean isApplicable(@NotNull Field field) {
         return field.isStaleMate();
     }
 }

@@ -1,5 +1,6 @@
 package org.mark.chess.piece.isvalidmove;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
@@ -45,7 +46,7 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
     }
 
-    private static Field getRookField(Grid grid, Field from, int direction) {
+    private static Field getRookField(@NotNull Grid grid, @NotNull Field from, int direction) {
         return grid.getField(new Coordinates((direction == KING_CASTLING_TO_THE_LEFT
                 ? ROOK_CASTLING_FROM_THE_LEFT
                 : ROOK_CASTLING_FROM_THE_RIGHT), from.getPieceType().getColor().getBaseline()));
@@ -68,7 +69,7 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
         return isValidFrom(from) && isValidTo(from, to, direction);
     }
 
-    private static boolean isValidFrom(Field from) {
+    private static boolean isValidFrom(@NotNull Field from) {
         return from.getCoordinates().getX() == KING_STARTING_POSITION && from.getCoordinates().getY() == from.getPieceType().getColor().getBaseline();
     }
 

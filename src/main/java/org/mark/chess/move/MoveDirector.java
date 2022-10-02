@@ -1,5 +1,6 @@
 package org.mark.chess.move;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.Grid;
 import org.mark.chess.game.Game;
@@ -63,7 +64,7 @@ public class MoveDirector {
      * @param fieldClick The to-field that has been clicked upon.
      * @return The built move.
      */
-    public Move performToMove(Game game, Move move, Field fieldClick) {
+    public Move performToMove(@NotNull Game game, Move move, Field fieldClick) {
         return generalMoveBuilder
                 .setMove(move)
                 .setTo(game.getGrid(), fieldClick)

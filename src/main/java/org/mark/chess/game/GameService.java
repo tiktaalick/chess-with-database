@@ -1,8 +1,7 @@
 package org.mark.chess.game;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.player.PlayerColor;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,24 +13,26 @@ public class GameService {
     /**
      * Creates a new game.
      *
-     * @param board            The front-end chessboard.
      * @param humanPlayerColor The piece-type color with which the human plays.
      * @return The created game.
      */
-    public Game createGame(Board board, PlayerColor humanPlayerColor) {
-        return Game.create(board, humanPlayerColor);
+    public Game createGame(PlayerColor humanPlayerColor) {
+        return Game.create(humanPlayerColor);
     }
 
     /**
      * Handles the left and right mouse clicks on the chessboard fields.
      *
-     * @param game        The game.
-     * @param board       The front-end chessboard.
-     * @param buttonClick An integer that indicates whether the event is a left, middle or right mouse click.
-     * @param button      The front-end chessboard field that was clicked.
+     * @param game           The game.
+     * @param leftRightClick An integer that indicates whether the event is a left, middle or right mouse click.
+     * @param buttonId       The front-end chessboard field that was clicked.
      */
-    public void handleButtonClick(Game game, Board board, int buttonClick, Button button) {
-        game.handleButtonClick(board, buttonClick, button);
+    public Game handleButtonClick(@NotNull Game game, int leftRightClick, int buttonId) {
+        if (!game.isInProgress()) {
+            return Game.restart(game);
+        } else {
+            return game.handleButtonClick(leftRightClick, buttonId);
+        }
     }
 
     /**
@@ -39,7 +40,7 @@ public class GameService {
      *
      * @param game The game.
      */
-    public void resetValidMoves(Game game) {
+    public void resetValidMoves(@NotNull Game game) {
         game.resetValidMoves();
     }
 }

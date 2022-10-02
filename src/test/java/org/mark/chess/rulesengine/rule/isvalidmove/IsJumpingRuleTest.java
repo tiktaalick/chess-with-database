@@ -2,12 +2,12 @@ package org.mark.chess.rulesengine.rule.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Grid;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.board.Grid;
 import org.mark.chess.piece.Bishop;
-import org.mark.chess.piece.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.isvalidmove.IsJumpingRule;
+import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.swing.Board;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,6 +20,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class IsJumpingRuleTest {
+
     private static final int LAST_SQUARE_ON_THE_BOARD_ID = 63;
 
     @InjectMocks
@@ -34,7 +35,7 @@ class IsJumpingRuleTest {
         Field to = new Field(null).setCode("c3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("b2");
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(opponentField.getId(), opponentField);
 
@@ -48,7 +49,7 @@ class IsJumpingRuleTest {
         Field to = new Field(null).setCode("c3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("d4");
 
-        Grid grid = Grid.createEmpty(board, WHITE);
+        Grid grid = Grid.createEmpty();
         grid.getFields().set(from.getId(), from);
         grid.getFields().set(opponentField.getId(), opponentField);
 

@@ -42,7 +42,7 @@ class FieldTest {
     void testIsActivePlayerField_WhenActivePlayerField_ThenReturnTrue() {
         Game game = new Game(WHITE, grid);
 
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(WHITE));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(WHITE));
 
         assertTrue(field.isActivePlayerField(game));
     }
@@ -51,7 +51,7 @@ class FieldTest {
     void testIsActivePlayerField_WhenEmptyField_ThenReturnFalse() {
         Game game = new Game(WHITE, grid);
 
-        field.initialize(board, FIELD_ID_C5);
+        field.setId(FIELD_ID_C5);
 
         assertFalse(field.isActivePlayerField(game));
     }
@@ -60,7 +60,7 @@ class FieldTest {
     void testIsActivePlayerField_WhenOpponentField_ThenReturnFalse() {
         Game game = new Game(WHITE, grid);
 
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(BLACK));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
         assertFalse(field.isActivePlayerField(game));
     }
@@ -69,7 +69,7 @@ class FieldTest {
     void testIsNotAbleToMove_WhenNoMoves_ThenNotAbleToMove() {
         Game game = new Game(WHITE, grid).setCurrentPlayerColor(BLACK).setInProgress(true);
 
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(BLACK));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
         assertTrue(field.isNotAbleToMove(game, new ArrayList<>()));
     }
@@ -78,7 +78,7 @@ class FieldTest {
     void testIsNotAbleToMove_WhenValidMoves_ThenAbleToMove() {
         Game game = new Game(WHITE, grid).setCurrentPlayerColor(BLACK).setInProgress(true);
 
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(BLACK));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
         List<Field> allValidMoves = List.of(field);
 
@@ -87,27 +87,26 @@ class FieldTest {
 
     @Test
     void testResetField() {
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(BLACK));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
-        Field result = this.field.resetField();
+        Field result = this.field.setPieceType(null);
 
         assertNull(result.getPieceType());
         assertEquals("c5", result.getCode());
-        assertNull(result.getButton().getIcon());
     }
 
     @Test
     void testSetAttackingColors() {
-        field.initialize(board, FIELD_ID_C5).setPieceType(new Pawn(BLACK));
-        Field kingField = new Field(new King(WHITE)).initialize(board, Coordinates.createId("e1"));
+        field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
+        Field kingField = new Field(new King(WHITE)).setId(Coordinates.createId("e1"));
 
-        Grid grid = Grid.createEmpty(board, WHITE).setFields(Arrays.asList(field, kingField));
+        Grid grid = Grid.createEmpty().setFields(Arrays.asList(field, kingField));
 
         field.setAttackingColors(grid);
 
         assertTrue(field.isAttacking());
         assertTrue(kingField.isUnderAttack());
-        assertEquals(ATTACKING.getAwtColor(), field.getButton().getBackground());
-        assertEquals(ATTACKING.getAwtColor(), kingField.getButton().getBackground());
+        assertEquals(ATTACKING.getAwtColor(), field.getBackgroundColor());
+        assertEquals(ATTACKING.getAwtColor(), kingField.getBackgroundColor());
     }
 }

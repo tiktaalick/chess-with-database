@@ -11,8 +11,6 @@ import org.mark.chess.piece.Rook;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
 import org.mark.chess.piece.maybecapturedenpassant.PawnMayBeCapturedEnPassantRulesEngine;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,16 +37,10 @@ class MoveBuilderTest {
     private MoveBuilder moveBuilder;
 
     @Mock
-    private Board board;
-
-    @Mock
     private Move move;
 
     @Mock
     private MoveDirector rookMoveDirector;
-
-    @Mock
-    private Button button;
 
     @Mock
     private PawnMayBeCapturedEnPassantRulesEngine pawnMayBeCapturedEnPassantRulesEngine;
@@ -91,7 +83,7 @@ class MoveBuilderTest {
         when(move.getFrom()).thenReturn(kingFrom);
         when(move.getTo()).thenReturn(kingTo);
 
-        Game game = Game.create(board, WHITE);
+        Game game = Game.create(WHITE);
 
         try (MockedStatic<KingIsValidCastlingRule> kingIsValidCastlingRuleMockedStatic = Mockito.mockStatic(KingIsValidCastlingRule.class)) {
             kingIsValidCastlingRuleMockedStatic
@@ -124,13 +116,13 @@ class MoveBuilderTest {
         moveBuilder.resetFrom();
 
         verify(move).getFrom();
-        verify(field).resetField();
+        verify(field).setPieceType(null);
     }
 
     @Test
     void testSetChessPieceSpecificFields_WhenKing_ThenSetHasMovedAtLeastOnce() {
-        Grid grid = Grid.create(board, WHITE);
-        Game game = Game.create(board, WHITE).setGrid(grid);
+        Grid grid = Grid.create();
+        Game game = Game.create(WHITE).setGrid(grid);
         Field from = new Field(new King(WHITE));
         Field to = new Field(null);
 
@@ -144,10 +136,10 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnIsBeingPromoted_ThenPawnIsPromotedToQueen() {
-        Grid grid = Grid.create(board, WHITE);
-        Game game = Game.create(board, WHITE).setGrid(grid);
-        Field from = new Field(new Pawn(WHITE)).setButton(button);
-        Field to = new Field(null).setButton(button).setCode("e8");
+        Grid grid = Grid.create();
+        Game game = Game.create(WHITE).setGrid(grid);
+        Field from = new Field(new Pawn(WHITE));
+        Field to = new Field(null).setCode("e8");
 
         when(move.getFrom()).thenReturn(from);
         when(move.getTo()).thenReturn(to);
@@ -161,8 +153,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
-        Grid grid = Grid.create(board, WHITE);
-        Game game = Game.create(board, WHITE).setGrid(grid);
+        Grid grid = Grid.create();
+        Game game = Game.create(WHITE).setGrid(grid);
         Field from = new Field(new Pawn(WHITE).setPawnMayBeCapturedEnPassantRulesEngine(pawnMayBeCapturedEnPassantRulesEngine));
         Field to = new Field(null);
 
@@ -177,8 +169,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenRook_ThenSetHasMovedAtLeastOnce() {
-        Grid grid = Grid.create(board, WHITE);
-        Game game = Game.create(board, WHITE).setGrid(grid);
+        Grid grid = Grid.create();
+        Game game = Game.create(WHITE).setGrid(grid);
         Field from = new Field(new Rook(WHITE));
         Field to = new Field(null);
 

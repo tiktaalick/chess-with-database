@@ -1,5 +1,6 @@
 package org.mark.chess.piece.isvalidmove;
 
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.rulesengine.Rule;
 
@@ -22,7 +23,7 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
         return !isValidDirection(getFrom(), getTo());
     }
 
-    private static boolean isValidDirection(Field from, Field to) {
+    private static boolean isValidDirection(@NotNull Field from, @NotNull Field to) {
         return Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()) ==
                 (from.getPieceType().getColor() == WHITE
                         ? GOING_UP

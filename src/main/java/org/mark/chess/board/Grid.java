@@ -2,13 +2,11 @@ package org.mark.chess.board;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.InitialPieceRepository;
 import org.mark.chess.player.PlayerColor;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.Button;
 
-import java.awt.GridLayout;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +18,9 @@ import static org.mark.chess.piece.PieceType.KING;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
 
+/**
+ * Contains methods related to the backend representation of a chessboard.
+ */
 @Data
 @Accessors(chain = true)
 public final class Grid {
@@ -39,7 +40,7 @@ public final class Grid {
         this.gridValue = calculateGridValue(this, WHITE);
     }
 
-    private Grid(Grid gridBeforeTheMove, Field from, Field to) {
+    private Grid(@NotNull Grid gridBeforeTheMove, @NotNull Field from, Field to) {
         this.fields = gridBeforeTheMove
                 .getFields()
                 .stream()
@@ -62,35 +63,47 @@ public final class Grid {
         this.gridValue = calculateGridValue(this, from.getPieceType().getColor());
     }
 
-    public static Grid create(Board board, PlayerColor humanPlayerColor) {
+    /**
+     * Creates a chessboard with chess pieces in their initial positions.
+     *
+     * @return A chessboard with chess pieces in their initial positions.
+     */
+    public static @NotNull Grid create() {
         return new Grid(IntStream
                 .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .map(id -> (humanPlayerColor == WHITE)
-                        ? id
-                        : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> new Field(null).initialize(board, id).addChessPiece(InitialPieceRepository.getInitialPiece(id)))
+                .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceRepository.getInitialPiece(id)))
                 .collect(Collectors.toList()));
     }
 
-    public static Grid createAfterMovement(Grid gridBeforeTheMove, Field from, Field to) {
+    /**
+     * Creates a chessboard with chess pieces in their future positions, based on their current positions and the current move.
+     *
+     * @param gridBeforeTheMove The chessboard with the chess pieces in their positions
+     * @param from              The field from which a piece is moving.
+     * @param to                The field to which a piece is moving.
+     * @return A chessboard with chess pieces in their future positions.
+     */
+    public static @NotNull Grid createAfterMovement(Grid gridBeforeTheMove, Field from, Field to) {
         return new Grid(gridBeforeTheMove, from, to);
     }
 
-    public static Grid createEmpty(Board board, PlayerColor humanPlayerColor) {
-        return new Grid(IntStream
-                .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .map(id -> (humanPlayerColor == WHITE)
-                        ? id
-                        : (MAXIMUM_SQUARE_ID - id))
-                .mapToObj(id -> new Field(null).initialize(board, id))
-                .collect(Collectors.toList()));
+    /**
+     * Creates a chessboard without chess pieces.
+     *
+     * @return A chessboard without chess pieces.
+     */
+    public static @NotNull Grid createEmpty() {
+        return new Grid(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
     }
 
-    public static GridLayout createGridLayout() {
-        return new GridLayout(NUMBER_OF_COLUMNS_AND_ROWS, NUMBER_OF_COLUMNS_AND_ROWS);
-    }
-
-    public static void setKingFieldFlags(Game game, Collection<Field> allValidMoves, Field kingField) {
+    /**
+     * Sets the checkmate or stalemate flag on a field that contains a king, if applicable.
+     *
+     * @param game          The game.
+     * @param allValidMoves All the valid moves.
+     * @param kingField     The field that contains a king.
+     */
+    public static void setKingFieldFlags(@NotNull Game game, Collection<Field> allValidMoves, @NotNull Field kingField) {
         boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
 
         kingField
@@ -98,7 +111,14 @@ public final class Grid {
                 .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
     }
 
-    public int calculateGridValue(Grid grid, PlayerColor activePlayerColor) {
+    /**
+     * Calculates the value of the current positions of the chess pieces on the chessboard for the active player.
+     *
+     * @param grid              The backend representation of the chessboard.
+     * @param activePlayerColor The player who is currently the active player.
+     * @return The value of the current positions of the chess pieces on the chessboard.
+     */
+    public int calculateGridValue(@NotNull Grid grid, PlayerColor activePlayerColor) {
         return grid
                 .getFields()
                 .stream()
@@ -109,6 +129,12 @@ public final class Grid {
                 .sum();
     }
 
+    /**
+     * Retrieves a field based on its {@link Coordinates}.
+     *
+     * @param coordinates The {@link Coordinates} of the field.
+     * @return The field.
+     */
     public Field getField(Coordinates coordinates) {
         return this
                 .getFields()
@@ -119,15 +145,24 @@ public final class Grid {
                 .orElse(null);
     }
 
+    /**
+     * Retrieves a field based on the code of the field.
+     *
+     * @param code The code of the field.
+     * @return The field.
+     */
     public Field getField(String code) {
         return this.getFields().stream().filter(field -> field.getCode() == code).findAny().orElse(null);
     }
 
-    public Field getField(Button button) {
-        return this.getFields().stream().filter(field -> button.equals(field.getButton())).findAny().orElse(null);
-    }
-
-    public Field getKingField(Grid grid, PlayerColor color) {
+    /**
+     * Retrieves a field that contains a king in the given color.
+     *
+     * @param grid  The backend representation of a chessboard.
+     * @param color The color of the king.
+     * @return The field that contains a king in the given color.
+     */
+    public Field getKingField(@NotNull Grid grid, PlayerColor color) {
         return grid
                 .getFields()
                 .stream()
