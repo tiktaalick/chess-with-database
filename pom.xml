@@ -7,7 +7,7 @@
     <groupId>org.mark</groupId>
     <artifactId>chess-with-database</artifactId>
     <name>chess-with-database</name>
-    <version>${version}</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <description>A colorful chess application</description>
 
@@ -29,7 +29,7 @@
         <java.version>11</java.version>
         <sonar.organization>tiktaalick</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <version>1.2.0-SNAPSHOT</version>
+        <revision>1.2.0-SNAPSHOT</revision>
     </properties>
 
     <dependencies>

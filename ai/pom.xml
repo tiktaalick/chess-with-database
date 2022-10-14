@@ -12,14 +12,14 @@
     <parent>
         <artifactId>chess-with-database</artifactId>
         <groupId>org.mark</groupId>
-        <version>${version}</version>
+        <version>${revision}</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>org.mark</groupId>
             <artifactId>library</artifactId>
-            <version>${version}</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

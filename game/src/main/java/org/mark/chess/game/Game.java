@@ -3,8 +3,8 @@ package org.mark.chess.game;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
@@ -48,14 +48,14 @@ public class Game {
     private List<Player> players = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
     private boolean      inProgress;
     private PlayerColor  humanPlayerColor;
-    private PlayerColor currentPlayerColor;
-    private Chessboard  chessboard;
+    private PlayerColor  currentPlayerColor;
+    private Chessboard   chessboard;
 
     /**
      * Creates a new game.
      *
      * @param humanPlayerColor The piece-type color with which the human plays.
-     * @param chessboard             The backend representation of a chessboard.
+     * @param chessboard       The backend representation of a chessboard.
      */
     public Game(PlayerColor humanPlayerColor, Chessboard chessboard) {
         this.inProgress = true;
@@ -218,12 +218,15 @@ public class Game {
     /**
      * Gives all valid moves a color.
      *
-     * @param chessboard          The backend representation of a chessboard.
+     * @param chessboard    The backend representation of a chessboard.
      * @param from          The field from which the chess piece moves.
      * @param validMoves    The list of valid moves for the chess piece standing on the from field.
      * @param allValidMoves The list of valid moves for all the chess pieces of the active player.
      */
-    public void setValidMoveColors(@NotNull Chessboard chessboard, Field from, Collection<Field> validMoves, @NotNull Collection<Field> allValidMoves) {
+    public void setValidMoveColors(@NotNull Chessboard chessboard,
+            Field from,
+            Collection<Field> validMoves,
+            @NotNull Collection<Field> allValidMoves) {
         chessboard.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
         allValidMoves.forEach(to -> createAbsoluteFieldValues(chessboard, from, to));
         createRelativeFieldValues(validMoves, allValidMoves, from);
