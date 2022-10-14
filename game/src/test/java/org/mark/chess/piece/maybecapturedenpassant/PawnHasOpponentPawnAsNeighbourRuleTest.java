@@ -3,7 +3,7 @@ package org.mark.chess.piece.maybecapturedenpassant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.Bishop;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
@@ -27,12 +27,12 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         Field to = new Field(new Pawn(WHITE)).setCode("e3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("c3");
 
-        Grid grid = Grid.create();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -41,12 +41,12 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         Field to = new Field(new Pawn(WHITE)).setCode("e3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("d3");
 
-        Grid grid = Grid.create();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(pawnHasOpponentPawnAsNeighbourRule.create());
     }
 }

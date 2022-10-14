@@ -1,6 +1,5 @@
 package org.mark.chess.board;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Getter
 @Setter
 @Accessors(chain = true)
-public final class Grid {
+public final class Chessboard {
 
     public static final  int NUMBER_OF_COLUMNS_AND_ROWS = 8;
     private static final int MAXIMUM_SQUARE_ID          = 63;
@@ -36,21 +35,21 @@ public final class Grid {
     private Field       opponentKingField;
     private int         gridValue;
 
-    private Grid(List<Field> fields) {
+    private Chessboard(List<Field> fields) {
         this.fields = fields;
         this.kingField = getKingField(this, WHITE);
         this.opponentKingField = getKingField(this, BLACK);
         this.gridValue = calculateGridValue(this, WHITE);
     }
 
-    private Grid(@NotNull Grid gridBeforeTheMove, @NotNull Field from, Field to) {
-        this.fields = gridBeforeTheMove
+    private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
+        this.fields = chessboardBeforeTheMove
                 .getFields()
                 .stream()
                 .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
                 .collect(Collectors.toList());
 
-        List<Field> movementList = gridBeforeTheMove
+        List<Field> movementList = chessboardBeforeTheMove
                 .getFields()
                 .stream()
                 .filter(field -> Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
@@ -71,8 +70,8 @@ public final class Grid {
      *
      * @return A chessboard with chess pieces in their initial positions.
      */
-    public static @NotNull Grid create() {
-        return new Grid(IntStream
+    public static @NotNull Chessboard create() {
+        return new Chessboard(IntStream
                 .rangeClosed(0, MAXIMUM_SQUARE_ID)
                 .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceRepository.getInitialPiece(id)))
                 .collect(Collectors.toList()));
@@ -81,13 +80,13 @@ public final class Grid {
     /**
      * Creates a chessboard with chess pieces in their future positions, based on their current positions and the current move.
      *
-     * @param gridBeforeTheMove The chessboard with the chess pieces in their positions
+     * @param chessboardBeforeTheMove The chessboard with the chess pieces in their positions
      * @param from              The field from which a piece is moving.
      * @param to                The field to which a piece is moving.
      * @return A chessboard with chess pieces in their future positions.
      */
-    public static @NotNull Grid createAfterMovement(Grid gridBeforeTheMove, Field from, Field to) {
-        return new Grid(gridBeforeTheMove, from, to);
+    public static @NotNull Chessboard createAfterMovement(Chessboard chessboardBeforeTheMove, Field from, Field to) {
+        return new Chessboard(chessboardBeforeTheMove, from, to);
     }
 
     /**
@@ -95,8 +94,8 @@ public final class Grid {
      *
      * @return A chessboard without chess pieces.
      */
-    public static @NotNull Grid createEmpty() {
-        return new Grid(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
+    public static @NotNull Chessboard createEmpty() {
+        return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
     }
 
     /**
@@ -107,7 +106,7 @@ public final class Grid {
      * @param kingField     The field that contains a king.
      */
     public static void setKingFieldFlags(@NotNull Game game, Collection<Field> allValidMoves, @NotNull Field kingField) {
-        boolean isInCheckNow = kingField.isInCheckNow(game.getGrid(), false);
+        boolean isInCheckNow = kingField.isInCheckNow(game.getChessboard(), false);
 
         kingField
                 .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
@@ -117,12 +116,12 @@ public final class Grid {
     /**
      * Calculates the value of the current positions of the chess pieces on the chessboard for the active player.
      *
-     * @param grid              The backend representation of the chessboard.
+     * @param chessboard              The backend representation of the chessboard.
      * @param activePlayerColor The player who is currently the active player.
      * @return The value of the current positions of the chess pieces on the chessboard.
      */
-    public int calculateGridValue(@NotNull Grid grid, PlayerColor activePlayerColor) {
-        return grid
+    public int calculateGridValue(@NotNull Chessboard chessboard, PlayerColor activePlayerColor) {
+        return chessboard
                 .getFields()
                 .stream()
                 .filter(field -> field.getPieceType() != null)
@@ -161,12 +160,12 @@ public final class Grid {
     /**
      * Retrieves a field that contains a king in the given color.
      *
-     * @param grid  The backend representation of a chessboard.
+     * @param chessboard  The backend representation of a chessboard.
      * @param color The color of the king.
      * @return The field that contains a king in the given color.
      */
-    public Field getKingField(@NotNull Grid grid, PlayerColor color) {
-        return grid
+    public Field getKingField(@NotNull Chessboard chessboard, PlayerColor color) {
+        return chessboard
                 .getFields()
                 .stream()
                 .filter(field -> field.getPieceType() != null)

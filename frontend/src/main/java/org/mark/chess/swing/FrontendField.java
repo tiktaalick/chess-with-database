@@ -21,7 +21,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public final class Button extends JButton {
+public final class FrontendField extends JButton {
 
     public static final  int    FIELD_WIDTH_AND_HEIGHT = 75;
     private static final String EXTENSION              = ".png";
@@ -33,14 +33,14 @@ public final class Button extends JButton {
     private int    id;
     private String iconPath;
 
-    public Button(Board board, @NotNull Field field) {
+    public FrontendField(FrontendChessboard frontendChessboard, @NotNull Field field) {
         this.setText(String.valueOf(field.getCode()));
         this.setBounds(field.getCoordinates().getX() * FIELD_WIDTH_AND_HEIGHT,
                 field.getCoordinates().getY() * FIELD_WIDTH_AND_HEIGHT,
                 FIELD_WIDTH_AND_HEIGHT,
                 FIELD_WIDTH_AND_HEIGHT);
-        this.addActionListener(board);
-        this.addMouseListener(board);
+        this.addActionListener(frontendChessboard);
+        this.addMouseListener(frontendChessboard);
         this.setBackground(backgroundColorRulesEngine.process(field));
         this.initialize(field);
     }
@@ -51,7 +51,7 @@ public final class Button extends JButton {
                 : (MAXIMUM_FIELD_ID - fieldId);
     }
 
-    public Button initialize(@NotNull Field field) {
+    public FrontendField initialize(@NotNull Field field) {
         this.id = field.getId();
 
         if (field.getPieceType() == null) {
@@ -71,7 +71,7 @@ public final class Button extends JButton {
         return this;
     }
 
-    public Button reset(@NotNull Field field) {
+    public FrontendField reset(@NotNull Field field) {
         this.setText(field.getCode());
         this.setIcon(null);
 

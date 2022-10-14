@@ -3,7 +3,7 @@ package org.mark.chess.piece.isvalidmove;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.PieceType;
 import org.mark.chess.piece.Rook;
@@ -26,12 +26,12 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     public static final  int ROOK_CASTLING_TO_THE_RIGHT   = 4;
     private static final int KING_STARTING_POSITION       = 5;
 
-    public static boolean isValidCastling(Grid grid, Field from, Field to, int direction, boolean isOpponent, boolean isNowCastling) {
+    public static boolean isValidCastling(Chessboard chessboard, Field from, Field to, int direction, boolean isOpponent, boolean isNowCastling) {
 
         return !isOpponent &&
                 isValidCastlingPositions(from, to, direction) &&
-                isValidCastlingPieces(grid, from, direction, isNowCastling) &&
-                !from.isInCheckNow(grid, false);
+                isValidCastlingPieces(chessboard, from, direction, isNowCastling) &&
+                !from.isInCheckNow(chessboard, false);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
     }
 
-    private static Field getRookField(@NotNull Grid grid, @NotNull Field from, int direction) {
-        return grid.getField(new Coordinates((direction == KING_CASTLING_TO_THE_LEFT
+    private static Field getRookField(@NotNull Chessboard chessboard, @NotNull Field from, int direction) {
+        return chessboard.getField(new Coordinates((direction == KING_CASTLING_TO_THE_LEFT
                 ? ROOK_CASTLING_FROM_THE_LEFT
                 : ROOK_CASTLING_FROM_THE_RIGHT), from.getPieceType().getColor().getBaseline()));
     }
@@ -62,8 +62,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
                 !((Rook) Optional.of(rookField).map(Field::getPieceType).orElse(new Rook(PlayerColor.BLACK))).isHasMovedAtLeastOnce();
     }
 
-    private static boolean isValidCastlingPieces(Grid grid, Field from, int direction, boolean isNowCastling) {
-        return isKingValid(from, isNowCastling) && isRookValid(getRookField(grid, from, direction));
+    private static boolean isValidCastlingPieces(Chessboard chessboard, Field from, int direction, boolean isNowCastling) {
+        return isKingValid(from, isNowCastling) && isRookValid(getRookField(chessboard, from, direction));
     }
 
     private static boolean isValidCastlingPositions(Field from, Field to, int direction) {
