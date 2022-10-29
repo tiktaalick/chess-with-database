@@ -3,12 +3,11 @@ package org.mark.chess.move;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.piece.PieceType;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +57,7 @@ class MoveTest {
 
     @Test
     void testSetTo() {
-        Grid grid = Grid.create();
+        Chessboard chessboard = Chessboard.create();
 
         PieceType pieceType = new Pawn(WHITE);
 
@@ -67,7 +66,7 @@ class MoveTest {
 
         move.setFrom(from);
 
-        Move result = this.move.setTo(grid, to);
+        Move result = this.move.setTo(chessboard, to);
         assertEquals(to, result.getTo());
         assertEquals(pieceType, result.getTo().getPieceType());
     }

@@ -3,7 +3,7 @@ package org.mark.chess.game;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
 import org.mark.chess.piece.Pawn;
@@ -38,7 +38,7 @@ class GameTest {
     private static final int RIGHT_CLICK       = 3;
 
     @Mock
-    private Grid grid;
+    private Chessboard chessboard;
 
     @Mock
     private Move move;
@@ -48,11 +48,11 @@ class GameTest {
 
     @Spy
     @InjectMocks
-    private Game game = new Game(WHITE, grid);
+    private Game game = new Game(WHITE, chessboard);
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
-        Game game = new Game(WHITE, Grid.create()).setCurrentPlayerColor(BLACK);
+        Game game = new Game(WHITE, Chessboard.create()).setCurrentPlayerColor(BLACK);
 
         game.changeTurn();
 
@@ -61,7 +61,7 @@ class GameTest {
 
     @Test
     void testChangeTurn_WhenWhite_ThenBlack() {
-        Game game = new Game(WHITE, Grid.create()).setCurrentPlayerColor(WHITE);
+        Game game = new Game(WHITE, Chessboard.create()).setCurrentPlayerColor(WHITE);
 
         game.changeTurn();
 
@@ -74,17 +74,17 @@ class GameTest {
 
         assertEquals(WHITE, game.getCurrentPlayerColor());
         assertTrue(game.isInProgress());
-        assertEquals(64, game.getGrid().getFields().size());
-        assertEquals(BLACK, game.getGrid().getFields().get(0).getPieceType().getColor());
-        assertEquals("rook", game.getGrid().getFields().get(0).getPieceType().getName());
+        assertEquals(64, game.getChessboard().getFields().size());
+        assertEquals(BLACK, game.getChessboard().getFields().get(0).getPieceType().getColor());
+        assertEquals("rook", game.getChessboard().getFields().get(0).getPieceType().getName());
     }
 
     @Test
     void testEnableValidMoves_When64EnabledMovesAnd2ValidMoves_ThenDisable62Moves() {
-        Grid grid = Grid.create();
+        Chessboard chessboard = Chessboard.create();
         Field from = new Field(new Pawn(WHITE)).setId(0);
 
-        List<Field> validMovesList = grid
+        List<Field> validMovesList = chessboard
                 .getFields()
                 .stream()
                 .filter(field -> field.getCoordinates().getX() == 4)
@@ -92,24 +92,24 @@ class GameTest {
                 .collect(Collectors.toList());
         validMovesList.forEach(field -> field.setValidMove(false));
 
-        when(game.getGrid()).thenReturn(grid);
+        when(game.getChessboard()).thenReturn(chessboard);
         when(game.createValidMoves(from)).thenReturn(validMovesList);
 
         game.enableValidMoves(from);
 
-        assertEquals(NUMBER_OF_SQUARES, game.getGrid().getFields().size());
-        assertEquals(2L, game.getGrid().getFields().stream().filter(Field::isValidMove).count());
-        assertEquals(validMovesList, game.getGrid().getFields().stream().filter(Field::isValidMove).collect(Collectors.toList()));
+        assertEquals(NUMBER_OF_SQUARES, game.getChessboard().getFields().size());
+        assertEquals(2L, game.getChessboard().getFields().stream().filter(Field::isValidMove).count());
+        assertEquals(validMovesList, game.getChessboard().getFields().stream().filter(Field::isValidMove).collect(Collectors.toList()));
     }
 
     @Test
     void testGetValidMoves() {
-        Grid grid = Grid.create();
+        Chessboard chessboard = Chessboard.create();
         Field field = new Field(new Pawn(WHITE)).setCode("d2");
 
-        grid.getFields().set(field.getId(), field);
+        chessboard.getFields().set(field.getId(), field);
 
-        game.setGrid(grid);
+        game.setChessboard(chessboard);
 
         List<Field> validMoves = game.createValidMoves(field);
 
@@ -118,10 +118,10 @@ class GameTest {
 
     @Test
     void testHandleButtonClick_WhenLeftClickOnFromField_ThenSetFrom() {
-        Grid grid = Grid.create();
-        grid.getFields().get(50).setValidMove(true);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().get(50).setValidMove(true);
 
-        when(game.getGrid()).thenReturn(grid);
+        when(game.getChessboard()).thenReturn(chessboard);
         when(move.isFrom(eq(game), any(Field.class))).thenReturn(true);
 
         Game.setMoveDirector(moveDirector);
@@ -132,10 +132,10 @@ class GameTest {
 
     @Test
     void testHandleButtonClick_WhenLeftClickOnToField_ThenSetTo() {
-        Grid grid = Grid.create();
-        grid.getFields().get(50).setValidMove(true);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().get(50).setValidMove(true);
 
-        when(game.getGrid()).thenReturn(grid);
+        when(game.getChessboard()).thenReturn(chessboard);
         when(move.isFrom(eq(game), any(Field.class))).thenReturn(false);
 
         Game.setMoveDirector(moveDirector);
@@ -146,9 +146,9 @@ class GameTest {
 
     @Test
     void testHandleButtonClick_WhenRightClickOnToField_ThenResetValidMoves() {
-        Grid grid = Grid.create();
+        Chessboard chessboard = Chessboard.create();
 
-        when(game.getGrid()).thenReturn(grid);
+        when(game.getChessboard()).thenReturn(chessboard);
 
         Game.setMoveDirector(moveDirector);
         game.handleButtonClick(RIGHT_CLICK, 63);
@@ -158,7 +158,7 @@ class GameTest {
 
     @Test
     void testResetValidMoves() {
-        game.setGrid(Grid.create());
+        game.setChessboard(Chessboard.create());
 
         List<Field> validMoves = game.resetValidMoves();
 
@@ -178,42 +178,42 @@ class GameTest {
 
     @Test
     void testSetGameProgress_WhenCheckMate_ThenGameIsInNotInProgress() {
-        game.setGrid(Grid.create());
+        game.setChessboard(Chessboard.create());
 
-        game.setGameProgress(game.getGrid().getKingField().setCheckMate(true));
+        game.setGameProgress(game.getChessboard().getKingField().setCheckMate(true));
 
         assertFalse(game.isInProgress());
     }
 
     @Test
     void testSetGameProgress_WhenNoCheckMateNorStaleMate_ThenGameIsInProgress() {
-        game.setGrid(Grid.create());
+        game.setChessboard(Chessboard.create());
 
-        game.setGameProgress(game.getGrid().getKingField());
+        game.setGameProgress(game.getChessboard().getKingField());
 
         assertTrue(game.isInProgress());
     }
 
     @Test
     void testSetGameProgress_WhenStaleMate_ThenGameIsInNotInProgress() {
-        game.setGrid(Grid.create());
+        game.setChessboard(Chessboard.create());
 
-        game.setGameProgress(game.getGrid().getKingField().setStaleMate(true));
+        game.setGameProgress(game.getChessboard().getKingField().setStaleMate(true));
 
         assertFalse(game.isInProgress());
     }
 
     @Test
     void testSetKingFieldColors() {
-        Grid grid = Grid.create();
-        game.setGrid(grid);
-        List<Field> fields = game.getGrid().getFields();
+        Chessboard chessboard = Chessboard.create();
+        game.setChessboard(chessboard);
+        List<Field> fields = game.getChessboard().getFields();
 
-        try (MockedStatic<Grid> gridMockedStatic = Mockito.mockStatic(Grid.class)) {
+        try (MockedStatic<Chessboard> gridMockedStatic = Mockito.mockStatic(Chessboard.class)) {
             game.setKingFieldColors(fields);
 
-            gridMockedStatic.verify(() -> Grid.setKingFieldFlags(game, fields, grid.getKingField()));
-            gridMockedStatic.verify(() -> Grid.setKingFieldFlags(game, fields, grid.getOpponentKingField()));
+            gridMockedStatic.verify(() -> Chessboard.setKingFieldFlags(game, fields, chessboard.getKingField()));
+            gridMockedStatic.verify(() -> Chessboard.setKingFieldFlags(game, fields, chessboard.getOpponentKingField()));
         }
     }
 }

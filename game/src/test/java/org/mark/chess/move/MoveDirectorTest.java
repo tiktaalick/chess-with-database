@@ -3,7 +3,7 @@ package org.mark.chess.move;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,7 +31,7 @@ class MoveDirectorTest {
     private Game game;
 
     @Mock
-    private Grid grid;
+    private Chessboard chessboard;
 
     @Test
     void testPerformFromMove() {
@@ -60,20 +60,20 @@ class MoveDirectorTest {
     void testPerformRookMove() {
         Move move = new Move(field);
         when(moveBuilder.setMove(move)).thenReturn(moveBuilder);
-        when(moveBuilder.setTo(grid, field)).thenReturn(moveBuilder);
+        when(moveBuilder.setTo(chessboard, field)).thenReturn(moveBuilder);
         when(moveBuilder.resetFrom()).thenReturn(moveBuilder);
 
         MoveDirector.setRookMoveBuilder(moveBuilder);
-        moveDirector.performRookMove(grid, field, field);
+        moveDirector.performRookMove(chessboard, field, field);
 
         verify(moveBuilder).build();
     }
 
     @Test
     void testPerformToMove() {
-        when(game.getGrid()).thenReturn(grid);
+        when(game.getChessboard()).thenReturn(chessboard);
         when(moveBuilder.setMove(move)).thenReturn(moveBuilder);
-        when(moveBuilder.setTo(grid, field)).thenReturn(moveBuilder);
+        when(moveBuilder.setTo(chessboard, field)).thenReturn(moveBuilder);
         when(moveBuilder.setPieceTypeSpecificAttributes(game)).thenReturn(moveBuilder);
         when(moveBuilder.moveRookIfCastling(game)).thenReturn(moveBuilder);
         when(moveBuilder.changeTurn(game)).thenReturn(moveBuilder);

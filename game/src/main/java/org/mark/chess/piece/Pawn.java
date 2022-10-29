@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.isvalidmove.PawnIsValidMoveRulesEngine;
@@ -54,7 +54,7 @@ public class Pawn extends PieceType {
 
     @Override
     public void setPieceTypeSpecificAttributes(@NotNull Game game, @NotNull Field from, Field to) {
-        ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(game.getGrid(), from, to).setPawnBeingPromoted(from, to);
+        ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(game.getChessboard(), from, to).setPawnBeingPromoted(from, to);
 
         if ((from.getPieceType()).isPawnBeingPromoted()) {
             to.setPieceType(getNextPawnPromotion());
@@ -64,13 +64,13 @@ public class Pawn extends PieceType {
     /**
      * Sets whether the pawn may be captured en passant or not.
      *
-     * @param grid The backend representation of a chessboard.
+     * @param chessboard The backend representation of a chessboard.
      * @param from The field from which the pawn is moving.
      * @param to   The field to which the pawn is moving.
      * @return The pawn.
      */
-    public Pawn setMayBeCapturedEnPassant(Grid grid, Field from, Field to) {
-        setMayBeCapturedEnPassant(pawnMayBeCapturedEnPassantRulesEngine.process(new IsValidMoveParameter(grid, from, to, false)));
+    public Pawn setMayBeCapturedEnPassant(Chessboard chessboard, Field from, Field to) {
+        setMayBeCapturedEnPassant(pawnMayBeCapturedEnPassantRulesEngine.process(new IsValidMoveParameter(chessboard, from, to, false)));
 
         return this;
     }

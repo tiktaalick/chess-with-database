@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.Rook;
 import org.mockito.InjectMocks;
@@ -28,11 +28,11 @@ class KingIsValidCastlingRuleTest {
         Coordinates rookCoordinates = new Coordinates(1, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(rookField.getId(), rookField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(rookField.getId(), rookField);
 
-        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(kingIsValidCastlingRule.create());
     }
 
@@ -44,11 +44,11 @@ class KingIsValidCastlingRuleTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(rookField.getId(), rookField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(rookField.getId(), rookField);
 
-        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(kingIsValidCastlingRule.create());
     }
 
@@ -60,11 +60,11 @@ class KingIsValidCastlingRuleTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(rookField.getId(), rookField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(rookField.getId(), rookField);
 
-        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -75,11 +75,11 @@ class KingIsValidCastlingRuleTest {
         Coordinates rookCoordinates = new Coordinates(8, 1);
         Field rookField = new Field(new Rook(WHITE).setHasMovedAtLeastOnce(true)).setCoordinates(rookCoordinates);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(rookField.getId(), rookField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(rookField.getId(), rookField);
 
-        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -87,9 +87,9 @@ class KingIsValidCastlingRuleTest {
         Field from = new Field(new King(WHITE)).setCode("e1");
         Field to = new Field(null).setCode("d1");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(kingIsValidCastlingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

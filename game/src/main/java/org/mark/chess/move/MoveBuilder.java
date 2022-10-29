@@ -3,7 +3,7 @@ package org.mark.chess.move;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
 
@@ -60,7 +60,7 @@ public class MoveBuilder {
      */
     public MoveBuilder moveRookIfCastling(Game game) {
         if (this.move.getFrom().getPieceType().getName().equals(KING) &&
-                KingIsValidCastlingRule.isValidCastling(game.getGrid(),
+                KingIsValidCastlingRule.isValidCastling(game.getChessboard(),
                         this.move.getFrom(),
                         this.move.getTo(),
                         this.move.getTo().getCoordinates().getX(),
@@ -71,14 +71,14 @@ public class MoveBuilder {
                     ? KingIsValidCastlingRule.ROOK_CASTLING_FROM_THE_LEFT
                     : KingIsValidCastlingRule.ROOK_CASTLING_FROM_THE_RIGHT), this.move.getFrom().getPieceType().getColor().getBaseline());
 
-            var rookFromField = game.getGrid().getField(rookCoordinates);
+            var rookFromField = game.getChessboard().getField(rookCoordinates);
             var rookToField = game
-                    .getGrid()
+                    .getChessboard()
                     .getField(rookCoordinates.setX(this.move.getTo().getCoordinates().getX() == KingIsValidCastlingRule.KING_CASTLING_TO_THE_LEFT
                             ? KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_RIGHT
                             : KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_LEFT));
 
-            rookMoveDirector.performRookMove(game.getGrid(), rookFromField, rookToField);
+            rookMoveDirector.performRookMove(game.getChessboard(), rookFromField, rookToField);
         }
 
         return this;
@@ -158,12 +158,12 @@ public class MoveBuilder {
     /**
      * Sets the field as the to-part of the move.
      *
-     * @param grid  The back-end representation of a chessboard.
+     * @param chessboard  The back-end representation of a chessboard.
      * @param field The field.
      * @return The builder.
      */
-    public MoveBuilder setTo(Grid grid, Field field) {
-        this.move = this.move.setTo(grid, field);
+    public MoveBuilder setTo(Chessboard chessboard, Field field) {
+        this.move = this.move.setTo(chessboard, field);
 
         return this;
     }

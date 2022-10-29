@@ -2,10 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
-import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,11 +19,11 @@ class HasEmptyParametersRuleTest {
     private HasEmptyParametersRule hasEmptyParametersRule;
 
     @Mock
-    private Grid grid;
+    private Chessboard chessboard;
 
     @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, null, field, false)));
+        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, null, field, false)));
         assertFalse(hasEmptyParametersRule.create());
     }
 
@@ -43,12 +41,12 @@ class HasEmptyParametersRuleTest {
 
     @Test
     void testProcess_WhenEmptyTo_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, null, false)));
+        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, field, null, false)));
         assertFalse(hasEmptyParametersRule.create());
     }
 
     @Test
     void testProcess_WhenFilledParameters_ThenReturnFalse() {
-        assertFalse(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, field, false)));
+        assertFalse(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, field, field, false)));
     }
 }

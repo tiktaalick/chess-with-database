@@ -71,26 +71,26 @@ public class Field implements Comparable<Field> {
         return this.getPieceType() != null && this.getPieceType().getColor() == game.getCurrentPlayerColor();
     }
 
-    public boolean isInCheckNow(Grid grid, boolean isOpponent) {
+    public boolean isInCheckNow(Chessboard chessboard, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }
 
-        grid.getFields().forEach(field -> field.setUnderAttack(false));
+        chessboard.getFields().forEach(field -> field.setUnderAttack(false));
 
-        List<Field> attackers = grid.getFields().stream().filter(isAttacking(grid)).collect(Collectors.toList());
+        List<Field> attackers = chessboard.getFields().stream().filter(isAttacking(chessboard)).collect(Collectors.toList());
 
-        attackers.forEach((Field field) -> field.setAttackingColors(grid));
+        attackers.forEach((Field field) -> field.setAttackingColors(chessboard));
 
         return !attackers.isEmpty();
     }
 
-    public boolean isMovingIntoCheck(Grid grid, Field to, boolean isOpponent) {
+    public boolean isMovingIntoCheck(Chessboard chessboard, Field to, boolean isOpponent) {
         if (isOpponent) {
             return false;
         }
 
-        var gridAfterMovement = Grid.createAfterMovement(grid, this, to);
+        var gridAfterMovement = Chessboard.createAfterMovement(chessboard, this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
@@ -113,10 +113,10 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    public void setAttackingColors(@NotNull Grid grid) {
+    public void setAttackingColors(@NotNull Chessboard chessboard) {
         this.setAttacking(true).setBackgroundColor(backgroundColorRulesEngine.process(this));
 
-        grid.getFields().stream().filter(isUnderAttack(this)).forEach(Field::setUnderAttackColor);
+        chessboard.getFields().stream().filter(isUnderAttack(this)).forEach(Field::setUnderAttackColor);
     }
 
     public Field setCode(String code) {
@@ -148,10 +148,10 @@ public class Field implements Comparable<Field> {
                 field.getPieceType().getColor() != attacking.getPieceType().getColor();
     }
 
-    private static boolean isValidMove(Grid gridAfterMovement, @NotNull Field opponentField) {
+    private static boolean isValidMove(Chessboard chessboardAfterMovement, @NotNull Field opponentField) {
         return opponentField
                 .getPieceType()
-                .isValidMove(new IsValidMoveParameter(gridAfterMovement, opponentField, gridAfterMovement.getKingField(), true));
+                .isValidMove(new IsValidMoveParameter(chessboardAfterMovement, opponentField, chessboardAfterMovement.getKingField(), true));
     }
 
     private static void setUnderAttackColor(@NotNull Field attackedKingField) {
@@ -159,9 +159,9 @@ public class Field implements Comparable<Field> {
     }
 
     @NotNull
-    private Predicate<Field> isAttacking(Grid grid) {
+    private Predicate<Field> isAttacking(Chessboard chessboard) {
         return field -> null != field.getPieceType() &&
                 field.getPieceType().getColor() != this.getPieceType().getColor() &&
-                field.getPieceType().isValidMove(new IsValidMoveParameter(grid, field, this, true));
+                field.getPieceType().isValidMove(new IsValidMoveParameter(chessboard, field, this, true));
     }
 }

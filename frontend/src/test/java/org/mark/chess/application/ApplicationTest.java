@@ -2,11 +2,9 @@ package org.mark.chess.application;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.application.Application;
-import org.mark.chess.application.ApplicationRepository;
 import org.mark.chess.game.GameService;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.BoardBuilder;
+import org.mark.chess.swing.FrontendChessboard;
+import org.mark.chess.swing.FrontendChessboardBuilder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -28,10 +26,10 @@ class ApplicationTest {
     private GameService gameService;
 
     @Mock
-    private Board board;
+    private FrontendChessboard frontendChessboard;
 
     @Mock
-    private BoardBuilder boardBuilder;
+    private FrontendChessboardBuilder frontendChessboardBuilder;
 
     @Test
     void testMain(@Mock Application application) {
@@ -44,15 +42,15 @@ class ApplicationTest {
 
     @Test
     void testStartApplication() {
-        Application.setBoardBuilder(boardBuilder);
+        Application.setBoardBuilder(frontendChessboardBuilder);
         Application.setGameService(gameService);
 
-        when(boardBuilder.setBoard(gameService, WHITE)).thenReturn(boardBuilder);
-        when(boardBuilder.createButtons()).thenReturn(boardBuilder);
-        when(boardBuilder.initialize()).thenReturn(boardBuilder);
-        when(boardBuilder.updateButtons()).thenReturn(boardBuilder);
-        when(boardBuilder.build()).thenReturn(board);
+        when(frontendChessboardBuilder.setBoard(gameService, WHITE)).thenReturn(frontendChessboardBuilder);
+        when(frontendChessboardBuilder.createButtons()).thenReturn(frontendChessboardBuilder);
+        when(frontendChessboardBuilder.initialize()).thenReturn(frontendChessboardBuilder);
+        when(frontendChessboardBuilder.updateButtons()).thenReturn(frontendChessboardBuilder);
+        when(frontendChessboardBuilder.build()).thenReturn(frontendChessboard);
 
-        assertEquals(board, application.startApplication(WHITE));
+        assertEquals(frontendChessboard, application.startApplication(WHITE));
     }
 }

@@ -3,7 +3,7 @@ package org.mark.chess.piece.isvalidmove;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.player.PlayerColor;
 
 import java.util.List;
@@ -32,8 +32,8 @@ public class PieceTypeSharedRules {
         return to.getPieceType() != null && to.getPieceType().getColor() != from.getPieceType().getColor();
     }
 
-    protected static List<Field> neighbourFieldsWithOpponentPawns(@NotNull Grid grid, Field playerField, PlayerColor color) {
-        return grid
+    protected static List<Field> neighbourFieldsWithOpponentPawns(@NotNull Chessboard chessboard, Field playerField, PlayerColor color) {
+        return chessboard
                 .getFields()
                 .stream()
                 .filter(opponentField -> (opponentField.getCoordinates().getX() + ONE_STEP_WEST == playerField.getCoordinates().getX() ||
@@ -60,8 +60,8 @@ public class PieceTypeSharedRules {
         return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getFrom).orElse(null);
     }
 
-    protected Grid getGrid() {
-        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getGrid).orElse(null);
+    protected Chessboard getGrid() {
+        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getChessboard).orElse(null);
     }
 
     protected Field getTo() {

@@ -2,7 +2,7 @@ package org.mark.chess.move;
 
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 
 /**
@@ -47,13 +47,13 @@ public class MoveDirector {
     /**
      * Performs a rook move during castling.
      *
-     * @param grid The back-end representation of a chessboard.
+     * @param chessboard The back-end representation of a chessboard.
      * @param from The field the rook moves from.
      * @param to   The field the rook moves to.
      * @return The built move.
      */
-    public Move performRookMove(Grid grid, Field from, Field to) {
-        return rookMoveBuilder.setMove(new Move(from)).setTo(grid, to).resetFrom().build();
+    public Move performRookMove(Chessboard chessboard, Field from, Field to) {
+        return rookMoveBuilder.setMove(new Move(from)).setTo(chessboard, to).resetFrom().build();
     }
 
     /**
@@ -67,7 +67,7 @@ public class MoveDirector {
     public Move performToMove(@NotNull Game game, Move move, Field fieldClick) {
         return generalMoveBuilder
                 .setMove(move)
-                .setTo(game.getGrid(), fieldClick)
+                .setTo(game.getChessboard(), fieldClick)
                 .setPieceTypeSpecificAttributes(game)
                 .moveRookIfCastling(game)
                 .changeTurn(game)
