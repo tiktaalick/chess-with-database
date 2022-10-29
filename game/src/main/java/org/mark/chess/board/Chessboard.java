@@ -40,7 +40,6 @@ public final class Chessboard {
         this.fields = new ArrayList<>(fields);
         this.kingField = getKingField(this, WHITE);
         this.opponentKingField = getKingField(this, BLACK);
-        this.gridValue = calculateGridValue(this, WHITE);
     }
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
@@ -63,7 +62,6 @@ public final class Chessboard {
 
         this.kingField = getKingField(this, from.getPieceType().getColor());
         this.opponentKingField = getKingField(this, from.getPieceType().getColor().getOpposite());
-        this.gridValue = calculateGridValue(this, from.getPieceType().getColor());
     }
 
     /**
@@ -112,24 +110,6 @@ public final class Chessboard {
         kingField
                 .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
                 .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
-    }
-
-    /**
-     * Calculates the value of the current positions of the chess pieces on the chessboard for the active player.
-     *
-     * @param chessboard        The backend representation of the chessboard.
-     * @param activePlayerColor The player who is currently the active player.
-     * @return The value of the current positions of the chess pieces on the chessboard.
-     */
-    public int calculateGridValue(@NotNull Chessboard chessboard, PlayerColor activePlayerColor) {
-        return chessboard
-                .getFields()
-                .stream()
-                .filter(field -> field.getPieceType() != null)
-                .mapToInt(field -> field.getPieceType().getColor() == activePlayerColor
-                        ? field.getPieceType().getValue()
-                        : -field.getPieceType().getValue())
-                .sum();
     }
 
     /**

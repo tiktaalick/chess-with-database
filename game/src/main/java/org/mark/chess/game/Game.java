@@ -3,6 +3,8 @@ package org.mark.chess.game;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.ai.ChessboardValueParameter;
+import org.mark.chess.ai.ChessboardValueRulesEngine;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
@@ -35,9 +37,11 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public class Game {
 
-    public static final  int                        MAX_COLOR_VALUE               = 255;
-    public static final  int                        MIN_COLOR_VALUE               = 0;
+    public static final int MAX_COLOR_VALUE = 255;
+    public static final int MIN_COLOR_VALUE = 0;
+
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
+    private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
     private static final int                        LEFT_CLICK                    = 1;
     private static final int                        MAXIMUM_SQUARE_ID             = 63;
     private static final int                        RIGHT_CLICK                   = 3;
@@ -90,7 +94,7 @@ public class Game {
     /**
      * Sets the move director.
      *
-     * @param moveDirector
+     * @param moveDirector The move director.
      */
     public static void setMoveDirector(MoveDirector moveDirector) {
         Game.moveDirector = moveDirector;
@@ -98,11 +102,9 @@ public class Game {
 
     /**
      * Changes the active player.
-     *
-     * @return The game.
      */
-    public Game changeTurn() {
-        return this.setCurrentPlayerColor(this.getCurrentPlayerColor().getOpposite());
+    public void changeTurn() {
+        this.setCurrentPlayerColor(this.getCurrentPlayerColor().getOpposite());
     }
 
     /**
@@ -232,18 +234,12 @@ public class Game {
         createRelativeFieldValues(validMoves, allValidMoves, from);
     }
 
-    void createAbsoluteFieldValues(Chessboard chessboard, Field from, Field to) {
-        if (from != null && from.getPieceType() != null) {
-            var gridAfterMovement = Chessboard.createAfterMovement(chessboard, from, to);
-
-            to.setValue(gridAfterMovement.getGridValue());
-            from.setValue(from.getValue() == null
-                    ? to.getValue()
-                    : Math.max(from.getValue(), to.getValue()));
-        }
+    private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
+        return (((double) getCurrentFieldValueComparedToMinimumValue(gridField, minValue)) /
+                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAX_COLOR_VALUE - MIN_COLOR_VALUE) + MIN_COLOR_VALUE;
     }
 
-    void createRelativeFieldValues(@NotNull Collection<Field> validMoves, Collection<Field> allValidMoves, @NotNull Field from) {
+    private static void createRelativeFieldValues(@NotNull Collection<Field> validMoves, Collection<Field> allValidMoves, @NotNull Field from) {
         int minValue = getMinValue(allValidMoves);
         int maxValue = getMaxValue(allValidMoves);
         validMoves.forEach((Field gridField) -> {
@@ -261,11 +257,6 @@ public class Game {
         });
 
         from.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(from));
-    }
-
-    private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
-        return (((double) getCurrentFieldValueComparedToMinimumValue(gridField, minValue)) /
-                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAX_COLOR_VALUE - MIN_COLOR_VALUE) + MIN_COLOR_VALUE;
     }
 
     private static int getCurrentFieldValueComparedToMinimumValue(@NotNull Field gridField, int minValue) {
@@ -286,6 +277,19 @@ public class Game {
         return validMoves == null
                 ? 0
                 : validMoves.stream().mapToInt(Field::getValue).min().orElse(0);
+    }
+
+    private void createAbsoluteFieldValues(Chessboard chessboard, Field from, Field to) {
+        if (from != null && from.getPieceType() != null) {
+            var chessboardAfterMovement = Chessboard.createAfterMovement(chessboard, from, to);
+
+            to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
+                    .process(new ChessboardValueParameter(chessboardAfterMovement, currentPlayerColor))
+                    .getTotalValue());
+            from.setValue(from.getValue() == null
+                    ? to.getValue()
+                    : Math.max(from.getValue(), to.getValue()));
+        }
     }
 
     private void setValidMoves(Map<Field, List<Field>> allValidFromsAndValidMoves, @NotNull List<Field> allValidMoves, Field from) {
