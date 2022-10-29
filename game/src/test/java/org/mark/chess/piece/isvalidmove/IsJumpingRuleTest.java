@@ -3,7 +3,7 @@ package org.mark.chess.piece.isvalidmove;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.Bishop;
 import org.mark.chess.piece.Pawn;
 import org.mockito.InjectMocks;
@@ -28,11 +28,11 @@ class IsJumpingRuleTest {
         Field to = new Field(null).setCode("c3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("b2");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(isJumpingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(isJumpingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
         assertFalse(isJumpingRule.create());
     }
 
@@ -42,10 +42,10 @@ class IsJumpingRuleTest {
         Field to = new Field(null).setCode("c3");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("d4");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(isJumpingRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(isJumpingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.Queen;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,10 +27,10 @@ class QueenIsValidBasicMoveRuleTest {
         Field from = new Field(new Queen(WHITE)).setCode("e3");
         Field to = new Field(null).setCode("c2");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
@@ -39,10 +39,10 @@ class QueenIsValidBasicMoveRuleTest {
         Field from = new Field(new Queen(WHITE)).setCode(codeFrom);
         Field to = new Field(null).setCode(codeTo);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertTrue(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(queenIsValidBasicMoveRule.create());
     }
 }

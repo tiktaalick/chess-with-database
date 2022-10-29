@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
@@ -48,20 +48,20 @@ public class Game {
     private List<Player> players = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
     private boolean      inProgress;
     private PlayerColor  humanPlayerColor;
-    private PlayerColor  currentPlayerColor;
-    private Grid         grid;
+    private PlayerColor currentPlayerColor;
+    private Chessboard  chessboard;
 
     /**
      * Creates a new game.
      *
      * @param humanPlayerColor The piece-type color with which the human plays.
-     * @param grid             The backend representation of a chessboard.
+     * @param chessboard             The backend representation of a chessboard.
      */
-    public Game(PlayerColor humanPlayerColor, Grid grid) {
+    public Game(PlayerColor humanPlayerColor, Chessboard chessboard) {
         this.inProgress = true;
         this.humanPlayerColor = humanPlayerColor;
         this.currentPlayerColor = WHITE;
-        this.grid = grid;
+        this.chessboard = chessboard;
     }
 
     /**
@@ -71,7 +71,7 @@ public class Game {
      * @return A new game.
      */
     public static @NotNull Game create(PlayerColor humanPlayerColor) {
-        return new Game(humanPlayerColor, Grid.create());
+        return new Game(humanPlayerColor, Chessboard.create());
     }
 
     /**
@@ -114,10 +114,10 @@ public class Game {
     public List<Field> createValidMoves(@NotNull Field from) {
         return from.isActivePlayerField(this)
                 ? this
-                .getGrid()
+                .getChessboard()
                 .getFields()
                 .stream()
-                .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(grid, from, to, false)))
+                .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(chessboard, from, to, false)))
                 .collect(Collectors.toList())
                 : new ArrayList<>();
     }
@@ -128,7 +128,7 @@ public class Game {
      * @param from The field from which the chess piece might be moving.
      */
     public void enableValidMoves(Field from) {
-        this.getGrid().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
+        this.getChessboard().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
 
         List<Field> validMoves = this.createValidMoves(from);
         validMoves.forEach((Field validMove) -> {
@@ -136,7 +136,7 @@ public class Game {
             validMove.setValidMove(true);
         });
 
-        this.setValidMoveColors(this.getGrid(), from, validMoves, validMoves);
+        this.setValidMoveColors(this.getChessboard(), from, validMoves, validMoves);
     }
 
     /**
@@ -147,7 +147,7 @@ public class Game {
      * @return The game.
      */
     public Game handleButtonClick(int leftRightClick, int buttonId) {
-        var fieldClick = this.getGrid().getFields().get(buttonId);
+        var fieldClick = this.getChessboard().getFields().get(buttonId);
 
         if (leftRightClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
             this.move = moveDirector.performFromMove(this, move, fieldClick);
@@ -171,7 +171,7 @@ public class Game {
         Map<Field, List<Field>> allValidFromsAndValidMoves = new HashMap<>();
         List<Field> allValidMoves = new ArrayList<>();
 
-        this.getGrid().getFields().forEach((Field from) -> {
+        this.getChessboard().getFields().forEach((Field from) -> {
             from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
 
             setValidMoves(allValidFromsAndValidMoves, allValidMoves, from);
@@ -181,7 +181,7 @@ public class Game {
             }
         });
 
-        allValidFromsAndValidMoves.forEach((from, validMoves) -> setValidMoveColors(getGrid(), from, validMoves, allValidMoves));
+        allValidFromsAndValidMoves.forEach((from, validMoves) -> setValidMoveColors(this.getChessboard(), from, validMoves, allValidMoves));
 
         return allValidMoves;
     }
@@ -203,9 +203,9 @@ public class Game {
      * @param allValidMoves All the valid to-fields together.
      */
     public void setKingFieldColors(Collection<Field> allValidMoves) {
-        this.getGrid().getFields().stream().filter(field -> field.getPieceType() != null).forEach((Field field) -> {
+        this.getChessboard().getFields().stream().filter(field -> field.getPieceType() != null).forEach((Field field) -> {
             if (field.getPieceType().getName().equals(KING)) {
-                Grid.setKingFieldFlags(this, allValidMoves, field);
+                Chessboard.setKingFieldFlags(this, allValidMoves, field);
                 this.setGameProgress(field);
             }
 
@@ -218,20 +218,20 @@ public class Game {
     /**
      * Gives all valid moves a color.
      *
-     * @param grid          The backend representation of a chessboard.
+     * @param chessboard          The backend representation of a chessboard.
      * @param from          The field from which the chess piece moves.
      * @param validMoves    The list of valid moves for the chess piece standing on the from field.
      * @param allValidMoves The list of valid moves for all the chess pieces of the active player.
      */
-    public void setValidMoveColors(@NotNull Grid grid, Field from, Collection<Field> validMoves, @NotNull Collection<Field> allValidMoves) {
-        grid.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
-        allValidMoves.forEach(to -> createAbsoluteFieldValues(grid, from, to));
+    public void setValidMoveColors(@NotNull Chessboard chessboard, Field from, Collection<Field> validMoves, @NotNull Collection<Field> allValidMoves) {
+        chessboard.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+        allValidMoves.forEach(to -> createAbsoluteFieldValues(chessboard, from, to));
         createRelativeFieldValues(validMoves, allValidMoves, from);
     }
 
-    void createAbsoluteFieldValues(Grid grid, Field from, Field to) {
+    void createAbsoluteFieldValues(Chessboard chessboard, Field from, Field to) {
         if (from != null && from.getPieceType() != null) {
-            var gridAfterMovement = Grid.createAfterMovement(grid, from, to);
+            var gridAfterMovement = Chessboard.createAfterMovement(chessboard, from, to);
 
             to.setValue(gridAfterMovement.getGridValue());
             from.setValue(from.getValue() == null

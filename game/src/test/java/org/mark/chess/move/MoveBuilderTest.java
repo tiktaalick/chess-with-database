@@ -3,7 +3,7 @@ package org.mark.chess.move;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.Pawn;
@@ -52,7 +52,7 @@ class MoveBuilderTest {
     private Field field;
 
     @Mock
-    private Grid grid;
+    private Chessboard chessboard;
 
     @Test
     void testBuild() {
@@ -87,7 +87,7 @@ class MoveBuilderTest {
 
         try (MockedStatic<KingIsValidCastlingRule> kingIsValidCastlingRuleMockedStatic = Mockito.mockStatic(KingIsValidCastlingRule.class)) {
             kingIsValidCastlingRuleMockedStatic
-                    .when(() -> KingIsValidCastlingRule.isValidCastling(game.getGrid(),
+                    .when(() -> KingIsValidCastlingRule.isValidCastling(game.getChessboard(),
                             kingFrom,
                             kingTo,
                             kingTo.getCoordinates().getX(),
@@ -100,7 +100,7 @@ class MoveBuilderTest {
             ArgumentCaptor<Field> fromArgumentCaptor = ArgumentCaptor.forClass(Field.class);
             ArgumentCaptor<Field> toArgumentCaptor = ArgumentCaptor.forClass(Field.class);
 
-            verify(rookMoveDirector).performRookMove(any(Grid.class), fromArgumentCaptor.capture(), toArgumentCaptor.capture());
+            verify(rookMoveDirector).performRookMove(any(Chessboard.class), fromArgumentCaptor.capture(), toArgumentCaptor.capture());
 
             assertEquals(ROOK, fromArgumentCaptor.getValue().getPieceType().getName());
             assertEquals(WHITE, fromArgumentCaptor.getValue().getPieceType().getColor());
@@ -121,8 +121,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenKing_ThenSetHasMovedAtLeastOnce() {
-        Grid grid = Grid.create();
-        Game game = Game.create(WHITE).setGrid(grid);
+        Chessboard chessboard = Chessboard.create();
+        Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new King(WHITE));
         Field to = new Field(null);
 
@@ -136,8 +136,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnIsBeingPromoted_ThenPawnIsPromotedToQueen() {
-        Grid grid = Grid.create();
-        Game game = Game.create(WHITE).setGrid(grid);
+        Chessboard chessboard = Chessboard.create();
+        Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new Pawn(WHITE));
         Field to = new Field(null).setCode("e8");
 
@@ -153,8 +153,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
-        Grid grid = Grid.create();
-        Game game = Game.create(WHITE).setGrid(grid);
+        Chessboard chessboard = Chessboard.create();
+        Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new Pawn(WHITE).setPawnMayBeCapturedEnPassantRulesEngine(pawnMayBeCapturedEnPassantRulesEngine));
         Field to = new Field(null);
 
@@ -169,8 +169,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetChessPieceSpecificFields_WhenRook_ThenSetHasMovedAtLeastOnce() {
-        Grid grid = Grid.create();
-        Game game = Game.create(WHITE).setGrid(grid);
+        Chessboard chessboard = Chessboard.create();
+        Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new Rook(WHITE));
         Field to = new Field(null);
 
@@ -202,8 +202,8 @@ class MoveBuilderTest {
 
     @Test
     void testSetTo() {
-        moveBuilder.setTo(grid, field);
+        moveBuilder.setTo(chessboard, field);
 
-        verify(move).setTo(grid, field);
+        verify(move).setTo(chessboard, field);
     }
 }
