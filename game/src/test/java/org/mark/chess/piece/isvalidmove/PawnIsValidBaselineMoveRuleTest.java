@@ -28,7 +28,7 @@ class PawnIsValidBaselineMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(pawnIsValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsValidBaselineMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -39,7 +39,7 @@ class PawnIsValidBaselineMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(pawnIsValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(pawnIsValidBaselineMoveRule.create());
+        assertTrue(pawnIsValidBaselineMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidBaselineMoveRule.createResult());
     }
 }

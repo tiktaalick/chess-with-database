@@ -12,12 +12,12 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
     private static final int GOING_UP   = 1;
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return false;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return !isValidDirection(getFrom(), getTo());

@@ -6,12 +6,12 @@ import org.mark.chess.rulesengine.RulesEngine;
 
 @Getter
 @Setter
-public class ChessboardValueRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
+public final class ChessboardValueRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
 
     private final ChessboardValue chessboardValue = new ChessboardValue();
 
     public ChessboardValueRulesEngine() {
-        getRules().add(new PieceValueRule(chessboardValue));
-        getRules().add(new TotalValueRule(chessboardValue));
+        addRule(new PieceValueRule(chessboardValue));
+        addRule(new TotalValueRule(chessboardValue));
     }
 }

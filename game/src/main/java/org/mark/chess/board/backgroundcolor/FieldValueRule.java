@@ -14,12 +14,12 @@ public class FieldValueRule implements Rule<Field, Color> {
     private              Field field  = new Field(null);
 
     @Override
-    public Color create() {
+    public Color createResult() {
         return getValueColor(field);
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean hasResult(@NotNull Field field) {
         this.field = field;
         return field.isValidFrom() || field.isValidMove();
     }

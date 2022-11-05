@@ -30,7 +30,7 @@ class KnightIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(knightIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(knightIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
@@ -42,7 +42,7 @@ class KnightIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(knightIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(knightIsValidBasicMoveRule.create());
+        assertTrue(knightIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(knightIsValidBasicMoveRule.createResult());
     }
 }

@@ -61,7 +61,7 @@ class FieldTest {
 
     @Test
     void testIsNotAbleToMove_WhenNoMoves_ThenNotAbleToMove() {
-        Game game = new Game(WHITE, chessboard).setCurrentPlayerColor(BLACK).setInProgress(true);
+        Game game = new Game(WHITE, chessboard).setActivePlayerColor(BLACK).setInProgress(true);
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
@@ -70,7 +70,7 @@ class FieldTest {
 
     @Test
     void testIsNotAbleToMove_WhenValidMoves_ThenAbleToMove() {
-        Game game = new Game(WHITE, chessboard).setCurrentPlayerColor(BLACK).setInProgress(true);
+        Game game = new Game(WHITE, chessboard).setActivePlayerColor(BLACK).setInProgress(true);
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 

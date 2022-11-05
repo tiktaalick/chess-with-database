@@ -4,13 +4,16 @@ import org.mark.chess.rulesengine.RulesEngine;
 
 public final class KingIsValidMoveRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public KingIsValidMoveRulesEngine() {
-        getRules().add(new HasEmptyParametersRule());
-        getRules().add(new IsFriendlyFireRule());
-        getRules().add(new IsJumpingRule());
-        getRules().add(new IsMovingIntoCheckRule());
-        getRules().add(new KingIsValidBasicMoveRule());
-        getRules().add(new KingIsValidCastlingRule());
-        getRules().add(new IsNotValidRule());
+        addRule(new HasEmptyParametersRule());
+        addRule(new IsFriendlyFireRule());
+        addRule(new IsJumpingRule());
+        addRule(new IsMovingIntoCheckRule());
+        addRule(new KingIsValidBasicMoveRule());
+        addRule(new KingIsValidCastlingRule());
+        addRule(new IsNotValidRule());
     }
 }

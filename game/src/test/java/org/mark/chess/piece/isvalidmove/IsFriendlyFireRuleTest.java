@@ -28,8 +28,8 @@ class IsFriendlyFireRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(isFriendlyFireRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(isFriendlyFireRule.create());
+        assertTrue(isFriendlyFireRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isFriendlyFireRule.createResult());
     }
 
     @Test
@@ -40,6 +40,6 @@ class IsFriendlyFireRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(isFriendlyFireRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isFriendlyFireRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }
