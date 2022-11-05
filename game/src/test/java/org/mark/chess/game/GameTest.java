@@ -52,27 +52,27 @@ class GameTest {
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
-        Game game = new Game(WHITE, Chessboard.create()).setCurrentPlayerColor(BLACK);
+        Game game = new Game(WHITE, Chessboard.create()).setActivePlayerColor(BLACK);
 
         game.changeTurn();
 
-        assertEquals(WHITE, game.getCurrentPlayerColor());
+        assertEquals(WHITE, game.getActivePlayerColor());
     }
 
     @Test
     void testChangeTurn_WhenWhite_ThenBlack() {
-        Game game = new Game(WHITE, Chessboard.create()).setCurrentPlayerColor(WHITE);
+        Game game = new Game(WHITE, Chessboard.create()).setActivePlayerColor(WHITE);
 
         game.changeTurn();
 
-        assertEquals(BLACK, game.getCurrentPlayerColor());
+        assertEquals(BLACK, game.getActivePlayerColor());
     }
 
     @Test
     void testCreate() {
         Game game = Game.create(WHITE);
 
-        assertEquals(WHITE, game.getCurrentPlayerColor());
+        assertEquals(WHITE, game.getActivePlayerColor());
         assertTrue(game.isInProgress());
         assertEquals(64, game.getChessboard().getFields().size());
         assertEquals(BLACK, game.getChessboard().getFields().get(0).getPieceType().getColor());

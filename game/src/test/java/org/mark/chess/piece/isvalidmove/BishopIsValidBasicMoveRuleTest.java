@@ -30,7 +30,7 @@ class BishopIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(bishopIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(bishopIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
@@ -42,7 +42,7 @@ class BishopIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(bishopIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(bishopIsValidBasicMoveRule.create());
+        assertTrue(bishopIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(bishopIsValidBasicMoveRule.createResult());
     }
 }

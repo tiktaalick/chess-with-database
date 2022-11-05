@@ -14,13 +14,13 @@ public class PieceValueRule implements Rule<ChessboardValueParameter, Chessboard
     }
 
     @Override
-    public ChessboardValue create() {
+    public ChessboardValue createResult() {
         return chessboardValue;
     }
 
     @Override
-    public boolean isApplicable(ChessboardValueParameter chessboardValueParameter) {
-        chessboardValue.setPieceValue(calculateGridValue(chessboardValueParameter.getChessboard(), chessboardValueParameter.getCurrentPlayerColor()));
+    public boolean hasResult(ChessboardValueParameter chessboardValueParameter) {
+        chessboardValue.setPieceValue(calculateGridValue(chessboardValueParameter.getChessboard(), chessboardValueParameter.getActivePlayerColor()));
 
         return false;
     }
@@ -28,16 +28,16 @@ public class PieceValueRule implements Rule<ChessboardValueParameter, Chessboard
     /**
      * Calculates the value of the current positions of the chess pieces on the chessboard for the active player.
      *
-     * @param chessboard The backend representation of the chessboard.
-     * @param currentPlayerColor The current player color.
+     * @param chessboard        The backend representation of the chessboard.
+     * @param activePlayerColor The active player color.
      * @return The value of the current positions of the chess pieces on the chessboard.
      */
-    private static int calculateGridValue(@NotNull Chessboard chessboard, PlayerColor currentPlayerColor) {
+    private static int calculateGridValue(@NotNull Chessboard chessboard, PlayerColor activePlayerColor) {
         return chessboard
                 .getFields()
                 .stream()
                 .filter(field -> field.getPieceType() != null)
-                .mapToInt(field -> field.getPieceType().getColor() == currentPlayerColor
+                .mapToInt(field -> field.getPieceType().getColor() == activePlayerColor
                         ? field.getPieceType().getValue()
                         : -field.getPieceType().getValue())
                 .sum();

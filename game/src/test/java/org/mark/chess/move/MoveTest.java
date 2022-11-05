@@ -41,7 +41,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsBlacksTurn_ThenReturnFalse() {
-        Game game = Game.create(WHITE).setCurrentPlayerColor(BLACK);
+        Game game = Game.create(WHITE).setActivePlayerColor(BLACK);
         Field field = new Field(new Pawn(WHITE));
 
         assertFalse(move.isFrom(game, field));
@@ -49,7 +49,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsWhitesTurn_ThenReturnTrue() {
-        Game game = Game.create(WHITE).setCurrentPlayerColor(WHITE);
+        Game game = Game.create(WHITE).setActivePlayerColor(WHITE);
         Field field = new Field(new Pawn(WHITE));
 
         assertTrue(move.isFrom(game, field));

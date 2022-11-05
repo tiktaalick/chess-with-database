@@ -2,7 +2,6 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.piece.isvalidmove.IsNotValidRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -16,7 +15,7 @@ class IsNotValidRuleTest {
 
     @Test
     void testRule_Always_ReturnTrue() {
-        assertTrue(isNotValidRule.isApplicable(null));
-        assertFalse(isNotValidRule.create());
+        assertTrue(isNotValidRule.hasResult(null));
+        assertFalse(isNotValidRule.createResult());
     }
 }

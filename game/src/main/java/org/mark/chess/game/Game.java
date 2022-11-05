@@ -52,7 +52,7 @@ public class Game {
     private List<Player> players = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
     private boolean      inProgress;
     private PlayerColor  humanPlayerColor;
-    private PlayerColor  currentPlayerColor;
+    private PlayerColor  activePlayerColor;
     private Chessboard   chessboard;
 
     /**
@@ -64,7 +64,7 @@ public class Game {
     public Game(PlayerColor humanPlayerColor, Chessboard chessboard) {
         this.inProgress = true;
         this.humanPlayerColor = humanPlayerColor;
-        this.currentPlayerColor = WHITE;
+        this.activePlayerColor = WHITE;
         this.chessboard = chessboard;
     }
 
@@ -104,7 +104,7 @@ public class Game {
      * Changes the active player.
      */
     public void changeTurn() {
-        this.setCurrentPlayerColor(this.getCurrentPlayerColor().getOpposite());
+        this.setActivePlayerColor(this.getActivePlayerColor().getOpposite());
     }
 
     /**
@@ -284,7 +284,7 @@ public class Game {
             var chessboardAfterMovement = Chessboard.createAfterMovement(chessboard, from, to);
 
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
-                    .process(new ChessboardValueParameter(chessboardAfterMovement, currentPlayerColor))
+                    .process(new ChessboardValueParameter(chessboardAfterMovement, activePlayerColor))
                     .getTotalValue());
             from.setValue(from.getValue() == null
                     ? to.getValue()

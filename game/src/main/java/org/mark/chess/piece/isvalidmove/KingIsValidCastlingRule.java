@@ -35,12 +35,12 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return true;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||

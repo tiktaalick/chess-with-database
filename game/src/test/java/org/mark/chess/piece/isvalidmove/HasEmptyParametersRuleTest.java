@@ -23,30 +23,30 @@ class HasEmptyParametersRuleTest {
 
     @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, null, field, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, null, field, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyGrid_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(null, field, field, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(null, field, field, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyParameter_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(null));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(null));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyTo_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, field, null, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, field, null, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenFilledParameters_ThenReturnFalse() {
-        assertFalse(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(chessboard, field, field, false)));
+        assertFalse(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, field, field, false)));
     }
 }

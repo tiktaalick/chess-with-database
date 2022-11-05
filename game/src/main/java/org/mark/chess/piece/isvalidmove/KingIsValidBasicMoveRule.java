@@ -7,12 +7,12 @@ import java.util.Arrays;
 public class KingIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return true;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return Arrays.asList(ZERO_STEPS, ONE_STEP).contains(getAbsoluteHorizontalMove()) &&

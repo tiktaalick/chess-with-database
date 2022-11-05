@@ -4,12 +4,15 @@ import org.mark.chess.rulesengine.RulesEngine;
 
 public final class BishopIsValidMoveRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public BishopIsValidMoveRulesEngine() {
-        getRules().add(new HasEmptyParametersRule());
-        getRules().add(new IsFriendlyFireRule());
-        getRules().add(new IsJumpingRule());
-        getRules().add(new IsMovingIntoCheckRule());
-        getRules().add(new BishopIsValidBasicMoveRule());
-        getRules().add(new IsNotValidRule());
+        addRule(new HasEmptyParametersRule());
+        addRule(new IsFriendlyFireRule());
+        addRule(new IsJumpingRule());
+        addRule(new IsMovingIntoCheckRule());
+        addRule(new BishopIsValidBasicMoveRule());
+        addRule(new IsNotValidRule());
     }
 }

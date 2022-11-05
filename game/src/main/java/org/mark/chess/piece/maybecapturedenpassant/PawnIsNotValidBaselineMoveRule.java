@@ -7,12 +7,12 @@ import org.mark.chess.piece.isvalidmove.PieceTypeSharedRules;
 public class PawnIsNotValidBaselineMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return false;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return !pawnIsValidBaselineMove();

@@ -68,7 +68,7 @@ public class Field implements Comparable<Field> {
     }
 
     public boolean isActivePlayerField(Game game) {
-        return this.getPieceType() != null && this.getPieceType().getColor() == game.getCurrentPlayerColor();
+        return this.getPieceType() != null && this.getPieceType().getColor() == game.getActivePlayerColor();
     }
 
     public boolean isInCheckNow(Chessboard chessboard, boolean isOpponent) {
@@ -104,7 +104,7 @@ public class Field implements Comparable<Field> {
     }
 
     public boolean isNotAbleToMove(@NotNull Game game, Collection<Field> allValidMoves) {
-        return game.getCurrentPlayerColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
+        return game.getActivePlayerColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
     public Field setAttacking(boolean isAttacking) {

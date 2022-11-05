@@ -27,8 +27,8 @@ class PawnIsNotValidDirectionRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(pawnIsNotValidDirectionRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(pawnIsNotValidDirectionRule.create());
+        assertTrue(pawnIsNotValidDirectionRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsNotValidDirectionRule.createResult());
     }
 
     @Test
@@ -39,7 +39,7 @@ class PawnIsNotValidDirectionRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(pawnIsNotValidDirectionRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(pawnIsNotValidDirectionRule.create());
+        assertFalse(pawnIsNotValidDirectionRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsNotValidDirectionRule.createResult());
     }
 }

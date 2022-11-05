@@ -11,12 +11,12 @@ import static org.mark.chess.board.backgroundcolor.BackgroundColor.CHECKMATE;
 public class CheckmateRule implements Rule<Field, Color> {
 
     @Override
-    public Color create() {
+    public Color createResult() {
         return CHECKMATE.getAwtColor();
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean hasResult(@NotNull Field field) {
         return field.isCheckMate();
     }
 }

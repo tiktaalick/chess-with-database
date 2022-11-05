@@ -11,12 +11,12 @@ import static org.mark.chess.board.backgroundcolor.BackgroundColor.STALEMATE;
 public class StalemateRule implements Rule<Field, Color> {
 
     @Override
-    public Color create() {
+    public Color createResult() {
         return STALEMATE.getAwtColor();
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean hasResult(@NotNull Field field) {
         return field.isStaleMate();
     }
 }

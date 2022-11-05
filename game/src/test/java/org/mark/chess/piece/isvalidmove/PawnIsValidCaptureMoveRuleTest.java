@@ -28,7 +28,7 @@ class PawnIsValidCaptureMoveRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertFalse(pawnIsValidCaptureMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsValidCaptureMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -40,7 +40,7 @@ class PawnIsValidCaptureMoveRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(pawnIsValidCaptureMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(pawnIsValidCaptureMoveRule.create());
+        assertTrue(pawnIsValidCaptureMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidCaptureMoveRule.createResult());
     }
 }

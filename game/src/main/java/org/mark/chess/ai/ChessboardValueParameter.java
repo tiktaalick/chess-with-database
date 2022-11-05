@@ -8,5 +8,5 @@ import org.mark.chess.player.PlayerColor;
 public class ChessboardValueParameter {
 
     private final Chessboard  chessboard;
-    private final PlayerColor currentPlayerColor;
+    private final PlayerColor activePlayerColor;
 }
