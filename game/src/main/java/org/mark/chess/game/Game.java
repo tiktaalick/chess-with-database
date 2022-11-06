@@ -48,12 +48,13 @@ public class Game {
 
     private static MoveDirector moveDirector = new MoveDirector();
 
-    private Move         move    = new Move(new Field(null));
-    private List<Player> players = Arrays.asList(new Human().setColor(WHITE), new Computer().setColor(BLACK));
-    private boolean      inProgress;
-    private PlayerColor  humanPlayerColor;
-    private PlayerColor  activePlayerColor;
-    private Chessboard   chessboard;
+    private Move                    move    = new Move(new Field(null));
+    private List<Player>            players = Arrays.asList(new Human(WHITE), new Computer(BLACK));
+    private boolean                 inProgress;
+    private PlayerColor             humanPlayerColor;
+    private Player                  activePlayer;
+    private Chessboard              chessboard;
+    private Map<Field, List<Field>> allValidFromToCombinations;
 
     /**
      * Creates a new game.
@@ -64,7 +65,7 @@ public class Game {
     public Game(PlayerColor humanPlayerColor, Chessboard chessboard) {
         this.inProgress = true;
         this.humanPlayerColor = humanPlayerColor;
-        this.activePlayerColor = WHITE;
+        this.activePlayer = players.get(WHITE.ordinal());
         this.chessboard = chessboard;
     }
 
@@ -104,7 +105,7 @@ public class Game {
      * Changes the active player.
      */
     public void changeTurn() {
-        this.setActivePlayerColor(this.getActivePlayerColor().getOpposite());
+        this.setActivePlayer(players.get(getActivePlayer().getColor().getOpposite().ordinal()));
     }
 
     /**
@@ -113,7 +114,7 @@ public class Game {
      * @param from The field from which the chess piece moves.
      * @return A list of valid moves.
      */
-    public List<Field> createValidMoves(@NotNull Field from) {
+    public List<Field> createValidToFields(@NotNull Field from) {
         return from.isActivePlayerField(this)
                 ? this
                 .getChessboard()
@@ -130,15 +131,15 @@ public class Game {
      * @param from The field from which the chess piece might be moving.
      */
     public void enableValidMoves(Field from) {
-        this.getChessboard().getFields().forEach(field -> field.setValidFrom(false).setValidMove(false).setAttacking(false).setUnderAttack(false));
+        this.getChessboard().getFields().forEach(field -> field.setValidFrom(false).setValidTo(false).setAttacking(false).setUnderAttack(false));
 
-        List<Field> validMoves = this.createValidMoves(from);
+        List<Field> validMoves = this.createValidToFields(from);
         validMoves.forEach((Field validMove) -> {
             from.setValidFrom(true);
-            validMove.setValidMove(true);
+            validMove.setValidTo(true);
         });
 
-        this.setValidMoveColors(this.getChessboard(), from, validMoves, validMoves);
+        this.setValidMoveColors(from, validMoves, validMoves);
     }
 
     /**
@@ -151,9 +152,9 @@ public class Game {
     public Game handleButtonClick(int leftRightClick, int buttonId) {
         var fieldClick = this.getChessboard().getFields().get(buttonId);
 
-        if (leftRightClick == LEFT_CLICK && fieldClick.isValidMove() && move.isFrom(this, fieldClick)) {
+        if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && move.isFrom(this, fieldClick)) {
             this.move = moveDirector.performFromMove(this, move, fieldClick);
-        } else if (leftRightClick == LEFT_CLICK && fieldClick.isValidMove() && !move.isFrom(this, fieldClick)) {
+        } else if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && !move.isFrom(this, fieldClick)) {
             this.move = moveDirector.performToMove(this, move, fieldClick);
         } else if (leftRightClick == RIGHT_CLICK) {
             this.move = moveDirector.performResetMove(this, move);
@@ -167,25 +168,25 @@ public class Game {
     /**
      * Resets all valid moves.
      *
-     * @return The game.
+     * @return A list of fields.
      */
     public List<Field> resetValidMoves() {
-        Map<Field, List<Field>> allValidFromsAndValidMoves = new HashMap<>();
-        List<Field> allValidMoves = new ArrayList<>();
+        this.allValidFromToCombinations = new HashMap<>();
+        List<Field> allValidToFields = new ArrayList<>();
 
         this.getChessboard().getFields().forEach((Field from) -> {
             from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
 
-            setValidMoves(allValidFromsAndValidMoves, allValidMoves, from);
+            setValidMoves(this.allValidFromToCombinations, from, allValidToFields);
 
             if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
                 ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
             }
         });
 
-        allValidFromsAndValidMoves.forEach((from, validMoves) -> setValidMoveColors(this.getChessboard(), from, validMoves, allValidMoves));
+        this.allValidFromToCombinations.forEach((from, validToFields) -> setValidMoveColors(from, validToFields, allValidToFields));
 
-        return allValidMoves;
+        return allValidToFields;
     }
 
     /**
@@ -220,17 +221,13 @@ public class Game {
     /**
      * Gives all valid moves a color.
      *
-     * @param chessboard    The backend representation of a chessboard.
      * @param from          The field from which the chess piece moves.
      * @param validMoves    The list of valid moves for the chess piece standing on the from field.
      * @param allValidMoves The list of valid moves for all the chess pieces of the active player.
      */
-    public void setValidMoveColors(@NotNull Chessboard chessboard,
-            Field from,
-            Collection<Field> validMoves,
-            @NotNull Collection<Field> allValidMoves) {
-        chessboard.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
-        allValidMoves.forEach(to -> createAbsoluteFieldValues(chessboard, from, to));
+    public void setValidMoveColors(Field from, Collection<Field> validMoves, @NotNull Collection<Field> allValidMoves) {
+        this.chessboard.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+        allValidMoves.forEach(to -> createAbsoluteFieldValues(from, to));
         createRelativeFieldValues(validMoves, allValidMoves, from);
     }
 
@@ -279,12 +276,11 @@ public class Game {
                 : validMoves.stream().mapToInt(Field::getValue).min().orElse(0);
     }
 
-    private void createAbsoluteFieldValues(Chessboard chessboard, Field from, Field to) {
+    private void createAbsoluteFieldValues(Field from, Field to) {
         if (from != null && from.getPieceType() != null) {
-            var chessboardAfterMovement = Chessboard.createAfterMovement(chessboard, from, to);
-
+            var chessboardAfterMovement = Chessboard.createAfterMovement(this.chessboard, from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
-                    .process(new ChessboardValueParameter(chessboardAfterMovement, activePlayerColor))
+                    .process(new ChessboardValueParameter(chessboardAfterMovement, getActivePlayer().getColor()))
                     .getTotalValue());
             from.setValue(from.getValue() == null
                     ? to.getValue()
@@ -292,14 +288,14 @@ public class Game {
         }
     }
 
-    private void setValidMoves(Map<Field, List<Field>> allValidFromsAndValidMoves, @NotNull List<Field> allValidMoves, Field from) {
-        List<Field> validMoves = createValidMoves(from);
-        from.setValidMove(!validMoves.isEmpty());
-        from.setValidFrom(from.isValidMove());
-        allValidMoves.addAll(validMoves);
+    private void setValidMoves(Map<Field, List<Field>> allValidFromToCombinations, Field from, @NotNull List<Field> allValidToFields) {
+        List<Field> validToFields = createValidToFields(from);
+        from.setValidTo(!validToFields.isEmpty());
+        from.setValidFrom(from.hasValidTo());
+        allValidToFields.addAll(validToFields);
 
         if (from.isValidFrom()) {
-            allValidFromsAndValidMoves.put(from, validMoves);
+            allValidFromToCombinations.put(from, validToFields);
         }
     }
 }

@@ -106,10 +106,10 @@ public final class Chessboard {
      */
     public static void setKingFieldFlags(@NotNull Game game, Collection<Field> allValidMoves, @NotNull Field kingField) {
         boolean isInCheckNow = kingField.isInCheckNow(game.getChessboard(), false);
+        boolean isCheckMate = kingField.isCheckMate() || (kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow);
+        boolean isStaleMate = kingField.isStaleMate() || (kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
 
-        kingField
-                .setCheckMate(kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow)
-                .setStaleMate(kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
+        kingField.setCheckMate(isCheckMate).setStaleMate(isStaleMate);
     }
 
     /**
@@ -126,6 +126,16 @@ public final class Chessboard {
                 .filter(field -> field.getCoordinates().getY() == coordinates.getY())
                 .findAny()
                 .orElse(null);
+    }
+
+    /**
+     * Retrieves a field based on its code.
+     *
+     * @param code The code of the field.
+     * @return The field.
+     */
+    public Field getField(String code) {
+        return this.getFields().stream().filter(field -> field.getCode().equals(code)).findAny().orElse(null);
     }
 
     /**

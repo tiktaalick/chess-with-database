@@ -10,8 +10,8 @@ import org.mark.chess.game.Game;
  */
 public class MoveDirector {
 
-    private static MoveBuilder generalMoveBuilder = new MoveBuilder();
-    private static MoveBuilder rookMoveBuilder    = new MoveBuilder();
+    protected static MoveBuilder generalMoveBuilder = new MoveBuilder();
+    private static   MoveBuilder rookMoveBuilder    = new MoveBuilder();
 
     public static void setGeneralMoveBuilder(MoveBuilder moveBuilder) {
         generalMoveBuilder = moveBuilder;
@@ -30,7 +30,7 @@ public class MoveDirector {
      * @return The built move.
      */
     public Move performFromMove(Game game, Move move, Field fieldClick) {
-        return generalMoveBuilder.setMove(move).setFrom(fieldClick).enableValidMoves(game, fieldClick).build();
+        return generalMoveBuilder.setMove(move).setFrom(fieldClick).enableValidMoves(game).build();
     }
 
     /**
@@ -48,8 +48,8 @@ public class MoveDirector {
      * Performs a rook move during castling.
      *
      * @param chessboard The back-end representation of a chessboard.
-     * @param from The field the rook moves from.
-     * @param to   The field the rook moves to.
+     * @param from       The field the rook moves from.
+     * @param to         The field the rook moves to.
      * @return The built move.
      */
     public Move performRookMove(Chessboard chessboard, Field from, Field to) {
@@ -73,6 +73,7 @@ public class MoveDirector {
                 .changeTurn(game)
                 .resetFrom()
                 .setKingFieldColors(game)
+                .performAiMove(game)
                 .build();
     }
 }

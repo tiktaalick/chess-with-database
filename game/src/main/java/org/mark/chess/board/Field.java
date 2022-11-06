@@ -1,6 +1,6 @@
 package org.mark.chess.board;
 
-import lombok.EqualsAndHashCode;
+import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +23,6 @@ import static org.mark.chess.piece.PieceType.KING;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 @Accessors(chain = true)
 public class Field implements Comparable<Field> {
 
@@ -40,12 +39,19 @@ public class Field implements Comparable<Field> {
     private Integer     value         = VALUE_NOT_CALCULATED;
     private Integer     relativeValue = VALUE_NOT_CALCULATED;
     private boolean     isValidFrom;
-    private boolean     isValidMove;
-    private boolean     isAttacking;
-    private boolean     isUnderAttack;
-    private boolean     isCheckMate;
-    private boolean     isStaleMate;
 
+    @Accessors(fluent = true)
+    private boolean hasValidTo;
+    private boolean isAttacking;
+    private boolean isUnderAttack;
+    private boolean isCheckMate;
+    private boolean isStaleMate;
+
+    /**
+     * Constructor that creates a field based on a piece-type.
+     *
+     * @param pieceType A piece-type.
+     */
     public Field(PieceType pieceType) {
         this.pieceType = pieceType;
     }
@@ -67,10 +73,43 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    public boolean isActivePlayerField(Game game) {
-        return this.getPieceType() != null && this.getPieceType().getColor() == game.getActivePlayerColor();
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, code, coordinates);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        var field = (Field) o;
+
+        return id == field.id && Objects.equal(code, field.code) && Objects.equal(coordinates, field.coordinates);
+    }
+
+    /**
+     * True if the field that contains the piece belongs to the active player.
+     *
+     * @param game The game.
+     * @return True if the field that contains the piece belongs to the active player.
+     */
+    public boolean isActivePlayerField(Game game) {
+        return this.getPieceType() != null && this.getPieceType().getColor() == game.getActivePlayer().getColor();
+    }
+
+    /**
+     * True if the active player is in check now.
+     *
+     * @param chessboard The chessboard.
+     * @param isOpponent Indicates whether the player is the opponent of the active player.
+     * @return True if the active player is in check now.
+     */
     public boolean isInCheckNow(Chessboard chessboard, boolean isOpponent) {
         if (isOpponent) {
             return false;
@@ -85,6 +124,14 @@ public class Field implements Comparable<Field> {
         return !attackers.isEmpty();
     }
 
+    /**
+     * True if the active player moves into check.
+     *
+     * @param chessboard The chessboard.
+     * @param to         The field to which the piece is moved.
+     * @param isOpponent Indicates whether the player is the opponent of the active player.
+     * @return True if the active player moves into check.
+     */
     public boolean isMovingIntoCheck(Chessboard chessboard, Field to, boolean isOpponent) {
         if (isOpponent) {
             return false;
@@ -103,22 +150,46 @@ public class Field implements Comparable<Field> {
         return !attackers.isEmpty();
     }
 
+    /**
+     * True if the player is not able to move.
+     *
+     * @param game          The game.
+     * @param allValidMoves A list of all valid moves.
+     * @return True if the player is not able to move.
+     */
     public boolean isNotAbleToMove(@NotNull Game game, Collection<Field> allValidMoves) {
-        return game.getActivePlayerColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
+        return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
     }
 
+    /**
+     * Sets whether a piece is attacking another piece from this field.
+     *
+     * @param isAttacking True if a piece is attacking another piece from this field.
+     * @return The field.
+     */
     public Field setAttacking(boolean isAttacking) {
         this.isAttacking = isAttacking;
 
         return this;
     }
 
+    /**
+     * Sets the attacking and under-attack colors.
+     *
+     * @param chessboard The chessboard.
+     */
     public void setAttackingColors(@NotNull Chessboard chessboard) {
         this.setAttacking(true).setBackgroundColor(backgroundColorRulesEngine.process(this));
 
         chessboard.getFields().stream().filter(isUnderAttack(this)).forEach(Field::setUnderAttackColor);
     }
 
+    /**
+     * Sets the field code.
+     *
+     * @param code The code.
+     * @return The field.
+     */
     public Field setCode(String code) {
         this.id = Coordinates.createId(code);
         this.code = code;
@@ -127,6 +198,12 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
+    /**
+     * Sets the field coordinates.
+     *
+     * @param coordinates The coordinates.
+     * @return The field.
+     */
     public Field setCoordinates(Coordinates coordinates) {
         this.id = Coordinates.createId(coordinates);
         this.code = Coordinates.createCode(coordinates);
@@ -134,8 +211,14 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    public Field setValidMove(boolean isValidMove) {
-        this.isValidMove = isValidMove;
+    /**
+     * Sets whether the field has valid fields to move to.
+     *
+     * @param hasValidTo True if the field has valid fields to move to.
+     * @return The field.
+     */
+    public Field setValidTo(boolean hasValidTo) {
+        this.hasValidTo = hasValidTo;
         this.setBackgroundColor(backgroundColorRulesEngine.process(this));
 
         return this;

@@ -5,10 +5,18 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.player.PlayerColor;
 import org.mark.chess.rulesengine.Rule;
 
+/**
+ * A rule that calculates the value of a board position based upon the piece values.
+ */
 public class PieceValueRule implements Rule<ChessboardValueParameter, ChessboardValue> {
 
     private final ChessboardValue chessboardValue;
 
+    /**
+     * Constructor.
+     *
+     * @param chessboardValue The chessboard value.
+     */
     public PieceValueRule(ChessboardValue chessboardValue) {
         this.chessboardValue = chessboardValue;
     }

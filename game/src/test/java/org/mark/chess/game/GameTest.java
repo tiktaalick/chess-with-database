@@ -2,11 +2,12 @@ package org.mark.chess.game;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
 import org.mark.chess.piece.Pawn;
+import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -52,27 +53,27 @@ class GameTest {
 
     @Test
     void testChangeTurn_WhenBlack_ThenWhite() {
-        Game game = new Game(WHITE, Chessboard.create()).setActivePlayerColor(BLACK);
+        Game game = new Game(WHITE, Chessboard.create()).setActivePlayer(new Human(BLACK));
 
         game.changeTurn();
 
-        assertEquals(WHITE, game.getActivePlayerColor());
+        assertEquals(WHITE, game.getActivePlayer().getColor());
     }
 
     @Test
     void testChangeTurn_WhenWhite_ThenBlack() {
-        Game game = new Game(WHITE, Chessboard.create()).setActivePlayerColor(WHITE);
+        Game game = new Game(WHITE, Chessboard.create()).setActivePlayer(new Human(WHITE));
 
         game.changeTurn();
 
-        assertEquals(BLACK, game.getActivePlayerColor());
+        assertEquals(BLACK, game.getActivePlayer().getColor());
     }
 
     @Test
     void testCreate() {
         Game game = Game.create(WHITE);
 
-        assertEquals(WHITE, game.getActivePlayerColor());
+        assertEquals(WHITE, game.getActivePlayer().getColor());
         assertTrue(game.isInProgress());
         assertEquals(64, game.getChessboard().getFields().size());
         assertEquals(BLACK, game.getChessboard().getFields().get(0).getPieceType().getColor());
@@ -90,16 +91,16 @@ class GameTest {
                 .filter(field -> field.getCoordinates().getX() == 4)
                 .filter(field -> Arrays.asList(4, 5).contains(field.getCoordinates().getY()))
                 .collect(Collectors.toList());
-        validMovesList.forEach(field -> field.setValidMove(false));
+        validMovesList.forEach(field -> field.setValidTo(false));
 
         when(game.getChessboard()).thenReturn(chessboard);
-        when(game.createValidMoves(from)).thenReturn(validMovesList);
+        when(game.createValidToFields(from)).thenReturn(validMovesList);
 
         game.enableValidMoves(from);
 
         assertEquals(NUMBER_OF_SQUARES, game.getChessboard().getFields().size());
-        assertEquals(2L, game.getChessboard().getFields().stream().filter(Field::isValidMove).count());
-        assertEquals(validMovesList, game.getChessboard().getFields().stream().filter(Field::isValidMove).collect(Collectors.toList()));
+        assertEquals(2L, game.getChessboard().getFields().stream().filter(Field::hasValidTo).count());
+        assertEquals(validMovesList, game.getChessboard().getFields().stream().filter(Field::hasValidTo).collect(Collectors.toList()));
     }
 
     @Test
@@ -111,7 +112,7 @@ class GameTest {
 
         game.setChessboard(chessboard);
 
-        List<Field> validMoves = game.createValidMoves(field);
+        List<Field> validMoves = game.createValidToFields(field);
 
         assertEquals(2, validMoves.size());
     }
@@ -119,7 +120,7 @@ class GameTest {
     @Test
     void testHandleButtonClick_WhenLeftClickOnFromField_ThenSetFrom() {
         Chessboard chessboard = Chessboard.create();
-        chessboard.getFields().get(50).setValidMove(true);
+        chessboard.getFields().get(50).setValidTo(true);
 
         when(game.getChessboard()).thenReturn(chessboard);
         when(move.isFrom(eq(game), any(Field.class))).thenReturn(true);
@@ -133,7 +134,7 @@ class GameTest {
     @Test
     void testHandleButtonClick_WhenLeftClickOnToField_ThenSetTo() {
         Chessboard chessboard = Chessboard.create();
-        chessboard.getFields().get(50).setValidMove(true);
+        chessboard.getFields().get(50).setValidTo(true);
 
         when(game.getChessboard()).thenReturn(chessboard);
         when(move.isFrom(eq(game), any(Field.class))).thenReturn(false);
@@ -166,7 +167,7 @@ class GameTest {
         assertFalse(validMoves.get(0).isAttacking());
         assertFalse(validMoves.get(1).isUnderAttack());
         assertFalse(validMoves.get(2).isValidFrom());
-        assertFalse(validMoves.get(3).isValidMove());
+        assertFalse(validMoves.get(3).hasValidTo());
     }
 
     @Test

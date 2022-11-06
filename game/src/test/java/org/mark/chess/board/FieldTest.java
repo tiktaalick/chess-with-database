@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.Pawn;
+import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -61,7 +62,7 @@ class FieldTest {
 
     @Test
     void testIsNotAbleToMove_WhenNoMoves_ThenNotAbleToMove() {
-        Game game = new Game(WHITE, chessboard).setActivePlayerColor(BLACK).setInProgress(true);
+        Game game = new Game(WHITE, chessboard).setActivePlayer(new Human(BLACK)).setInProgress(true);
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
@@ -70,7 +71,7 @@ class FieldTest {
 
     @Test
     void testIsNotAbleToMove_WhenValidMoves_ThenAbleToMove() {
-        Game game = new Game(WHITE, chessboard).setActivePlayerColor(BLACK).setInProgress(true);
+        Game game = new Game(WHITE, chessboard).setActivePlayer(new Human(BLACK)).setInProgress(true);
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 

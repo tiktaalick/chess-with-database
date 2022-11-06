@@ -1,11 +1,23 @@
 package org.mark.chess.player;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@Data
+/**
+ * An artificial intelligent chess game player.
+ */
+@Getter
+@Setter
 @Accessors(chain = true)
 public class Computer extends Player {
 
-    private PlayerType playerType = PlayerType.COMPUTER;
+    /**
+     * Constructor for creating a computer player based on the player color.
+     *
+     * @param color The player color.
+     */
+    public Computer(PlayerColor color) {
+        super(color, PlayerType.COMPUTER);
+    }
 }
