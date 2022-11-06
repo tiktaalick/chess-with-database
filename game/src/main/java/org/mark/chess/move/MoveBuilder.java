@@ -1,11 +1,14 @@
 package org.mark.chess.move;
 
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.ai.AiMoveDirector;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
+
+import java.util.Comparator;
 
 import static org.mark.chess.piece.PieceType.KING;
 
@@ -14,9 +17,10 @@ import static org.mark.chess.piece.PieceType.KING;
  */
 public class MoveBuilder {
 
-    private MoveDirector rookMoveDirector = new MoveDirector();
+    private final AiMoveDirector aiMoveDirector = new AiMoveDirector();
 
-    private Move move;
+    protected Move         move;
+    private   MoveDirector rookMoveDirector = new MoveDirector();
 
     /**
      * Returns the built move.
@@ -40,14 +44,56 @@ public class MoveBuilder {
     }
 
     /**
-     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
+     * Sets the from-part of the AI move.
      *
-     * @param game  The game.
-     * @param field The field for which the valid moves will be searched.
+     * @param game The game.
      * @return The builder.
      */
-    public MoveBuilder enableValidMoves(@NotNull Game game, Field field) {
-        game.enableValidMoves(field);
+    public MoveBuilder createAiFrom(Game game) {
+        this.move.setFrom(game
+                .getChessboard()
+                .getFields()
+                .stream()
+                .filter(field -> field.getValue() != null)
+                .filter(field -> field.getPieceType() != null)
+                .filter(field -> field.getPieceType().getColor() == game.getActivePlayer().getColor())
+                .max(Comparator.comparing(Field::getValue))
+                .orElse(new Field(null)));
+
+        return this;
+    }
+
+    /**
+     * Sets the to-part of the AI move.
+     *
+     * @param game The game.
+     * @return The builder.
+     */
+    public MoveBuilder createAiTo(Game game) {
+        game.setKingFieldColors(game.getAllValidFromToCombinations().get(move.getFrom()));
+
+        if (game.isInProgress()) {
+            var toField = game
+                    .getAllValidFromToCombinations()
+                    .get(move.getFrom())
+                    .stream()
+                    .max(Comparator.comparing(Field::getValue))
+                    .orElse(new Field(null));
+
+            this.move = this.move.setTo(game.getChessboard(), toField);
+        }
+
+        return this;
+    }
+
+    /**
+     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
+     *
+     * @param game The game.
+     * @return The builder.
+     */
+    public MoveBuilder enableValidMoves(@NotNull Game game) {
+        game.enableValidMoves(this.move.getFrom());
 
         return this;
     }
@@ -85,6 +131,18 @@ public class MoveBuilder {
     }
 
     /**
+     * Performs a move based on artificial intelligence.
+     *
+     * @param game The game.
+     * @return The builder.
+     */
+    public MoveBuilder performAiMove(Game game) {
+        aiMoveDirector.performAiMove(game);
+
+        return this;
+    }
+
+    /**
      * Clears the from-field.
      *
      * @return The builder.
@@ -114,7 +172,9 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder setKingFieldColors(@NotNull Game game) {
-        game.setKingFieldColors(game.resetValidMoves());
+        if (game.isInProgress()) {
+            game.setKingFieldColors(game.resetValidMoves());
+        }
 
         return this;
     }
@@ -158,8 +218,8 @@ public class MoveBuilder {
     /**
      * Sets the field as the to-part of the move.
      *
-     * @param chessboard  The back-end representation of a chessboard.
-     * @param field The field.
+     * @param chessboard The back-end representation of a chessboard.
+     * @param field      The field.
      * @return The builder.
      */
     public MoveBuilder setTo(Chessboard chessboard, Field field) {

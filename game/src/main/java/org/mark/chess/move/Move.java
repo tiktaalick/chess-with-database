@@ -54,7 +54,7 @@ public class Move {
      */
     public boolean isFrom(Game game, @NotNull Field field) {
         return field.getPieceType() != null &&
-                field.getPieceType().getColor() == game.getPlayers().get(game.getActivePlayerColor().ordinal()).getColor();
+                field.getPieceType().getColor() == game.getPlayers().get(game.getActivePlayer().getColor().ordinal()).getColor();
     }
 
     /**

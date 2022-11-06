@@ -21,7 +21,7 @@ public class FieldValueRule implements Rule<Field, Color> {
     @Override
     public boolean hasResult(@NotNull Field field) {
         this.field = field;
-        return field.isValidFrom() || field.isValidMove();
+        return field.isValidFrom() || field.hasValidTo();
     }
 
     private static @NotNull Color getValueColor(@NotNull Field field) {

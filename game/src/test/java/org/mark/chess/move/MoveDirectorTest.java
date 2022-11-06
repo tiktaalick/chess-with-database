@@ -2,8 +2,8 @@ package org.mark.chess.move;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,7 +37,7 @@ class MoveDirectorTest {
     void testPerformFromMove() {
         when(moveBuilder.setMove(move)).thenReturn(moveBuilder);
         when(moveBuilder.setFrom(field)).thenReturn(moveBuilder);
-        when(moveBuilder.enableValidMoves(game, field)).thenReturn(moveBuilder);
+        when(moveBuilder.enableValidMoves(game)).thenReturn(moveBuilder);
 
         MoveDirector.setGeneralMoveBuilder(moveBuilder);
         moveDirector.performFromMove(game, move, field);
@@ -79,6 +79,7 @@ class MoveDirectorTest {
         when(moveBuilder.changeTurn(game)).thenReturn(moveBuilder);
         when(moveBuilder.resetFrom()).thenReturn(moveBuilder);
         when(moveBuilder.setKingFieldColors(game)).thenReturn(moveBuilder);
+        when(moveBuilder.performAiMove(game)).thenReturn(moveBuilder);
 
         MoveDirector.setGeneralMoveBuilder(moveBuilder);
         moveDirector.performToMove(game, move, field);

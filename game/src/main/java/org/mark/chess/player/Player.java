@@ -7,6 +7,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Player {
 
-    private PlayerColor color;
-    private PlayerType  playerType;
+    private final PlayerColor color;
+    private final PlayerType  playerType;
 }

@@ -7,6 +7,7 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.piece.PieceType;
+import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -41,7 +42,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsBlacksTurn_ThenReturnFalse() {
-        Game game = Game.create(WHITE).setActivePlayerColor(BLACK);
+        Game game = Game.create(WHITE).setActivePlayer(new Human(BLACK));
         Field field = new Field(new Pawn(WHITE));
 
         assertFalse(move.isFrom(game, field));
@@ -49,7 +50,7 @@ class MoveTest {
 
     @Test
     void testIsFrom_WhenFieldWithWhitePawnAndItsWhitesTurn_ThenReturnTrue() {
-        Game game = Game.create(WHITE).setActivePlayerColor(WHITE);
+        Game game = Game.create(WHITE).setActivePlayer(new Human(WHITE));
         Field field = new Field(new Pawn(WHITE));
 
         assertTrue(move.isFrom(game, field));
