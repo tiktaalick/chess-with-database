@@ -11,13 +11,15 @@ import org.mark.chess.rulesengine.RulesEngine;
 @Setter
 public final class ChessboardValueRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
 
+    protected static final BestMove BEST_MOVE = new BestMove();
+
     private final ChessboardValue chessboardValue = new ChessboardValue();
 
     /**
      * Constructor that adds all the rules to the rules engine.
      */
     public ChessboardValueRulesEngine() {
-        addRule(new PieceValueRule(chessboardValue));
+        addRule(new TotalValueOfAllPiecesRule(chessboardValue));
         addRule(new TotalValueRule(chessboardValue));
     }
 }
