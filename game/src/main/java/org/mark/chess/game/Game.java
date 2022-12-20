@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.ai.ChessboardValueParameter;
 import org.mark.chess.ai.ChessboardValueRulesEngine;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.ChessboardDirector;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.move.Move;
@@ -46,7 +47,9 @@ public class Game {
     private static final int                        MAXIMUM_SQUARE_ID             = 63;
     private static final int                        RIGHT_CLICK                   = 3;
 
-    private static MoveDirector moveDirector = new MoveDirector();
+    private static ChessboardDirector chessboardDirector = new ChessboardDirector();
+    private static GameDirector       gameDirector       = new GameDirector();
+    private static MoveDirector       moveDirector       = new MoveDirector();
 
     private Move                    move    = new Move(new Field(null));
     private List<Player>            players = Arrays.asList(new Human(WHITE), new Computer(BLACK));
@@ -76,7 +79,7 @@ public class Game {
      * @return A new game.
      */
     public static @NotNull Game create(PlayerColor humanPlayerColor) {
-        return new Game(humanPlayerColor, Chessboard.create());
+        return gameDirector.create(humanPlayerColor);
     }
 
     /**
@@ -86,10 +89,7 @@ public class Game {
      * @return The new game.
      */
     public static @NotNull Game restart(@NotNull Game oldGame) {
-        Game newGame = Game.create(oldGame.getHumanPlayerColor().getOpposite());
-        newGame.resetValidMoves();
-
-        return newGame;
+        return gameDirector.restart(oldGame.getHumanPlayerColor().getOpposite());
     }
 
     /**
