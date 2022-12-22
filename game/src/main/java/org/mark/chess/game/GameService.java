@@ -42,6 +42,6 @@ public class GameService {
      * @param game The game.
      */
     public void resetValidMoves(@NotNull Game game) {
-        game.resetValidMoves();
+        game.getChessboard().resetValidMoves(game.getMove(), game.getActivePlayer().getColor());
     }
 }

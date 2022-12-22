@@ -39,7 +39,7 @@ class FieldTest {
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(WHITE));
 
-        assertTrue(field.isActivePlayerField(game));
+        assertTrue(field.isActivePlayerField(WHITE));
     }
 
     @Test
@@ -48,7 +48,7 @@ class FieldTest {
 
         field.setId(FIELD_ID_C5);
 
-        assertFalse(field.isActivePlayerField(game));
+        assertFalse(field.isActivePlayerField(WHITE));
     }
 
     @Test
@@ -57,7 +57,7 @@ class FieldTest {
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
-        assertFalse(field.isActivePlayerField(game));
+        assertFalse(field.isActivePlayerField(WHITE));
     }
 
     @Test

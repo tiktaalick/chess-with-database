@@ -6,7 +6,7 @@ import org.mark.chess.rulesengine.Rule;
 
 import java.awt.Color;
 
-import static org.mark.chess.game.Game.MAX_COLOR_VALUE;
+import static org.mark.chess.board.Chessboard.MAX_COLOR_VALUE;
 
 public class FieldValueRule implements Rule<Field, Color> {
 

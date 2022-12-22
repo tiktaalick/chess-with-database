@@ -9,6 +9,7 @@ import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.player.PlayerColor;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -96,11 +97,11 @@ public class Field implements Comparable<Field> {
     /**
      * True if the field that contains the piece belongs to the active player.
      *
-     * @param game The game.
+     * @param activePlayerColor The color with which the active player plays.
      * @return True if the field that contains the piece belongs to the active player.
      */
-    public boolean isActivePlayerField(Game game) {
-        return this.getPieceType() != null && this.getPieceType().getColor() == game.getActivePlayer().getColor();
+    public boolean isActivePlayerField(PlayerColor activePlayerColor) {
+        return this.getPieceType() != null && this.getPieceType().getColor() == activePlayerColor;
     }
 
     /**

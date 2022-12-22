@@ -1,5 +1,7 @@
 package org.mark.chess.ai;
 
+import org.mark.chess.board.ChessboardDirector;
+
 import java.util.function.Function;
 
 /**
@@ -7,8 +9,9 @@ import java.util.function.Function;
  */
 public class BestMove {
 
-    protected static final int NUMBER_OF_MOVES_AHEAD = 2;
+    protected static final int NUMBER_OF_MOVES_AHEAD = 1;
     private static final   int EVEN                  = 2;
+    private static final   int ONE_MOVE_FURTHER      = 1;
 
     /**
      * Searches for the best move.
@@ -21,20 +24,33 @@ public class BestMove {
     public int calculate(Function<ChessboardValueParameter, Integer> typeOfCalculation,
             ChessboardValueParameter chessboardValueParameter,
             int level) {
+        int returnValue;
+
+        var parentChessboard = chessboardValueParameter.getChessboard();
+        var activePlayerColor = chessboardValueParameter.getActivePlayerColor();
+
         if (level == 0 /* || the game has ended*/) {
-            return typeOfCalculation.apply(chessboardValueParameter);
+            returnValue = typeOfCalculation.apply(chessboardValueParameter);
+        } else if (isActivePlayerMove(level)) {
+            returnValue = ChessboardDirector
+                    .createChessboardChildren(parentChessboard, activePlayerColor)
+                    .stream()
+                    .mapToInt(chessboard -> calculate(typeOfCalculation,
+                            new ChessboardValueParameter(chessboard, activePlayerColor),
+                            level - ONE_MOVE_FURTHER))
+                    .max()
+                    .orElse(Integer.MIN_VALUE);
+        } else {
+            returnValue = ChessboardDirector
+                    .createChessboardChildren(parentChessboard, activePlayerColor.getOpposite())
+                    .stream()
+                    .mapToInt(chessboard -> calculate(typeOfCalculation,
+                            new ChessboardValueParameter(chessboard, activePlayerColor.getOpposite()),
+                            level - ONE_MOVE_FURTHER))
+                    .max()
+                    .orElse(Integer.MIN_VALUE);
         }
 
-        var returnValue = typeOfCalculation.apply(chessboardValueParameter);
-
-//        if (isActivePlayerMove(level)) {
-//            returnValue = Integer.MIN_VALUE;
-//
-////            List<Chessboard> chessboardChildren =
-//
-//        } else {
-//            returnValue = Integer.MAX_VALUE;
-//        }
         return returnValue;
     }
 
