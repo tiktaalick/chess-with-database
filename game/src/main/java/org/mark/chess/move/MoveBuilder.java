@@ -9,6 +9,7 @@ import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
 
 import java.util.Comparator;
+import java.util.List;
 
 import static org.mark.chess.piece.PieceType.KING;
 
@@ -70,10 +71,11 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder createAiTo(Game game) {
-        game.setKingFieldColors(game.getAllValidFromToCombinations().get(move.getFrom()));
+        game.getChessboard().setKingFieldColors(game, game.getChessboard().getAllValidFromToCombinations().get(move.getFrom()));
 
         if (game.isInProgress()) {
             var toField = game
+                    .getChessboard()
                     .getAllValidFromToCombinations()
                     .get(move.getFrom())
                     .stream()
@@ -93,7 +95,7 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder enableValidMoves(@NotNull Game game) {
-        game.enableValidMoves(this.move.getFrom());
+        game.getChessboard().enableValidMoves(this.move.getFrom(), game.getActivePlayer().getColor());
 
         return this;
     }
@@ -173,7 +175,8 @@ public class MoveBuilder {
      */
     public MoveBuilder setKingFieldColors(@NotNull Game game) {
         if (game.isInProgress()) {
-            game.setKingFieldColors(game.resetValidMoves());
+            List<Field> allValidMoves = game.getChessboard().resetValidMoves(this.move, game.getActivePlayer().getColor());
+            game.getChessboard().setKingFieldColors(game, allValidMoves);
         }
 
         return this;

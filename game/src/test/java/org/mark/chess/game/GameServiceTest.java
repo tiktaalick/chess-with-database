@@ -2,6 +2,11 @@ package org.mark.chess.game;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
+import org.mark.chess.move.Move;
+import org.mark.chess.piece.Pawn;
+import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -23,6 +28,9 @@ class GameServiceTest {
 
     @Mock
     private Game game;
+
+    @Mock
+    private Chessboard chessboard;
 
     @Test
     void testCreateGame() {
@@ -55,8 +63,15 @@ class GameServiceTest {
 
     @Test
     void testResetValidMoves() {
+        Move move = new Move(new Field(new Pawn(WHITE)));
+
+        when(game.getChessboard()).thenReturn(chessboard);
+        when(game.getMove()).thenReturn(move);
+        when(game.getActivePlayer()).thenReturn(new Human(WHITE));
+
         gameService.resetValidMoves(game);
 
-        verify(game).resetValidMoves();
+        verify(game).getChessboard();
+        verify(chessboard).resetValidMoves(move, WHITE);
     }
 }

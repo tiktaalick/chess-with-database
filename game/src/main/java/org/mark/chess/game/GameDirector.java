@@ -6,11 +6,11 @@ public class GameDirector {
 
     private static GameBuilder gameBuilder = new GameBuilder();
 
-    public Game create(PlayerColor humanPlayerColor) {
+    public Game createGame(PlayerColor humanPlayerColor) {
         return gameBuilder.createGame(humanPlayerColor).build();
     }
 
-    public Game restart(PlayerColor humanPlayerColor) {
-        return gameBuilder.createGame(humanPlayerColor).resetValidMoves().build();
+    public Game restartGame(PlayerColor humanPlayerColor) {
+        return gameBuilder.createGame(humanPlayerColor).resetValidMoves().setValidMoveColors().build();
     }
 }
