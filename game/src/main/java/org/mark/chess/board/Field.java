@@ -10,6 +10,7 @@ import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.player.PlayerColor;
+import org.springframework.util.CollectionUtils;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -159,7 +160,7 @@ public class Field implements Comparable<Field> {
      * @return True if the player is not able to move.
      */
     public boolean isNotAbleToMove(@NotNull Game game, Collection<Field> allValidMoves) {
-        return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && allValidMoves.isEmpty();
+        return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && CollectionUtils.isEmpty(allValidMoves);
     }
 
     /**

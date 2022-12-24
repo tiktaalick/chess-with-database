@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.ai.BestMove;
 import org.mark.chess.ai.ChessboardValueParameter;
 import org.mark.chess.ai.ChessboardValueRulesEngine;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
@@ -50,6 +51,8 @@ public final class Chessboard {
     private int                     gridValue;
     private Field                   kingField;
     private Field                   opponentKingField;
+    private int                     level = BestMove.NUMBER_OF_MOVES_AHEAD;
+    private Move                    fromParentToChildMove;
 
     private Chessboard(List<Field> fields) {
         this.fields = new ArrayList<>(fields);
@@ -77,6 +80,8 @@ public final class Chessboard {
 
         this.kingField = getKingField(this, from.getPieceType().getColor());
         this.opponentKingField = getKingField(this, from.getPieceType().getColor().getOpposite());
+        this.level = chessboardBeforeTheMove.level - 1;
+        this.fromParentToChildMove = new Move(from).setTo(to);
     }
 
     /**
@@ -195,6 +200,11 @@ public final class Chessboard {
             }
         });
 
+        this.allValidFromToCombinations.forEach((from, validToFields) -> setValidMoveColors(from,
+                validToFields,
+                allValidToFields,
+                activePlayerColor));
+
         return allValidToFields;
     }
 
@@ -266,7 +276,7 @@ public final class Chessboard {
     private static int getMaxValue(Collection<Field> validMoves) {
         return validMoves == null
                 ? 0
-                : validMoves.stream().mapToInt(Field::getValue).max().orElse(0);
+                : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).max().orElse(0);
     }
 
     private static int getMaximumFieldValueComparedToMinimumValue(int minValue, int maxValue) {
@@ -276,7 +286,7 @@ public final class Chessboard {
     private static int getMinValue(Collection<Field> validMoves) {
         return validMoves == null
                 ? 0
-                : validMoves.stream().mapToInt(Field::getValue).min().orElse(0);
+                : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
     }
 
     /**

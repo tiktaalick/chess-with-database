@@ -91,7 +91,7 @@ public class MoveBuilder {
     /**
      * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
      *
-     * @param game The game.
+     * @param game  The game.
      * @return The builder.
      */
     public MoveBuilder enableValidMoves(@NotNull Game game) {
