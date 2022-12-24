@@ -36,7 +36,7 @@ public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter,
      */
     @Override
     public boolean hasResult(ChessboardValueParameter chessboardValueParameter) {
-        chessboardValue.setPieceValue(BEST_MOVE.calculate(TOTAL_PIECES_VALUE, chessboardValueParameter, BestMove.NUMBER_OF_MOVES_AHEAD));
+        chessboardValue.setPieceValue(BEST_MOVE.calculate(TOTAL_PIECES_VALUE, chessboardValueParameter));
 
         return false;
     }

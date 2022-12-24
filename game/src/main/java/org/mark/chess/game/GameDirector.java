@@ -11,6 +11,6 @@ public class GameDirector {
     }
 
     public Game restartGame(PlayerColor humanPlayerColor) {
-        return gameBuilder.createGame(humanPlayerColor).resetValidMoves().setValidMoveColors().build();
+        return gameBuilder.createGame(humanPlayerColor).resetValidMoves().build();
     }
 }

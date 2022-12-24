@@ -1,8 +1,8 @@
 package org.mark.chess.move;
 
 import org.jetbrains.annotations.NotNull;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 
 /**
