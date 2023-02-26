@@ -34,10 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=tiktaalick_chess-with-database -Djava.awt.headless=true
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@main
+        #Snyk
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/nodemaster
         continue-on-error: true # To make sure that SARIF upload gets called
