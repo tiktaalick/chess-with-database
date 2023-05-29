@@ -163,6 +163,10 @@ public class Field implements Comparable<Field> {
         return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && CollectionUtils.isEmpty(allValidMoves);
     }
 
+    public boolean isValid() {
+        return this.id >= Chessboard.MINIMUM_SQUARE_ID && this.id <= Chessboard.MAXIMUM_SQUARE_ID;
+    }
+
     /**
      * Sets whether a piece is attacking another piece from this field.
      *

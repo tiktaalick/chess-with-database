@@ -91,7 +91,7 @@ public class MoveBuilder {
     /**
      * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
      *
-     * @param game  The game.
+     * @param game The game.
      * @return The builder.
      */
     public MoveBuilder enableValidMoves(@NotNull Game game) {
@@ -107,7 +107,8 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder moveRookIfCastling(Game game) {
-        if (this.move.getFrom().getPieceType().getName().equals(KING) &&
+        if (this.move.isValid() &&
+                this.move.getFrom().getPieceType().getName().equals(KING) &&
                 KingIsValidCastlingRule.isValidCastling(game.getChessboard(),
                         this.move.getFrom(),
                         this.move.getTo(),
@@ -201,7 +202,9 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder setPieceTypeSpecificAttributes(Game game) {
-        this.move.getFrom().getPieceType().setPieceTypeSpecificAttributes(game, this.move.getFrom(), this.move.getTo());
+        if (this.move.isValid()) {
+            this.move.getFrom().getPieceType().setPieceTypeSpecificAttributes(game, this.move.getFrom(), this.move.getTo());
+        }
 
         return this;
     }

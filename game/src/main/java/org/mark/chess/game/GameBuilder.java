@@ -24,7 +24,7 @@ public class GameBuilder {
     }
 
     public GameBuilder resetValidMoves() {
-        this.allValidToFields = this.game.getChessboard().resetValidMoves(this.game.getMove(), this.game.getHumanPlayerColor());
+        this.allValidToFields = this.game.getChessboard().resetValidMoves(this.game.getMove(), PlayerColor.WHITE);
 
         return this;
     }

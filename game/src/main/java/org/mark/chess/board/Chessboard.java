@@ -38,13 +38,14 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public final class Chessboard {
 
-    public static final int MAX_COLOR_VALUE            = 255;
-    public static final int MIN_COLOR_VALUE            = 0;
-    public static final int NUMBER_OF_COLUMNS_AND_ROWS = 8;
-
+    public static final  int                        MAXIMUM_COLOR_VALUE           = 255;
+    public static final  int                        MAXIMUM_SQUARE_ID             = 63;
+    public static final  int                        MINIMUM_COLOR_VALUE           = 0;
+    public static final  int                        MINIMUM_SQUARE_ID             = 0;
+    public static final  int                        NUMBER_OF_COLUMNS_AND_ROWS    = 8;
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
-    private static final int                        MAXIMUM_SQUARE_ID             = 63;
+    private static final int                        ONE_LEVEL                     = 1;
 
     private Map<Field, List<Field>> allValidFromToCombinations;
     private List<Field>             fields;
@@ -80,7 +81,7 @@ public final class Chessboard {
 
         this.kingField = getKingField(this, from.getPieceType().getColor());
         this.opponentKingField = getKingField(this, from.getPieceType().getColor().getOpposite());
-        this.level = chessboardBeforeTheMove.level - 1;
+        this.level = chessboardBeforeTheMove.level - ONE_LEVEL;
         this.fromParentToChildMove = new Move(from).setTo(to);
     }
 
@@ -233,7 +234,7 @@ public final class Chessboard {
      * @param from              The field from which the chess piece moves.
      * @param validMoves        The list of valid moves for the chess piece standing on the from field.
      * @param allValidMoves     The list of valid moves for all the chess pieces of the active player.
-     * @param activePlayerColor
+     * @param activePlayerColor The active player color.
      */
     public void setValidMoveColors(Field from,
             Collection<Field> validMoves,
@@ -246,7 +247,7 @@ public final class Chessboard {
 
     private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
         return (((double) getCurrentFieldValueComparedToMinimumValue(gridField, minValue)) /
-                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAX_COLOR_VALUE - MIN_COLOR_VALUE) + MIN_COLOR_VALUE;
+                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE;
     }
 
     private static void createRelativeFieldValues(@NotNull Collection<Field> validMoves, Collection<Field> allValidMoves, @NotNull Field from) {
@@ -254,7 +255,7 @@ public final class Chessboard {
         int maxValue = getMaxValue(allValidMoves);
         validMoves.forEach((Field gridField) -> {
             double relativeValue = maxValue - minValue <= 0
-                    ? MAX_COLOR_VALUE
+                    ? MAXIMUM_COLOR_VALUE
                     : calculateRelativeValue(minValue, maxValue, gridField);
 
             gridField.setRelativeValue((int) relativeValue);
