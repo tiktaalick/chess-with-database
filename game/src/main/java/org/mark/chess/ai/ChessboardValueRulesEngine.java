@@ -11,7 +11,7 @@ import org.mark.chess.rulesengine.RulesEngine;
 @Setter
 public final class ChessboardValueRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
 
-    protected static final BestMove BEST_MOVE = new BestMove();
+    public static final BestMove BEST_MOVE = new BestMove();
 
     private final ChessboardValue chessboardValue = new ChessboardValue();
 

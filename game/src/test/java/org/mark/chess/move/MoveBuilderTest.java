@@ -1,5 +1,6 @@
 package org.mark.chess.move;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
@@ -73,12 +74,14 @@ class MoveBuilderTest {
 //    }
 
     @Test
-    void testMoveRookWhenCastling_WhenCastling_ThenMoveRook() {
+    @DisplayName("When castling then move rook.")
+    void testMoveRookWhenCastling_Castling() {
         Field kingFrom = new Field(new King(WHITE)).setCode("e1");
         Field kingTo = new Field(null).setCode("c1");
 
         when(move.getFrom()).thenReturn(kingFrom);
         when(move.getTo()).thenReturn(kingTo);
+        when(move.isValid()).thenReturn(true);
 
         Game game = Game.create(WHITE);
 
@@ -117,7 +120,8 @@ class MoveBuilderTest {
     }
 
     @Test
-    void testSetChessPieceSpecificFields_WhenKing_ThenSetHasMovedAtLeastOnce() {
+    @DisplayName("When moving the king once then set HasMovedAtLeastOnce to true.")
+    void testSetChessPieceSpecificFields_King() {
         Chessboard chessboard = Chessboard.create();
         Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new King(WHITE));
@@ -125,6 +129,7 @@ class MoveBuilderTest {
 
         when(move.getFrom()).thenReturn(from);
         when(move.getTo()).thenReturn(to);
+        when(move.isValid()).thenReturn(true);
 
         moveBuilder.setPieceTypeSpecificAttributes(game);
 
@@ -132,7 +137,26 @@ class MoveBuilderTest {
     }
 
     @Test
-    void testSetChessPieceSpecificFields_WhenPawnIsBeingPromoted_ThenPawnIsPromotedToQueen() {
+    @DisplayName("When a pawn may be captured en passant then set MayBeCapturedEnPassant to true.")
+    void testSetChessPieceSpecificFields_Pawn() {
+        Chessboard chessboard = Chessboard.create();
+        Game game = Game.create(WHITE).setChessboard(chessboard);
+        Field from = new Field(new Pawn(WHITE).setPawnMayBeCapturedEnPassantRulesEngine(pawnMayBeCapturedEnPassantRulesEngine));
+        Field to = new Field(null);
+
+        when(pawnMayBeCapturedEnPassantRulesEngine.process(any(IsValidMoveParameter.class))).thenReturn(true);
+        when(move.getFrom()).thenReturn(from);
+        when(move.getTo()).thenReturn(to);
+        when(move.isValid()).thenReturn(true);
+
+        moveBuilder.setPieceTypeSpecificAttributes(game);
+
+        assertTrue(((Pawn) from.getPieceType()).isMayBeCapturedEnPassant());
+    }
+
+    @Test
+    @DisplayName("When a pawn is being promoted then the pawn is promoted to a queen.")
+    void testSetChessPieceSpecificFields_PawnPromotion() {
         Chessboard chessboard = Chessboard.create();
         Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new Pawn(WHITE));
@@ -140,6 +164,7 @@ class MoveBuilderTest {
 
         when(move.getFrom()).thenReturn(from);
         when(move.getTo()).thenReturn(to);
+        when(move.isValid()).thenReturn(true);
 
         moveBuilder.setPieceTypeSpecificAttributes(game);
 
@@ -149,23 +174,8 @@ class MoveBuilderTest {
     }
 
     @Test
-    void testSetChessPieceSpecificFields_WhenPawnMayBeCapturedEnPassant_ThenSetMayBeCapturedEnPassant() {
-        Chessboard chessboard = Chessboard.create();
-        Game game = Game.create(WHITE).setChessboard(chessboard);
-        Field from = new Field(new Pawn(WHITE).setPawnMayBeCapturedEnPassantRulesEngine(pawnMayBeCapturedEnPassantRulesEngine));
-        Field to = new Field(null);
-
-        when(pawnMayBeCapturedEnPassantRulesEngine.process(any(IsValidMoveParameter.class))).thenReturn(true);
-        when(move.getFrom()).thenReturn(from);
-        when(move.getTo()).thenReturn(to);
-
-        moveBuilder.setPieceTypeSpecificAttributes(game);
-
-        assertTrue(((Pawn) from.getPieceType()).isMayBeCapturedEnPassant());
-    }
-
-    @Test
-    void testSetChessPieceSpecificFields_WhenRook_ThenSetHasMovedAtLeastOnce() {
+    @DisplayName("When moving the rook once then set HasMovedAtLeastOnce to true.")
+    void testSetChessPieceSpecificFields_Rook() {
         Chessboard chessboard = Chessboard.create();
         Game game = Game.create(WHITE).setChessboard(chessboard);
         Field from = new Field(new Rook(WHITE));
@@ -173,6 +183,7 @@ class MoveBuilderTest {
 
         when(move.getFrom()).thenReturn(from);
         when(move.getTo()).thenReturn(to);
+        when(move.isValid()).thenReturn(true);
 
         moveBuilder.setPieceTypeSpecificAttributes(game);
 

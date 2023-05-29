@@ -3,9 +3,9 @@ package org.mark.chess.move;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 
@@ -57,6 +57,10 @@ public class Move {
                 field.getPieceType().getColor() == game.getPlayers().get(game.getActivePlayer().getColor().ordinal()).getColor();
     }
 
+    public boolean isValid() {
+        return isValidField(this.from) && isValidField(this.to) && this.pieceType != null;
+    }
+
     /**
      * Sets the field as the from-part of the move.
      *
@@ -77,7 +81,7 @@ public class Move {
      * Sets the field as the to-part of the move. Captures en passant a pawn en passant if during an en passant move.
      *
      * @param chessboard The back-end representation of a chessboard.
-     * @param to   The field.
+     * @param to         The field.
      * @return The move.
      */
     public Move setTo(Chessboard chessboard, Field to) {
@@ -95,8 +99,13 @@ public class Move {
     }
 
     private static boolean isCaptureEnPassant(@NotNull Move move, Field to) {
-        return move.getFrom().getPieceType().getName().equals(PAWN) &&
+        return move.isValid() &&
+                move.getFrom().getPieceType().getName().equals(PAWN) &&
                 move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
                 to.getPieceType() == null;
+    }
+
+    private static boolean isValidField(Field field) {
+        return field != null && field.isValid();
     }
 }
