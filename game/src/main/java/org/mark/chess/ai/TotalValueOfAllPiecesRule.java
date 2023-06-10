@@ -4,6 +4,8 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.player.PlayerColor;
 import org.mark.chess.rulesengine.Rule;
 
+import java.util.logging.Logger;
+
 import static org.mark.chess.ai.ChessboardValueRulesEngine.BEST_MOVE;
 
 /**
@@ -11,8 +13,10 @@ import static org.mark.chess.ai.ChessboardValueRulesEngine.BEST_MOVE;
  */
 public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter, ChessboardValue> {
 
+    private static final Logger                LOGGER             = Logger.getLogger(TotalValueOfAllPiecesRule.class.getName());
     private static final TotalValueOfAllPieces TOTAL_PIECES_VALUE = new TotalValueOfAllPieces();
-    private final        ChessboardValue       chessboardValue;
+
+    private final ChessboardValue chessboardValue;
 
     /**
      * Constructor.

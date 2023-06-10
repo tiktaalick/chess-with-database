@@ -5,12 +5,16 @@ import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
 
+import java.util.logging.Logger;
+
 import static org.mark.chess.player.PlayerType.HUMAN;
 
 /**
  * Contains all possible computer moves, which adds up to the staggering number of one.
  */
 public class AiMoveDirector extends MoveDirector {
+
+    private static final Logger LOGGER = Logger.getLogger(AiMoveDirector.class.getName());
 
     /**
      * Performs a computer move if applicable.

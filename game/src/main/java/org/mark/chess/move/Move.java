@@ -94,6 +94,15 @@ public class Move {
         return this;
     }
 
+    @Override
+    public String toString() {
+        if (this.getFrom() == null) {
+            return "";
+        }
+
+        return this.getFrom() + (this.getFrom().isAttacking() ? " x " : " - ") + (this.getTo() != null ? this.getTo() : "");
+    }
+
     private static void captureEnPassant(@NotNull Chessboard chessboard, @NotNull Field from, @NotNull Field to) {
         chessboard.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
     }

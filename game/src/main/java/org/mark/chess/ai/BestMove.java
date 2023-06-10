@@ -9,14 +9,16 @@ import org.mark.chess.piece.PieceType;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 /**
  * Contains a method that searches for the best move.
  */
 public class BestMove {
 
-    public static final  int NUMBER_OF_MOVES_AHEAD = 1;
-    private static final int EVEN                  = 2;
+    public static final  int    NUMBER_OF_MOVES_AHEAD = 1;
+    private static final int    EVEN                  = 2;
+    private static final Logger LOGGER                = Logger.getLogger(BestMove.class.getName());
 
     /**
      * Searches for the best move.
