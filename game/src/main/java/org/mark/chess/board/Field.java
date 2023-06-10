@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -93,6 +94,20 @@ public class Field implements Comparable<Field> {
         var field = (Field) o;
 
         return id == field.id && Objects.equal(code, field.code) && Objects.equal(coordinates, field.coordinates);
+    }
+
+    @Override
+    public String toString() {
+        String attacking = isAttacking ? " (attacking)" : "";
+        String underAttack = isUnderAttack ? " (under attack)" : "";
+        String checkmate = isCheckMate ? " (checkmate)" : "";
+        String stalemate = isStaleMate ? " (stalemate)" : "";
+
+        return Optional
+                .ofNullable(pieceType)
+                .map(PieceType::getColor)
+                .map(playerColor -> playerColor.getName() + " " + pieceType.getName() + " ")
+                .orElse("") + code + attacking + underAttack + checkmate + stalemate;
     }
 
     /**
