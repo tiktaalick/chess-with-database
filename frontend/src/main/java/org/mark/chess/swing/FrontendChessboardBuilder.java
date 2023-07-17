@@ -94,9 +94,11 @@ public class FrontendChessboardBuilder {
         this.frontendChessboard.getGame().getChessboard().getFields().forEach((Field field) -> {
             int buttonId = FrontendField.createButtonId(this.frontendChessboard.getGame().getHumanPlayerColor(), field.getId());
 
-            FrontendField frontendField = Objects.isNull(field.getPieceType())
-                    ? this.frontendChessboard.getFrontendFields().get(buttonId).reset(field).setId(buttonId)
-                    : this.frontendChessboard.getFrontendFields().get(buttonId).initialize(field).setId(buttonId);
+            FrontendField frontendField = Objects.isNull(field.getPieceType()) ? this.frontendChessboard
+                    .getFrontendFields()
+                    .get(buttonId)
+                    .reset(field)
+                    .setId(buttonId) : this.frontendChessboard.getFrontendFields().get(buttonId).update(field).setId(buttonId);
             frontendField.setBackground(field.getBackgroundColor());
         });
 

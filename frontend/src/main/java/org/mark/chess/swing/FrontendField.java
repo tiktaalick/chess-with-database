@@ -51,7 +51,7 @@ public final class FrontendField extends JButton {
         this.addActionListener(frontendChessboard);
         this.addMouseListener(frontendChessboard);
         this.setBackground(backgroundColorRulesEngine.process(field));
-        this.initialize(field);
+        this.update(field);
     }
 
     /**
@@ -62,9 +62,20 @@ public final class FrontendField extends JButton {
      * @return The front-end field id.
      */
     public static int createButtonId(PlayerColor humanPlayerColor, int fieldId) {
-        return humanPlayerColor == WHITE
-                ? fieldId
-                : (MAXIMUM_FIELD_ID - fieldId);
+        return humanPlayerColor == WHITE ? fieldId : (MAXIMUM_FIELD_ID - fieldId);
+    }
+
+    /**
+     * Reset the front-end field.
+     *
+     * @param field A back-end field.
+     * @return The front-end field.
+     */
+    public FrontendField reset(@NotNull Field field) {
+        this.setText(field.getCode());
+        this.setIcon(null);
+
+        return this;
     }
 
     /**
@@ -73,7 +84,7 @@ public final class FrontendField extends JButton {
      * @param field The back-end field.
      * @return The front-end field.
      */
-    public FrontendField initialize(@NotNull Field field) {
+    public FrontendField update(@NotNull Field field) {
         this.id = field.getId();
 
         if (field.getPieceType() == null) {
@@ -89,19 +100,6 @@ public final class FrontendField extends JButton {
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
-
-        return this;
-    }
-
-    /**
-     * Reset the front-end field.
-     *
-     * @param field A back-end field.
-     * @return The front-end field.
-     */
-    public FrontendField reset(@NotNull Field field) {
-        this.setText(field.getCode());
-        this.setIcon(null);
 
         return this;
     }
