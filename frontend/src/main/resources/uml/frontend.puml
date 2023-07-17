@@ -1,5 +1,10 @@
 @startuml
 
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
 '-----------'
 'Annotations'
 '-----------'
@@ -41,6 +46,7 @@ class FrontendChessboardBuilder {
     + initialize()
     + createButtons()
     + updateButtons()
+    + build()
 }
 class FrontendField {
     + update()
@@ -55,22 +61,16 @@ class GameService {
 'Relations'
 '---------'
 JFrame <|-- FrontendChessboard
-JButton <|-- FrontendField
+JButton <|--- FrontendField
 ActionListener <|-- FrontendChessboard
 MouseListener <|-- FrontendChessboard
 FrontendChessboard o-- GameService : updates game >
 FrontendChessboard --* FrontendChessboardBuilder : updates buttons >
-FrontendChessboard ..> Application
-FrontendChessboard *-- FrontendField : updates buttons >
+FrontendChessboard *-- FrontendField : has >
 FrontendChessboardBuilder --* Application : builds FrontendChessboard >
 Application ...> SpringBootApplication
 Application --* ApplicationRepository : retrieves Spring Application instance >
 ApplicationRepository ..> SpringApplicationBuilder : < builds Spring Application instance
-
-'--------------'
-'Hidden members'
-'--------------'
-hide empty members
 
 '-----'
 'Notes'
