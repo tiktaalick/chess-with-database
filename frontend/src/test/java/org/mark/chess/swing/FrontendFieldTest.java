@@ -43,7 +43,7 @@ class FrontendFieldTest {
 
     @Test
     void testInitialize() {
-        FrontendField initializedFrontendField = frontendField.initialize(new Field(new Queen(BLACK)).setId(12));
+        FrontendField initializedFrontendField = frontendField.update(new Field(new Queen(BLACK)).setId(12));
         assertEquals(12, initializedFrontendField.getId());
         assertNotNull(initializedFrontendField.getIcon());
         assertEquals("black_queen.png", initializedFrontendField.getIconPath());
@@ -53,7 +53,7 @@ class FrontendFieldTest {
     void testReset() {
         Field field = new Field(new Queen(BLACK)).setCode("d5");
 
-        FrontendField resetFrontendField = frontendField.initialize(field).reset(field);
+        FrontendField resetFrontendField = frontendField.update(field).reset(field);
 
         assertEquals("d5", resetFrontendField.getText());
         assertNull(resetFrontendField.getIcon());

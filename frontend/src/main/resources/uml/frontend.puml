@@ -1,0 +1,85 @@
+@startuml
+
+'-----------'
+'Annotations'
+'-----------'
+annotation SpringBootApplication
+
+'-----------'
+'Application'
+'-----------'
+class SpringApplicationBuilder
+class ApplicationRepository <<Singleton>> {
+    - {static} application
+    + {static} getInstance()
+}
+
+class Application {
+    - {static} frontendChessboardBuilder
+    - {static} gameService
+    + {static} main()
+    + startApplication()
+}
+
+'-----'
+'Swing'
+'-----'
+class JFrame{}
+class JButton{}
+interface ActionListener{}
+interface MouseListener{}
+
+class FrontendChessboard{
+    - frontendFields
+    - game
+    - gameService
+    + createGridLayout()
+    + mousePressed()
+}
+class FrontendChessboardBuilder {
+    - frontendChessboard
+    + initialize()
+    + createButtons()
+    + updateButtons()
+}
+class FrontendField {
+    + update()
+    + createButtonId()
+    + reset()
+}
+class GameService {
+    + handleButtonClick()
+}
+
+'---------'
+'Relations'
+'---------'
+JFrame <|-- FrontendChessboard
+JButton <|-- FrontendField
+ActionListener <|-- FrontendChessboard
+MouseListener <|-- FrontendChessboard
+FrontendChessboard o-- GameService : updates game >
+FrontendChessboard --* FrontendChessboardBuilder : updates buttons >
+FrontendChessboard ..> Application
+FrontendChessboard *-- FrontendField : updates buttons >
+FrontendChessboardBuilder --* Application : builds FrontendChessboard >
+Application ...> SpringBootApplication
+Application --* ApplicationRepository : retrieves Spring Application instance >
+ApplicationRepository ..> SpringApplicationBuilder : < builds Spring Application instance
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'-----'
+'Notes'
+'-----'
+note left of Application::main
+    start of Application
+end note
+note left of FrontendField::update
+    updates the graphics
+end note
+
+@enduml

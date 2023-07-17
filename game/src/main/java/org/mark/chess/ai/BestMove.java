@@ -2,13 +2,10 @@ package org.mark.chess.ai;
 
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.ChessboardDirector;
-import org.mark.chess.board.Field;
-import org.mark.chess.move.Move;
-import org.mark.chess.piece.PieceType;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -36,61 +33,29 @@ public class BestMove {
         if (parentChessboard.getLevel() <= 0 /* || the game has ended*/) {
             returnValue = typeOfCalculation.apply(chessboardValueParameter);
         } else {
-            System.out.println("");
-            System.out.println("level             = " + parentChessboard.getLevel());
-            System.out.println("activePlayerColor = " + activePlayerColor.getName());
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "");
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "level             = " + parentChessboard.getLevel());
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "activePlayerColor = " + activePlayerColor.getName());
 
-            var activePlayerColorLevel = isActivePlayerMove(parentChessboard.getLevel())
-                    ? activePlayerColor
-                    : activePlayerColor.getOpposite();
+            var activePlayerColorLevel = isActivePlayerMove(parentChessboard.getLevel()) ? activePlayerColor : activePlayerColor.getOpposite();
 
-            System.out.println("activePlayerColor = " + activePlayerColorLevel + " (for this level)");
-            System.out.println("parentChessboard  = " + parentChessboard);
-            System.out.println("Move              = " +
-                    Optional
-                            .ofNullable(parentChessboard.getFromParentToChildMove())
-                            .map(Move::getFrom)
-                            .map(Field::getPieceType)
-                            .map(PieceType::getColor)
-                            .orElse(null) +
-                    " " +
-                    Optional
-                            .ofNullable(parentChessboard.getFromParentToChildMove())
-                            .map(Move::getFrom)
-                            .map(Field::getPieceType)
-                            .map(PieceType::getName)
-                            .orElse(null) +
-                    " " +
-                    Optional.ofNullable(parentChessboard.getFromParentToChildMove()).map(Move::getFrom).map(Field::getCode).orElse(null) +
-                    " - " +
-                    Optional
-                            .ofNullable(parentChessboard.getFromParentToChildMove())
-                            .map(Move::getTo)
-                            .map(Field::getPieceType)
-                            .map(PieceType::getColor)
-                            .orElse(null) +
-                    " " +
-                    Optional
-                            .ofNullable(parentChessboard.getFromParentToChildMove())
-                            .map(Move::getTo)
-                            .map(Field::getPieceType)
-                            .map(PieceType::getName)
-                            .orElse(null) +
-                    " " +
-                    Optional.ofNullable(parentChessboard.getFromParentToChildMove()).map(Move::getTo).map(Field::getCode).orElse(null));
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "activePlayerColor = " + activePlayerColorLevel + " (for this level)");
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "parentChessboard  = " + parentChessboard);
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", parentChessboard.getFromParentToChildMove());
 
             List<Chessboard> chessboardChildren = ChessboardDirector.createChessboardChildren(parentChessboard, activePlayerColorLevel);
-            System.out.println("number of children= " + chessboardChildren.size());
+
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "number of children= " + chessboardChildren.size());
 
             returnValue = chessboardChildren
                     .stream()
-                    .peek(child -> System.out.println("childChessboard   = " + child))
+                    .peek(child -> LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "childChessboard   = " + child))
                     .mapToInt(chessboard -> calculate(typeOfCalculation, new ChessboardValueParameter(chessboard, activePlayerColorLevel)))
                     .max()
                     .orElse(Integer.MIN_VALUE);
 
-            System.out.println("returnValue       = " + returnValue);
-            System.out.println("");
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "returnValue       = " + returnValue);
+            LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "");
         }
 
         return returnValue;

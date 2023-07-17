@@ -2,8 +2,8 @@ package org.mark.chess.swing;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.game.GameService;
 import org.mockito.InjectMocks;
@@ -94,14 +94,13 @@ class FrontendChessboardBuilderTest {
         when(game.getChessboard()).thenReturn(chessboard);
         when(frontendChessboard.getFrontendFields()).thenReturn(frontendFields);
         when(frontendField.reset(any(Field.class))).thenReturn(frontendField);
-        when(frontendField.initialize(any(Field.class))).thenReturn(frontendField);
+        when(frontendField.update(any(Field.class))).thenReturn(frontendField);
         when(frontendField.setId(anyInt())).thenReturn(frontendField);
 
         FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).updateButtons().build();
 
         verify(frontendField, times(64)).setId(anyInt());
         verify(frontendField, times(32)).reset(any(Field.class));
-        verify(frontendField, times(32)).initialize(any(Field.class));
+        verify(frontendField, times(32)).update(any(Field.class));
     }
 }
-
