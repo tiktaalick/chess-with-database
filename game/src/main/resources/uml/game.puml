@@ -1,0 +1,61 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Game'
+'----'
+class Game {
+    - {static} gameDirector
+    - {static} moveDirector
+    - {static} chessboardDirector
+    - chessboard
+    + {static} create()
+    + {static} restart()
+    + changeTurn()
+    + handleButtonClick()
+}
+
+class GameDirector {
+    - gameBuilder
+    + createGame()
+    + restartGame()
+}
+
+class GameBuilder {
+    - game
+    + createGame()
+    + resetValidMoves()
+    + build()
+}
+
+class GameService {
+    + createGame()
+    + handleButtonClick()
+    + resetValidMoves()
+}
+
+class Chessboard {
+    + resetValidMoves()
+}
+
+class MoveDirector {
+    + performFromMove()
+    + performToMove()
+    + performResetMove()
+}
+
+'---------'
+'Relations'
+'---------'
+GameService ..> Game
+GameService ..> Chessboard
+Game *-left- Chessboard
+Game *-right- MoveDirector
+Game *-- GameDirector : creates or restarts a Game <
+GameDirector *-- GameBuilder : builds a Game <
+
+@enduml

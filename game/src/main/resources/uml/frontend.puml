@@ -13,46 +13,42 @@ annotation SpringBootApplication
 '-----------'
 'Application'
 '-----------'
-class SpringApplicationBuilder
-class ApplicationRepository <<Singleton>> {
-    - {static} application
-    + {static} getInstance()
-}
-
 class Application {
     - {static} frontendChessboardBuilder
     - {static} gameService
     + {static} main()
-    + startApplication()
 }
 
 '-----'
 'Swing'
 '-----'
-class JFrame{}
-class JButton{}
-interface ActionListener{}
-interface MouseListener{}
+interface ActionListener{
+}
+
+interface MouseListener{
+}
 
 class FrontendChessboard{
     - frontendFields
     - game
-    - gameService
     + createGridLayout()
     + mousePressed()
 }
+
 class FrontendChessboardBuilder {
     - frontendChessboard
     + initialize()
-    + createButtons()
-    + updateButtons()
+    + createFields()
+    + updateFields()
     + build()
 }
+
 class FrontendField {
     + update()
     + createButtonId()
     + reset()
 }
+
 class GameService {
     + handleButtonClick()
 }
@@ -61,23 +57,19 @@ class GameService {
 'Relations'
 '---------'
 JFrame <|-- FrontendChessboard
-JButton <|--- FrontendField
+JButton <|-- FrontendField
 ActionListener <|-- FrontendChessboard
 MouseListener <|-- FrontendChessboard
-FrontendChessboard o-- GameService : updates game >
-FrontendChessboard --* FrontendChessboardBuilder : updates buttons >
-FrontendChessboard *-- FrontendField : has >
+FrontendChessboard o-right- GameService : updates game >
+FrontendChessboard --* FrontendChessboardBuilder : updates fields >
+FrontendChessboard *-left- FrontendField : has >
 FrontendChessboardBuilder --* Application : builds FrontendChessboard >
-Application ...> SpringBootApplication
-Application --* ApplicationRepository : retrieves Spring Application instance >
-ApplicationRepository ..> SpringApplicationBuilder : < builds Spring Application instance
+Application ..> SpringBootApplication
+Application ..> SpringApplicationBuilder : < builds Spring Application instance
 
 '-----'
 'Notes'
 '-----'
-note left of Application::main
-    start of Application
-end note
 note left of FrontendField::update
     updates the graphics
 end note

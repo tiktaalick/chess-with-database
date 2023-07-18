@@ -32,7 +32,7 @@ public class FrontendChessboardBuilder {
      *
      * @return The front-end chessboard builder.
      */
-    public FrontendChessboardBuilder createButtons() {
+    public FrontendChessboardBuilder createFields() {
         this.frontendChessboard.setFrontendFields(new ArrayList<>());
         this.frontendChessboard.getGame().getChessboard().getFields().forEach((Field field) -> {
             var button = new FrontendField(this.frontendChessboard, field);
@@ -90,7 +90,7 @@ public class FrontendChessboardBuilder {
      *
      * @return The front-end chessboard builder.
      */
-    public FrontendChessboardBuilder updateButtons() {
+    public FrontendChessboardBuilder updateFields() {
         this.frontendChessboard.getGame().getChessboard().getFields().forEach((Field field) -> {
             int buttonId = FrontendField.createButtonId(this.frontendChessboard.getGame().getHumanPlayerColor(), field.getId());
 

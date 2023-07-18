@@ -5,6 +5,7 @@ import org.mark.chess.player.PlayerColor;
 import org.mark.chess.swing.FrontendChessboard;
 import org.mark.chess.swing.FrontendChessboardBuilder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
 
@@ -31,7 +32,7 @@ public class Application {
      * @param args Ignored parameter.
      */
     public static void main(String[] args) {
-        ApplicationRepository.getInstance().startApplication(WHITE);
+        createInstance().startApplication(WHITE);
     }
 
     public static void setGameService(GameService gameService) {
@@ -45,6 +46,10 @@ public class Application {
      * @return The just created chessboard.
      */
     public FrontendChessboard startApplication(PlayerColor humanPlayerColor) {
-        return frontendChessboardBuilder.setBoard(gameService, humanPlayerColor).createButtons().initialize().updateButtons().build();
+        return frontendChessboardBuilder.setBoard(gameService, humanPlayerColor).createFields().initialize().updateFields().build();
+    }
+
+    private static Application createInstance() {
+        return new SpringApplicationBuilder(Application.class).headless(false).run().getBean(Application.class);
     }
 }
