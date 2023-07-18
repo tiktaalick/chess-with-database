@@ -57,7 +57,7 @@ class FrontendChessboardBuilderTest {
         when(frontendChessboard.getFrontendFields()).thenReturn(new ArrayList<>());
         when(game.getChessboard()).thenReturn(chessboard);
 
-        FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).createButtons().build();
+        FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).createFields().build();
 
         assertEquals(64, result.getFrontendFields().size());
         assertEquals(63, result.getFrontendFields().get(63).getId());
@@ -97,7 +97,7 @@ class FrontendChessboardBuilderTest {
         when(frontendField.update(any(Field.class))).thenReturn(frontendField);
         when(frontendField.setId(anyInt())).thenReturn(frontendField);
 
-        FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).updateButtons().build();
+        FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).updateFields().build();
 
         verify(frontendField, times(64)).setId(anyInt());
         verify(frontendField, times(32)).reset(any(Field.class));

@@ -82,7 +82,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
                 event.getButton(),
                 FrontendField.createButtonId(this.game.getHumanPlayerColor(), ((FrontendField) event.getSource()).getId()));
 
-        Application.getBoardBuilder().setBoard(this).updateButtons();
+        Application.getBoardBuilder().setBoard(this).updateFields();
     }
 
     @Override
