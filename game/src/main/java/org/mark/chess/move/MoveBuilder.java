@@ -8,7 +8,6 @@ import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +32,7 @@ public class MoveBuilder {
      * @return The built move.
      */
     public Move build() {
-        LOGGER.log(Level.INFO, "Move.build(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.build(): {0}", this.move);
 
         return this.move;
     }
@@ -47,55 +46,7 @@ public class MoveBuilder {
     public MoveBuilder changeTurn(@NotNull Game game) {
         game.changeTurn();
 
-        LOGGER.info("Move.changeTurn() ");
-
-        return this;
-    }
-
-    /**
-     * Sets the from-part of the AI move.
-     *
-     * @param game The game.
-     * @return The builder.
-     */
-    public MoveBuilder createAiFrom(Game game) {
-        this.move.setFrom(game
-                .getChessboard()
-                .getFields()
-                .stream()
-                .filter(field -> field.getValue() != null)
-                .filter(field -> field.getPieceType() != null)
-                .filter(field -> field.getPieceType().getColor() == game.getActivePlayer().getColor())
-                .max(Comparator.comparing(Field::getValue))
-                .orElse(new Field(null)));
-
-        LOGGER.log(Level.INFO, "Move.createAiFrom(): {0}", this.move);
-
-        return this;
-    }
-
-    /**
-     * Sets the to-part of the AI move.
-     *
-     * @param game The game.
-     * @return The builder.
-     */
-    public MoveBuilder createAiTo(Game game) {
-        game.getChessboard().setKingFieldColors(game, game.getChessboard().getAllValidFromToCombinations().get(move.getFrom()));
-
-        if (game.isInProgress()) {
-            var toField = game
-                    .getChessboard()
-                    .getAllValidFromToCombinations()
-                    .get(move.getFrom())
-                    .stream()
-                    .max(Comparator.comparing(Field::getValue))
-                    .orElse(new Field(null));
-
-            this.move = this.move.setTo(game.getChessboard(), toField);
-        }
-
-        LOGGER.log(Level.INFO, "Move.createAiTo(): {0}", this.move);
+        LOGGER.info("MoveBuilder.changeTurn() ");
 
         return this;
     }
@@ -109,7 +60,7 @@ public class MoveBuilder {
     public MoveBuilder enableValidMoves(@NotNull Game game) {
         game.getChessboard().enableValidMoves(this.move.getFrom(), game.getActivePlayer().getColor());
 
-        LOGGER.log(Level.INFO, "Move.enableValidMoves(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.enableValidMoves(): {0}", this.move);
 
         return this;
     }
@@ -144,7 +95,7 @@ public class MoveBuilder {
             rookMoveDirector.performRookMove(game.getChessboard(), rookFromField, rookToField);
         }
 
-        LOGGER.log(Level.INFO, "Move.moveRookIfCastling(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.moveRookIfCastling(): {0}", this.move);
 
         return this;
     }
@@ -158,7 +109,7 @@ public class MoveBuilder {
     public MoveBuilder performAiMove(Game game) {
         aiMoveDirector.performAiMove(game);
 
-        LOGGER.log(Level.INFO, "Move.performAiMove(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.performAiMove(): {0}", this.move);
 
         return this;
     }
@@ -171,7 +122,7 @@ public class MoveBuilder {
     public MoveBuilder resetFrom() {
         move.getFrom().setPieceType(null);
 
-        LOGGER.log(Level.INFO, "Move.resetFrom(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.resetFrom(): {0}", this.move);
 
         return this;
     }
@@ -185,7 +136,7 @@ public class MoveBuilder {
     public MoveBuilder setFrom(Field field) {
         this.move.setFrom(field);
 
-        LOGGER.log(Level.INFO, "Move.setFrom(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setFrom(): {0}", this.move);
 
         return this;
     }
@@ -202,7 +153,7 @@ public class MoveBuilder {
             game.getChessboard().setKingFieldColors(game, allValidMoves);
         }
 
-        LOGGER.log(Level.INFO, "Move.setKingFieldColors(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setKingFieldColors(): {0}", this.move);
 
         return this;
     }
@@ -216,7 +167,7 @@ public class MoveBuilder {
     public MoveBuilder setMove(Move move) {
         this.move = move;
 
-        LOGGER.log(Level.INFO, "Move.setMove(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setMove(): {0}", this.move);
 
         return this;
     }
@@ -232,7 +183,7 @@ public class MoveBuilder {
             this.move.getFrom().getPieceType().setPieceTypeSpecificAttributes(game, this.move.getFrom(), this.move.getTo());
         }
 
-        LOGGER.log(Level.INFO, "Move.setPieceTypeSpecificAttributes(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setPieceTypeSpecificAttributes(): {0}", this.move);
 
         return this;
     }
@@ -246,7 +197,7 @@ public class MoveBuilder {
     public MoveBuilder setRookMoveDirector(MoveDirector rookMoveDirector) {
         this.rookMoveDirector = rookMoveDirector;
 
-        LOGGER.log(Level.INFO, "Move.setRookMoveDirector(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setRookMoveDirector(): {0}", this.move);
 
         return this;
     }
@@ -261,7 +212,7 @@ public class MoveBuilder {
     public MoveBuilder setTo(Chessboard chessboard, Field field) {
         this.move = this.move.setTo(chessboard, field);
 
-        LOGGER.log(Level.INFO, "Move.setTo(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.setTo(): {0}", this.move);
 
         return this;
     }

@@ -23,7 +23,6 @@ public class Move {
     private PieceType pieceType;
     private Field     from;
     private Field     to;
-    private Move      rookMove;
 
     /**
      * Constructor.
