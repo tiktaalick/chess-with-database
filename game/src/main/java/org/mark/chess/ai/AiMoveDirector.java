@@ -16,6 +16,12 @@ public class AiMoveDirector extends MoveDirector {
 
     private static final Logger LOGGER = Logger.getLogger(AiMoveDirector.class.getName());
 
+    protected static AiMoveBuilder aiMoveBuilder = new AiMoveBuilder();
+
+    public static void setAiMoveBuilder(AiMoveBuilder newBuilder) {
+        aiMoveBuilder = newBuilder;
+    }
+
     /**
      * Performs a computer move if applicable.
      *
@@ -24,8 +30,8 @@ public class AiMoveDirector extends MoveDirector {
      */
     public Move performAiMove(@NotNull Game game) {
         return game.getActivePlayer().getPlayerType() == HUMAN
-                ? generalMoveBuilder.build()
-                : generalMoveBuilder
+                ? aiMoveBuilder.build()
+                : aiMoveBuilder
                         .createAiFrom(game)
                         .enableValidMoves(game)
                         .createAiTo(game)

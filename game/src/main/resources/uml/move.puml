@@ -1,0 +1,59 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+class MoveDirector {
+    # {static} generalMoveBuilder
+    - {static} rookMoveBuilder
+    + performFromMove()
+    + performToMove()
+    + performResetMove()
+}
+
+class MoveBuilder {
+    # move
+    - aiMoveDirector
+    - rookMoveDirector
+    + changeTurn()
+    + enableValidMoves()
+    + moveRookIfCastling()
+    + resetFrom()
+    + setKingFieldColors()
+    + setPieceTypeSpecificAttributes()
+    + setRookMoveDirector()
+    + setFrom()
+    + setTo()
+    + setMove()
+    + performAiMove()
+    + build()
+}
+
+class Move {
+    - pieceType
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    - isCaptureEnPassant()
+    - captureEnPassant()
+}
+
+class Game {
+    + changeTurn()
+}
+
+'---------'
+'Relations'
+'---------'
+MoveDirector *-- MoveBuilder
+MoveBuilder *-- Move
+MoveBuilder .right.> Game
+
+@enduml

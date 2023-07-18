@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
-import org.mark.chess.move.MoveBuilder;
 import org.mark.chess.player.Computer;
 import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ class AiMoveDirectorTest {
     private AiMoveDirector aiMoveDirector = new AiMoveDirector();
 
     @Mock
-    private MoveBuilder moveBuilder;
+    private AiMoveBuilder aiMoveBuilder;
 
     @Mock
     private Chessboard chessboard;
@@ -33,29 +32,29 @@ class AiMoveDirectorTest {
     void testPerformAiMove_WhenComputer_ThenPerformAiMove() {
         Game game = Game.create(WHITE).setActivePlayer(new Computer(WHITE)).setChessboard(chessboard);
 
-        when(moveBuilder.createAiFrom(game)).thenReturn(moveBuilder);
-        when(moveBuilder.enableValidMoves(game)).thenReturn(moveBuilder);
-        when(moveBuilder.createAiTo(game)).thenReturn(moveBuilder);
-        when(moveBuilder.setPieceTypeSpecificAttributes(game)).thenReturn(moveBuilder);
-        when(moveBuilder.moveRookIfCastling(game)).thenReturn(moveBuilder);
-        when(moveBuilder.changeTurn(game)).thenReturn(moveBuilder);
-        when(moveBuilder.resetFrom()).thenReturn(moveBuilder);
-        when(moveBuilder.setKingFieldColors(game)).thenReturn(moveBuilder);
-        when(moveBuilder.setKingFieldColors(game)).thenReturn(moveBuilder);
+        when(aiMoveBuilder.createAiFrom(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.enableValidMoves(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.createAiTo(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.setPieceTypeSpecificAttributes(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.moveRookIfCastling(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.changeTurn(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.resetFrom()).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.setKingFieldColors(game)).thenReturn(aiMoveBuilder);
+        when(aiMoveBuilder.setKingFieldColors(game)).thenReturn(aiMoveBuilder);
 
-        AiMoveDirector.setGeneralMoveBuilder(moveBuilder);
+        AiMoveDirector.setAiMoveBuilder(aiMoveBuilder);
         aiMoveDirector.performAiMove(game);
 
-        verify(moveBuilder).build();
+        verify(aiMoveBuilder).build();
     }
 
     @Test
     void testPerformAiMove_WhenHumanPlayer_ThenBuild() {
         Game game = Game.create(WHITE).setActivePlayer(new Human(WHITE));
 
-        AiMoveDirector.setGeneralMoveBuilder(moveBuilder);
+        AiMoveDirector.setAiMoveBuilder(aiMoveBuilder);
         aiMoveDirector.performAiMove(game);
 
-        verify(moveBuilder).build();
+        verify(aiMoveBuilder).build();
     }
 }
