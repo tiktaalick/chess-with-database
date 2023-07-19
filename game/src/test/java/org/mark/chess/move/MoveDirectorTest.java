@@ -39,7 +39,7 @@ class MoveDirectorTest {
         when(moveBuilder.setFrom(field)).thenReturn(moveBuilder);
         when(moveBuilder.enableValidMoves(game)).thenReturn(moveBuilder);
 
-        MoveDirector.setGeneralMoveBuilder(moveBuilder);
+        MoveDirector.setMoveBuilder(moveBuilder);
         moveDirector.performFromMove(game, move, field);
 
         verify(moveBuilder).build();
@@ -50,7 +50,7 @@ class MoveDirectorTest {
         when(moveBuilder.setMove(move)).thenReturn(moveBuilder);
         when(moveBuilder.setKingFieldColors(game)).thenReturn(moveBuilder);
 
-        MoveDirector.setGeneralMoveBuilder(moveBuilder);
+        MoveDirector.setMoveBuilder(moveBuilder);
         moveDirector.performResetMove(game, move);
 
         verify(moveBuilder).build();
@@ -81,7 +81,7 @@ class MoveDirectorTest {
         when(moveBuilder.setKingFieldColors(game)).thenReturn(moveBuilder);
         when(moveBuilder.performAiMove(game)).thenReturn(moveBuilder);
 
-        MoveDirector.setGeneralMoveBuilder(moveBuilder);
+        MoveDirector.setMoveBuilder(moveBuilder);
         moveDirector.performToMove(game, move, field);
 
         verify(moveBuilder).build();
