@@ -68,6 +68,7 @@ public class AiMoveBuilder extends MoveBuilder {
      * @param game The game.
      * @return The builder.
      */
+    @Override
     public AiMoveBuilder enableValidMoves(@NotNull Game game) {
         LOGGER.log(Level.INFO, "AiMoveBuilder.enableValidMoves(): {0}", this.move);
 

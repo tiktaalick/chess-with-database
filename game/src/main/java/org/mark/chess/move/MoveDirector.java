@@ -10,11 +10,11 @@ import org.mark.chess.game.Game;
  */
 public class MoveDirector {
 
-    protected static MoveBuilder generalMoveBuilder = new MoveBuilder();
-    private static   MoveBuilder rookMoveBuilder    = new MoveBuilder();
+    protected static MoveBuilder moveBuilder     = new MoveBuilder();
+    private static   MoveBuilder rookMoveBuilder = new MoveBuilder();
 
-    public static void setGeneralMoveBuilder(MoveBuilder moveBuilder) {
-        generalMoveBuilder = moveBuilder;
+    public static void setMoveBuilder(MoveBuilder moveBuilder) {
+        MoveDirector.moveBuilder = moveBuilder;
     }
 
     public static void setRookMoveBuilder(MoveBuilder moveBuilder) {
@@ -30,7 +30,7 @@ public class MoveDirector {
      * @return The built move.
      */
     public Move performFromMove(Game game, Move move, Field fieldClick) {
-        return generalMoveBuilder.setMove(move).setFrom(fieldClick).enableValidMoves(game).build();
+        return moveBuilder.setMove(move).setFrom(fieldClick).enableValidMoves(game).build();
     }
 
     /**
@@ -41,7 +41,7 @@ public class MoveDirector {
      * @return The built move.
      */
     public Move performResetMove(Game game, Move move) {
-        return generalMoveBuilder.setMove(move).setKingFieldColors(game).build();
+        return moveBuilder.setMove(move).setKingFieldColors(game).build();
     }
 
     /**
@@ -65,7 +65,7 @@ public class MoveDirector {
      * @return The built move.
      */
     public Move performToMove(@NotNull Game game, Move move, Field fieldClick) {
-        return generalMoveBuilder
+        return moveBuilder
                 .setMove(move)
                 .setTo(game.getChessboard(), fieldClick)
                 .setPieceTypeSpecificAttributes(game)
