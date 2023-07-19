@@ -6,9 +6,12 @@ import org.mark.chess.piece.isvalidmove.IsNotValidRule;
 
 public final class PawnMayBeCapturedEnPassantRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public PawnMayBeCapturedEnPassantRulesEngine() {
-        getRules().add(new PawnIsNotValidBaselineMoveRule());
-        getRules().add(new PawnHasOpponentPawnAsNeighbourRule());
-        getRules().add(new IsNotValidRule());
+        addRule(new PawnIsNotValidBaselineMoveRule());
+        addRule(new PawnHasOpponentPawnAsNeighbourRule());
+        addRule(new IsNotValidRule());
     }
 }

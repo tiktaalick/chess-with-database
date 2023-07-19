@@ -5,12 +5,12 @@ import org.mark.chess.rulesengine.Rule;
 public class IsMovingIntoCheckRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return false;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return getFrom().isMovingIntoCheck(getGrid(), getTo(), isOpponent());

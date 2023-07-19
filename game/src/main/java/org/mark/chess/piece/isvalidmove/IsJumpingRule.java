@@ -3,24 +3,24 @@ package org.mark.chess.piece.isvalidmove;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.rulesengine.Rule;
 
 public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean create() {
+    public Boolean createResult() {
         return false;
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isJumping(getGrid(), getFrom(), getTo());
     }
 
-    boolean isJumping(Grid grid, @NotNull Field from, @NotNull Field to) {
+    boolean isJumping(Chessboard chessboard, @NotNull Field from, @NotNull Field to) {
         var step = new Coordinates(Integer.signum(to.getCoordinates().getX() - from.getCoordinates().getX()),
                 Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()));
 
@@ -31,7 +31,7 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
         var mustIJump = false;
 
         while (!mustIJump && movingTowardsDestination(currentCoordinates, to.getCoordinates(), step)) {
-            mustIJump = isFieldOccupied(grid, currentCoordinates);
+            mustIJump = isFieldOccupied(chessboard, currentCoordinates);
             doNextStep(currentCoordinates, step);
         }
 
@@ -43,8 +43,8 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
         coordinates.setY(coordinates.getY() + step.getY());
     }
 
-    private static boolean isFieldOccupied(@NotNull Grid grid, Coordinates currentCoordinates) {
-        return grid
+    private static boolean isFieldOccupied(@NotNull Chessboard chessboard, Coordinates currentCoordinates) {
+        return chessboard
                 .getFields()
                 .stream()
                 .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&

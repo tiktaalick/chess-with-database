@@ -26,6 +26,7 @@ public class GameService {
      * @param game           The game.
      * @param leftRightClick An integer that indicates whether the event is a left, middle or right mouse click.
      * @param buttonId       The front-end chessboard field that was clicked.
+     * @return The continued or restarted game.
      */
     public Game handleButtonClick(@NotNull Game game, int leftRightClick, int buttonId) {
         if (!game.isInProgress()) {
@@ -41,6 +42,6 @@ public class GameService {
      * @param game The game.
      */
     public void resetValidMoves(@NotNull Game game) {
-        game.resetValidMoves();
+        game.getChessboard().resetValidMoves(game.getMove(), game.getActivePlayer().getColor());
     }
 }

@@ -1,0 +1,124 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+class MoveDirector {
+    # {static} moveBuilder
+    - {static} rookMoveBuilder
+    + performFromMove()
+    + performToMove()
+    + performResetMove()
+}
+
+class MoveBuilder {
+    # move
+    - aiMoveDirector
+    - rookMoveDirector
+    + changeTurn()
+    + enableValidMoves()
+    + moveRookIfCastling()
+    + resetFrom()
+    + setKingFieldColors()
+    + setPieceTypeSpecificAttributes()
+    + setRookMoveDirector()
+    + setFrom()
+    + setTo()
+    + setMove()
+    + performAiMove()
+    + build()
+}
+
+class Move {
+    - pieceType
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    - isCaptureEnPassant()
+    - captureEnPassant()
+}
+
+class Field {
+    - pieceType
+}
+
+class PieceType {
+    + setPieceTypeSpecificAttributes()
+}
+
+class Game {
+    - chessboard
+    + changeTurn()
+}
+
+class Chessboard {
+    + enableValidMoves()
+    + resetValidMoves()
+    + setKingFieldColors()
+}
+
+class KingIsValidCastlingRule {
+    + isValidCastling()
+}
+
+class RookMoveDirector {
+    + performRookMove()
+}
+
+class AiMoveDirector {
+    + performAiMove()
+}
+
+'---------'
+'Relations'
+'---------'
+MoveDirector *-- MoveBuilder
+MoveBuilder *-- Move
+MoveBuilder *-- RookMoveDirector
+MoveBuilder *-right- AiMoveDirector
+MoveBuilder .left.> Game
+Game *-left- Chessboard
+MoveBuilder ..> KingIsValidCastlingRule
+Move *-- Field
+Field *-- PieceType
+
+'-----'
+'Notes'
+'-----'
+note left of MoveDirector
+    user decides:
+    * which piece to move
+    * where to move it or
+    * to cancel the move
+end note
+
+note bottom of KingIsValidCastlingRule
+    if the king is castling then
+end note
+
+note bottom of RookMoveDirector
+    also move its corresponding rook
+end note
+
+note left of Move::isCaptureEnPassant
+    if a pawn moves
+    en passant then
+    capture its
+    corresponding pawn
+end note
+
+note right of PieceType::setPieceTypeSpecificAttributes
+    * has the king moved at least once during the game?
+    * has the rook moved at least once during the game?
+    * may the pawn be captured en passant?
+    * is the pawn being promoted?
+end note
+
+@enduml

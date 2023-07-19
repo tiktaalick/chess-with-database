@@ -18,10 +18,13 @@ import java.util.Objects;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
 
+/**
+ * Contains front-end field related methods.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public final class Button extends JButton {
+public final class FrontendField extends JButton {
 
     public static final  int    FIELD_WIDTH_AND_HEIGHT = 75;
     private static final String EXTENSION              = ".png";
@@ -33,25 +36,55 @@ public final class Button extends JButton {
     private int    id;
     private String iconPath;
 
-    public Button(Board board, @NotNull Field field) {
+    /**
+     * Constructor for the front-end field.
+     *
+     * @param frontendChessboard The front-end chessboard.
+     * @param field              A back-end field.
+     */
+    public FrontendField(FrontendChessboard frontendChessboard, @NotNull Field field) {
         this.setText(String.valueOf(field.getCode()));
         this.setBounds(field.getCoordinates().getX() * FIELD_WIDTH_AND_HEIGHT,
                 field.getCoordinates().getY() * FIELD_WIDTH_AND_HEIGHT,
                 FIELD_WIDTH_AND_HEIGHT,
                 FIELD_WIDTH_AND_HEIGHT);
-        this.addActionListener(board);
-        this.addMouseListener(board);
+        this.addActionListener(frontendChessboard);
+        this.addMouseListener(frontendChessboard);
         this.setBackground(backgroundColorRulesEngine.process(field));
-        this.initialize(field);
+        this.update(field);
     }
 
+    /**
+     * Creates a front-end field id.
+     *
+     * @param humanPlayerColor The piece-type color with which the human plays.
+     * @param fieldId          The back-end field id.
+     * @return The front-end field id.
+     */
     public static int createButtonId(PlayerColor humanPlayerColor, int fieldId) {
-        return humanPlayerColor == WHITE
-                ? fieldId
-                : (MAXIMUM_FIELD_ID - fieldId);
+        return humanPlayerColor == WHITE ? fieldId : (MAXIMUM_FIELD_ID - fieldId);
     }
 
-    public Button initialize(@NotNull Field field) {
+    /**
+     * Reset the front-end field.
+     *
+     * @param field A back-end field.
+     * @return The front-end field.
+     */
+    public FrontendField reset(@NotNull Field field) {
+        this.setText(field.getCode());
+        this.setIcon(null);
+
+        return this;
+    }
+
+    /**
+     * Initializes the front-end field.
+     *
+     * @param field The back-end field.
+     * @return The front-end field.
+     */
+    public FrontendField update(@NotNull Field field) {
         this.id = field.getId();
 
         if (field.getPieceType() == null) {
@@ -67,13 +100,6 @@ public final class Button extends JButton {
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
-
-        return this;
-    }
-
-    public Button reset(@NotNull Field field) {
-        this.setText(field.getCode());
-        this.setIcon(null);
 
         return this;
     }

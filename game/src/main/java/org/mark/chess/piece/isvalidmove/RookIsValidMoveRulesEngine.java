@@ -4,12 +4,15 @@ import org.mark.chess.rulesengine.RulesEngine;
 
 public final class RookIsValidMoveRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public RookIsValidMoveRulesEngine() {
-        getRules().add(new HasEmptyParametersRule());
-        getRules().add(new IsFriendlyFireRule());
-        getRules().add(new IsJumpingRule());
-        getRules().add(new IsMovingIntoCheckRule());
-        getRules().add(new RookIsValidBasicMoveRule());
-        getRules().add(new IsNotValidRule());
+        addRule(new HasEmptyParametersRule());
+        addRule(new IsFriendlyFireRule());
+        addRule(new IsJumpingRule());
+        addRule(new IsMovingIntoCheckRule());
+        addRule(new RookIsValidBasicMoveRule());
+        addRule(new IsNotValidRule());
     }
 }

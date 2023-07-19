@@ -4,16 +4,19 @@ import org.mark.chess.rulesengine.RulesEngine;
 
 public final class PawnIsValidMoveRulesEngine extends RulesEngine<IsValidMoveParameter, Boolean> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public PawnIsValidMoveRulesEngine() {
-        getRules().add(new HasEmptyParametersRule());
-        getRules().add(new IsFriendlyFireRule());
-        getRules().add(new IsJumpingRule());
-        getRules().add(new IsMovingIntoCheckRule());
-        getRules().add(new PawnIsNotValidDirectionRule());
-        getRules().add(new PawnIsValidBasicMoveRule());
-        getRules().add(new PawnIsValidBaselineMoveRule());
-        getRules().add(new PawnIsValidCaptureMoveRule());
-        getRules().add(new PawnIsValidEnPassantMoveRule());
-        getRules().add(new IsNotValidRule());
+        addRule(new HasEmptyParametersRule());
+        addRule(new IsFriendlyFireRule());
+        addRule(new IsJumpingRule());
+        addRule(new IsMovingIntoCheckRule());
+        addRule(new PawnIsNotValidDirectionRule());
+        addRule(new PawnIsValidBasicMoveRule());
+        addRule(new PawnIsValidBaselineMoveRule());
+        addRule(new PawnIsValidCaptureMoveRule());
+        addRule(new PawnIsValidEnPassantMoveRule());
+        addRule(new IsNotValidRule());
     }
 }

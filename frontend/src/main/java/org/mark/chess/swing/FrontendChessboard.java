@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.application.Application;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.game.Game;
 import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
@@ -26,21 +26,20 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public final class Board extends JFrame implements ActionListener, MouseListener {
+public final class FrontendChessboard extends JFrame implements ActionListener, MouseListener {
 
-    private transient Game         game;
-    private transient GameService  gameService;
-    private           List<Button> buttons;
-    private           Dimension    dimension;
+    private transient Game                game;
+    private transient GameService         gameService;
+    private           List<FrontendField> frontendFields;
+    private           Dimension           dimension;
 
     /**
      * Creates a new chessboard for the front-end.
      *
      * @param gameService      A service class for the front-end.
      * @param humanPlayerColor The piece-type color with which the human plays.
-     * @return The created chessboard.
      */
-    public Board(@NotNull GameService gameService, PlayerColor humanPlayerColor) {
+    public FrontendChessboard(@NotNull GameService gameService, PlayerColor humanPlayerColor) {
         this.gameService = gameService;
         this.game = gameService.createGame(humanPlayerColor);
     }
@@ -51,7 +50,7 @@ public final class Board extends JFrame implements ActionListener, MouseListener
      * @return A grid layout.
      */
     public static @NotNull GridLayout createGridLayout() {
-        return new GridLayout(Grid.NUMBER_OF_COLUMNS_AND_ROWS, Grid.NUMBER_OF_COLUMNS_AND_ROWS);
+        return new GridLayout(Chessboard.NUMBER_OF_COLUMNS_AND_ROWS, Chessboard.NUMBER_OF_COLUMNS_AND_ROWS);
     }
 
     @Override
@@ -81,9 +80,9 @@ public final class Board extends JFrame implements ActionListener, MouseListener
     public void mousePressed(@NotNull MouseEvent event) {
         this.game = gameService.handleButtonClick(game,
                 event.getButton(),
-                Button.createButtonId(this.game.getHumanPlayerColor(), ((Button) event.getSource()).getId()));
+                FrontendField.createButtonId(this.game.getHumanPlayerColor(), ((FrontendField) event.getSource()).getId()));
 
-        Application.getBoardBuilder().setBoard(this).updateButtons();
+        Application.getBoardBuilder().setBoard(this).updateFields();
     }
 
     @Override
@@ -101,6 +100,9 @@ public final class Board extends JFrame implements ActionListener, MouseListener
         // Ignored
     }
 
+    /**
+     * Sets the dimension of the front-end chessboard.
+     */
     public void setDimension() {
         this.dimension = Toolkit.getDefaultToolkit().getScreenSize();
     }

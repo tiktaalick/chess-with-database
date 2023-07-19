@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
-import static org.mark.chess.board.Grid.NUMBER_OF_COLUMNS_AND_ROWS;
+import static org.mark.chess.board.Chessboard.NUMBER_OF_COLUMNS_AND_ROWS;
 
 /**
  * Contains methods for creating the {@link Coordinates}, id's and code of a field.

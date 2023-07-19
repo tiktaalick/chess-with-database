@@ -1,11 +1,16 @@
 package org.mark.chess.move;
 
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.ai.AiMoveDirector;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.mark.chess.piece.PieceType.KING;
 
@@ -14,9 +19,12 @@ import static org.mark.chess.piece.PieceType.KING;
  */
 public class MoveBuilder {
 
-    private MoveDirector rookMoveDirector = new MoveDirector();
+    private static final Logger LOGGER = Logger.getLogger(MoveBuilder.class.getName());
 
-    private Move move;
+    private final AiMoveDirector aiMoveDirector = new AiMoveDirector();
+
+    protected Move         move;
+    private   MoveDirector rookMoveDirector = new MoveDirector();
 
     /**
      * Returns the built move.
@@ -24,6 +32,8 @@ public class MoveBuilder {
      * @return The built move.
      */
     public Move build() {
+        LOGGER.log(Level.INFO, "MoveBuilder.build(): {0}", this.move);
+
         return this.move;
     }
 
@@ -36,18 +46,21 @@ public class MoveBuilder {
     public MoveBuilder changeTurn(@NotNull Game game) {
         game.changeTurn();
 
+        LOGGER.info("MoveBuilder.changeTurn() ");
+
         return this;
     }
 
     /**
      * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
      *
-     * @param game  The game.
-     * @param field The field for which the valid moves will be searched.
+     * @param game The game.
      * @return The builder.
      */
-    public MoveBuilder enableValidMoves(@NotNull Game game, Field field) {
-        game.enableValidMoves(field);
+    public MoveBuilder enableValidMoves(@NotNull Game game) {
+        game.getChessboard().enableValidMoves(this.move.getFrom(), game.getActivePlayer().getColor());
+
+        LOGGER.log(Level.INFO, "MoveBuilder.enableValidMoves(): {0}", this.move);
 
         return this;
     }
@@ -59,8 +72,9 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder moveRookIfCastling(Game game) {
-        if (this.move.getFrom().getPieceType().getName().equals(KING) &&
-                KingIsValidCastlingRule.isValidCastling(game.getGrid(),
+        if (this.move.isValid() &&
+                this.move.getFrom().getPieceType().getName().equals(KING) &&
+                KingIsValidCastlingRule.isValidCastling(game.getChessboard(),
                         this.move.getFrom(),
                         this.move.getTo(),
                         this.move.getTo().getCoordinates().getX(),
@@ -71,15 +85,31 @@ public class MoveBuilder {
                     ? KingIsValidCastlingRule.ROOK_CASTLING_FROM_THE_LEFT
                     : KingIsValidCastlingRule.ROOK_CASTLING_FROM_THE_RIGHT), this.move.getFrom().getPieceType().getColor().getBaseline());
 
-            var rookFromField = game.getGrid().getField(rookCoordinates);
+            var rookFromField = game.getChessboard().getField(rookCoordinates);
             var rookToField = game
-                    .getGrid()
+                    .getChessboard()
                     .getField(rookCoordinates.setX(this.move.getTo().getCoordinates().getX() == KingIsValidCastlingRule.KING_CASTLING_TO_THE_LEFT
                             ? KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_RIGHT
                             : KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_LEFT));
 
-            rookMoveDirector.performRookMove(game.getGrid(), rookFromField, rookToField);
+            rookMoveDirector.performRookMove(game.getChessboard(), rookFromField, rookToField);
         }
+
+        LOGGER.log(Level.INFO, "MoveBuilder.moveRookIfCastling(): {0}", this.move);
+
+        return this;
+    }
+
+    /**
+     * Performs a move based on artificial intelligence.
+     *
+     * @param game The game.
+     * @return The builder.
+     */
+    public MoveBuilder performAiMove(Game game) {
+        aiMoveDirector.performAiMove(game);
+
+        LOGGER.log(Level.INFO, "MoveBuilder.performAiMove(): {0}", this.move);
 
         return this;
     }
@@ -91,6 +121,8 @@ public class MoveBuilder {
      */
     public MoveBuilder resetFrom() {
         move.getFrom().setPieceType(null);
+
+        LOGGER.log(Level.INFO, "MoveBuilder.resetFrom(): {0}", this.move);
 
         return this;
     }
@@ -104,6 +136,8 @@ public class MoveBuilder {
     public MoveBuilder setFrom(Field field) {
         this.move.setFrom(field);
 
+        LOGGER.log(Level.INFO, "MoveBuilder.setFrom(): {0}", this.move);
+
         return this;
     }
 
@@ -114,7 +148,12 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder setKingFieldColors(@NotNull Game game) {
-        game.setKingFieldColors(game.resetValidMoves());
+        if (game.isInProgress()) {
+            List<Field> allValidMoves = game.getChessboard().resetValidMoves(this.move, game.getActivePlayer().getColor());
+            game.getChessboard().setKingFieldColors(game, allValidMoves);
+        }
+
+        LOGGER.log(Level.INFO, "MoveBuilder.setKingFieldColors(): {0}", this.move);
 
         return this;
     }
@@ -128,6 +167,8 @@ public class MoveBuilder {
     public MoveBuilder setMove(Move move) {
         this.move = move;
 
+        LOGGER.log(Level.INFO, "MoveBuilder.setMove(): {0}", this.move);
+
         return this;
     }
 
@@ -138,7 +179,11 @@ public class MoveBuilder {
      * @return The builder.
      */
     public MoveBuilder setPieceTypeSpecificAttributes(Game game) {
-        this.move.getFrom().getPieceType().setPieceTypeSpecificAttributes(game, this.move.getFrom(), this.move.getTo());
+        if (this.move.isValid()) {
+            this.move.getFrom().getPieceType().setPieceTypeSpecificAttributes(game, this.move.getFrom(), this.move.getTo());
+        }
+
+        LOGGER.log(Level.INFO, "MoveBuilder.setPieceTypeSpecificAttributes(): {0}", this.move);
 
         return this;
     }
@@ -152,18 +197,22 @@ public class MoveBuilder {
     public MoveBuilder setRookMoveDirector(MoveDirector rookMoveDirector) {
         this.rookMoveDirector = rookMoveDirector;
 
+        LOGGER.log(Level.INFO, "MoveBuilder.setRookMoveDirector(): {0}", this.move);
+
         return this;
     }
 
     /**
      * Sets the field as the to-part of the move.
      *
-     * @param grid  The back-end representation of a chessboard.
-     * @param field The field.
+     * @param chessboard The back-end representation of a chessboard.
+     * @param field      The field.
      * @return The builder.
      */
-    public MoveBuilder setTo(Grid grid, Field field) {
-        this.move = this.move.setTo(grid, field);
+    public MoveBuilder setTo(Chessboard chessboard, Field field) {
+        this.move = this.move.setTo(chessboard, field);
+
+        LOGGER.log(Level.INFO, "MoveBuilder.setTo(): {0}", this.move);
 
         return this;
     }

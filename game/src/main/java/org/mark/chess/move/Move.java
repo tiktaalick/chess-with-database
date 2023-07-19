@@ -3,9 +3,9 @@ package org.mark.chess.move;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 
@@ -23,7 +23,6 @@ public class Move {
     private PieceType pieceType;
     private Field     from;
     private Field     to;
-    private Move      rookMove;
 
     /**
      * Constructor.
@@ -54,7 +53,11 @@ public class Move {
      */
     public boolean isFrom(Game game, @NotNull Field field) {
         return field.getPieceType() != null &&
-                field.getPieceType().getColor() == game.getPlayers().get(game.getCurrentPlayerColor().ordinal()).getColor();
+                field.getPieceType().getColor() == game.getPlayers().get(game.getActivePlayer().getColor().ordinal()).getColor();
+    }
+
+    public boolean isValid() {
+        return isValidField(this.from) && isValidField(this.to) && this.pieceType != null;
     }
 
     /**
@@ -76,13 +79,13 @@ public class Move {
     /**
      * Sets the field as the to-part of the move. Captures en passant a pawn en passant if during an en passant move.
      *
-     * @param grid The back-end representation of a chessboard.
-     * @param to   The field.
+     * @param chessboard The back-end representation of a chessboard.
+     * @param to         The field.
      * @return The move.
      */
-    public Move setTo(Grid grid, Field to) {
+    public Move setTo(Chessboard chessboard, Field to) {
         if (isCaptureEnPassant(this, to)) {
-            captureEnPassant(grid, from, to);
+            captureEnPassant(chessboard, from, to);
         }
 
         setTo(to.setPieceType(from.getPieceType()));
@@ -90,13 +93,27 @@ public class Move {
         return this;
     }
 
-    private static void captureEnPassant(@NotNull Grid grid, @NotNull Field from, @NotNull Field to) {
-        grid.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
+    @Override
+    public String toString() {
+        if (this.getFrom() == null) {
+            return "";
+        }
+
+        return this.getFrom() + (this.getFrom().isAttacking() ? " x " : " - ") + (this.getTo() != null ? this.getTo() : "");
+    }
+
+    private static void captureEnPassant(@NotNull Chessboard chessboard, @NotNull Field from, @NotNull Field to) {
+        chessboard.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
     }
 
     private static boolean isCaptureEnPassant(@NotNull Move move, Field to) {
-        return move.getFrom().getPieceType().getName().equals(PAWN) &&
+        return move.isValid() &&
+                move.getFrom().getPieceType().getName().equals(PAWN) &&
                 move.getFrom().getCoordinates().getX() != to.getCoordinates().getX() &&
                 to.getPieceType() == null;
+    }
+
+    private static boolean isValidField(Field field) {
+        return field != null && field.isValid();
     }
 }

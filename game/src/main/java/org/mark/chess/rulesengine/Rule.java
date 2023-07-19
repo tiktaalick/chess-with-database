@@ -13,7 +13,7 @@ public interface Rule<T, U> {
      *
      * @return The result.
      */
-    U create();
+    U createResult();
 
     /**
      * Checks if the rule is applicable.
@@ -21,6 +21,6 @@ public interface Rule<T, U> {
      * @param ruleParameter The parameter that will be used by the rule.
      * @return True if applicable.
      */
-    boolean isApplicable(T ruleParameter);
+    boolean hasResult(T ruleParameter);
 }
 

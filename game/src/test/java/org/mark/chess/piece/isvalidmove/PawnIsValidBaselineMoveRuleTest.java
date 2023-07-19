@@ -3,7 +3,7 @@ package org.mark.chess.piece.isvalidmove;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.Pawn;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,10 +25,10 @@ class PawnIsValidBaselineMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e3");
         Field to = new Field(null).setCode("e5");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(pawnIsValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(pawnIsValidBaselineMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -36,10 +36,10 @@ class PawnIsValidBaselineMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e2");
         Field to = new Field(null).setCode("e4");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(pawnIsValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
-        assertTrue(pawnIsValidBaselineMoveRule.create());
+        assertTrue(pawnIsValidBaselineMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidBaselineMoveRule.createResult());
     }
 }

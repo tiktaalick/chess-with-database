@@ -2,10 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Grid;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
-import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,34 +19,34 @@ class HasEmptyParametersRuleTest {
     private HasEmptyParametersRule hasEmptyParametersRule;
 
     @Mock
-    private Grid grid;
+    private Chessboard chessboard;
 
     @Test
     void testProcess_WhenEmptyFrom_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, null, field, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, null, field, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyGrid_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(null, field, field, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(null, field, field, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyParameter_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(null));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(null));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenEmptyTo_ThenReturnTrue() {
-        assertTrue(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, null, false)));
-        assertFalse(hasEmptyParametersRule.create());
+        assertTrue(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, field, null, false)));
+        assertFalse(hasEmptyParametersRule.createResult());
     }
 
     @Test
     void testProcess_WhenFilledParameters_ThenReturnFalse() {
-        assertFalse(hasEmptyParametersRule.isApplicable(new IsValidMoveParameter(grid, field, field, false)));
+        assertFalse(hasEmptyParametersRule.hasResult(new IsValidMoveParameter(chessboard, field, field, false)));
     }
 }

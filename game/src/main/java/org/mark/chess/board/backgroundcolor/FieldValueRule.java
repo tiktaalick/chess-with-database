@@ -6,7 +6,7 @@ import org.mark.chess.rulesengine.Rule;
 
 import java.awt.Color;
 
-import static org.mark.chess.game.Game.MAX_COLOR_VALUE;
+import static org.mark.chess.board.Chessboard.MAXIMUM_COLOR_VALUE;
 
 public class FieldValueRule implements Rule<Field, Color> {
 
@@ -14,22 +14,22 @@ public class FieldValueRule implements Rule<Field, Color> {
     private              Field field  = new Field(null);
 
     @Override
-    public Color create() {
+    public Color createResult() {
         return getValueColor(field);
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean hasResult(@NotNull Field field) {
         this.field = field;
-        return field.isValidFrom() || field.isValidMove();
+        return field.isValidFrom() || field.hasValidTo();
     }
 
     private static @NotNull Color getValueColor(@NotNull Field field) {
         int relativeValue = field.getRelativeValue() == null
                 ? 0
                 : field.getRelativeValue();
-        return new Color(MAX_COLOR_VALUE - relativeValue,
-                Math.abs(MAX_COLOR_VALUE - DOUBLE * relativeValue),
-                MAX_COLOR_VALUE - (Math.abs(MAX_COLOR_VALUE - DOUBLE * relativeValue)));
+        return new Color(MAXIMUM_COLOR_VALUE - relativeValue,
+                Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue),
+                MAXIMUM_COLOR_VALUE - (Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue)));
     }
 }
