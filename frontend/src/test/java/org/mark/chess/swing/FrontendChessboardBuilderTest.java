@@ -67,7 +67,7 @@ class FrontendChessboardBuilderTest {
     @Test
     void testInitialize() {
         try (MockedStatic<FrontendChessboard> gridMockedStatic = Mockito.mockStatic(FrontendChessboard.class)) {
-            gridMockedStatic.when(FrontendChessboard::createGridLayout).thenReturn(gridLayout);
+            gridMockedStatic.when(FrontendChessboard::createGrid).thenReturn(gridLayout);
             when(frontendChessboard.getGame()).thenReturn(game);
             when(frontendChessboard.getGameService()).thenReturn(gameService);
             when(frontendChessboard.getDimensionWidth()).thenReturn(800);
@@ -94,13 +94,13 @@ class FrontendChessboardBuilderTest {
         when(game.getChessboard()).thenReturn(chessboard);
         when(frontendChessboard.getFrontendFields()).thenReturn(frontendFields);
         when(frontendField.reset(any(Field.class))).thenReturn(frontendField);
-        when(frontendField.update(any(Field.class))).thenReturn(frontendField);
+        when(frontendField.updateGraphics(any(Field.class))).thenReturn(frontendField);
         when(frontendField.setId(anyInt())).thenReturn(frontendField);
 
         FrontendChessboard result = frontendChessboardBuilder.setBoard(frontendChessboard).updateFields().build();
 
         verify(frontendField, times(64)).setId(anyInt());
         verify(frontendField, times(32)).reset(any(Field.class));
-        verify(frontendField, times(32)).update(any(Field.class));
+        verify(frontendField, times(32)).updateGraphics(any(Field.class));
     }
 }

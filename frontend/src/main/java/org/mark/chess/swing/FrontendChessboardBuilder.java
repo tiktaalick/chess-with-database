@@ -1,7 +1,6 @@
 package org.mark.chess.swing;
 
 import org.mark.chess.board.Field;
-import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class FrontendChessboardBuilder {
      */
     public FrontendChessboardBuilder initialize() {
         this.frontendChessboard.setSize(WIDTH, HEIGHT);
-        this.frontendChessboard.setLayout(FrontendChessboard.createGridLayout());
+        this.frontendChessboard.setLayout(FrontendChessboard.createGrid());
         this.frontendChessboard.setVisible(true);
         this.frontendChessboard.setResizable(false);
         this.frontendChessboard.setDimension();
@@ -64,12 +63,11 @@ public class FrontendChessboardBuilder {
     /**
      * Creates a basic front-end chessboard.
      *
-     * @param gameService      The game service.
      * @param humanPlayerColor The piece-type color with which the human plays.
      * @return The front-end chessboard builder.
      */
-    public FrontendChessboardBuilder setBoard(GameService gameService, PlayerColor humanPlayerColor) {
-        this.frontendChessboard = new FrontendChessboard(gameService, humanPlayerColor);
+    public FrontendChessboardBuilder setBoard(PlayerColor humanPlayerColor) {
+        this.frontendChessboard = new FrontendChessboard(humanPlayerColor);
 
         return this;
     }
@@ -98,7 +96,7 @@ public class FrontendChessboardBuilder {
                     .getFrontendFields()
                     .get(buttonId)
                     .reset(field)
-                    .setId(buttonId) : this.frontendChessboard.getFrontendFields().get(buttonId).update(field).setId(buttonId);
+                    .setId(buttonId) : this.frontendChessboard.getFrontendFields().get(buttonId).updateGraphics(field).setId(buttonId);
             frontendField.setBackground(field.getBackgroundColor());
         });
 

@@ -29,18 +29,17 @@ import java.util.List;
 public final class FrontendChessboard extends JFrame implements ActionListener, MouseListener {
 
     private transient Game                game;
-    private transient GameService         gameService;
+    private           GameService         gameService;
     private           List<FrontendField> frontendFields;
     private           Dimension           dimension;
 
     /**
      * Creates a new chessboard for the front-end.
      *
-     * @param gameService      A service class for the front-end.
      * @param humanPlayerColor The piece-type color with which the human plays.
      */
-    public FrontendChessboard(@NotNull GameService gameService, PlayerColor humanPlayerColor) {
-        this.gameService = gameService;
+    public FrontendChessboard(PlayerColor humanPlayerColor) {
+        this.gameService = new GameService();
         this.game = gameService.createGame(humanPlayerColor);
     }
 
@@ -49,7 +48,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
      *
      * @return A grid layout.
      */
-    public static @NotNull GridLayout createGridLayout() {
+    public static @NotNull GridLayout createGrid() {
         return new GridLayout(Chessboard.NUMBER_OF_COLUMNS_AND_ROWS, Chessboard.NUMBER_OF_COLUMNS_AND_ROWS);
     }
 

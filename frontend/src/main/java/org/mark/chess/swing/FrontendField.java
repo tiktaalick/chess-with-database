@@ -51,7 +51,7 @@ public final class FrontendField extends JButton {
         this.addActionListener(frontendChessboard);
         this.addMouseListener(frontendChessboard);
         this.setBackground(backgroundColorRulesEngine.process(field));
-        this.update(field);
+        this.updateGraphics(field);
     }
 
     /**
@@ -79,12 +79,12 @@ public final class FrontendField extends JButton {
     }
 
     /**
-     * Initializes the front-end field.
+     * Updates the front-end field.
      *
      * @param field The back-end field.
      * @return The front-end field.
      */
-    public FrontendField update(@NotNull Field field) {
+    public FrontendField updateGraphics(@NotNull Field field) {
         this.id = field.getId();
 
         if (field.getPieceType() == null) {

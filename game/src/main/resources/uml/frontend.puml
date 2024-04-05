@@ -15,7 +15,6 @@ annotation SpringBootApplication
 '-----------'
 class Application {
     - {static} frontendChessboardBuilder
-    - {static} gameService
     + {static} main()
 }
 
@@ -29,9 +28,10 @@ interface MouseListener{
 }
 
 class FrontendChessboard{
-    - frontendFields
     - game
-    + createGridLayout()
+    - gameService
+    - frontendFields
+    + createGrid()
     + mousePressed()
 }
 
@@ -44,13 +44,15 @@ class FrontendChessboardBuilder {
 }
 
 class FrontendField {
-    + update()
+    + updateGraphics()
     + createButtonId()
     + reset()
 }
 
 class GameService {
+    + createGame()
     + handleButtonClick()
+    + resetValidMoves()
 }
 
 '---------'
@@ -60,18 +62,11 @@ JFrame <|-- FrontendChessboard
 JButton <|-- FrontendField
 ActionListener <|-- FrontendChessboard
 MouseListener <|-- FrontendChessboard
-FrontendChessboard o-right- GameService : updates game >
-FrontendChessboard --* FrontendChessboardBuilder : updates fields >
-FrontendChessboard *-left- FrontendField : has >
-FrontendChessboardBuilder --* Application : builds FrontendChessboard >
+FrontendChessboard *-- FrontendChessboardBuilder : < updates board
+FrontendChessboard -left-* FrontendField : consists of >
+FrontendChessboard -right-o GameService : < updates game
+FrontendChessboardBuilder *-- Application : < creates a board
 Application ..> SpringBootApplication
 Application ..> SpringApplicationBuilder : < builds Spring Application instance
-
-'-----'
-'Notes'
-'-----'
-note left of FrontendField::update
-    updates the graphics
-end note
 
 @enduml

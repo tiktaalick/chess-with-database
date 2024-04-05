@@ -1,6 +1,5 @@
 package org.mark.chess.application;
 
-import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
 import org.mark.chess.swing.FrontendChessboard;
 import org.mark.chess.swing.FrontendChessboardBuilder;
@@ -16,7 +15,6 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 public class Application {
 
     private static FrontendChessboardBuilder frontendChessboardBuilder = new FrontendChessboardBuilder();
-    private static GameService               gameService               = new GameService();
 
     public static FrontendChessboardBuilder getBoardBuilder() {
         return frontendChessboardBuilder;
@@ -35,10 +33,6 @@ public class Application {
         createInstance().startApplication(WHITE);
     }
 
-    public static void setGameService(GameService gameService) {
-        Application.gameService = gameService;
-    }
-
     /**
      * Starts the application.
      *
@@ -46,7 +40,7 @@ public class Application {
      * @return The just created chessboard.
      */
     public FrontendChessboard startApplication(PlayerColor humanPlayerColor) {
-        return frontendChessboardBuilder.setBoard(gameService, humanPlayerColor).createFields().initialize().updateFields().build();
+        return frontendChessboardBuilder.setBoard(humanPlayerColor).createFields().initialize().updateFields().build();
     }
 
     private static Application createInstance() {

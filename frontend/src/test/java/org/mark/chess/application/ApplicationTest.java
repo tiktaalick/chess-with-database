@@ -31,9 +31,8 @@ class ApplicationTest {
     @Test
     void testStartApplication() {
         Application.setBoardBuilder(frontendChessboardBuilder);
-        Application.setGameService(gameService);
 
-        when(frontendChessboardBuilder.setBoard(gameService, WHITE)).thenReturn(frontendChessboardBuilder);
+        when(frontendChessboardBuilder.setBoard(WHITE)).thenReturn(frontendChessboardBuilder);
         when(frontendChessboardBuilder.createFields()).thenReturn(frontendChessboardBuilder);
         when(frontendChessboardBuilder.initialize()).thenReturn(frontendChessboardBuilder);
         when(frontendChessboardBuilder.updateFields()).thenReturn(frontendChessboardBuilder);
