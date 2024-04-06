@@ -4,8 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
-import org.mark.chess.application.Application;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.game.GameService;
 import org.mark.chess.player.PlayerColor;
@@ -18,7 +18,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class for the front-end chessboard.
@@ -28,10 +30,15 @@ import java.util.List;
 @Accessors(chain = true)
 public final class FrontendChessboard extends JFrame implements ActionListener, MouseListener {
 
-    private transient Game                game;
-    private           GameService         gameService;
-    private           List<FrontendField> frontendFields;
-    private           Dimension           dimension;
+    private static final int HEIGHT       = 870;
+    private static final int SPLIT_IN_TWO = 2;
+    private static final int WIDTH        = 828;
+
+    private transient Game        game;
+    private transient GameService gameService;
+
+    private List<FrontendField> frontendFields;
+    private Dimension           dimension;
 
     /**
      * Creates a new chessboard for the front-end.
@@ -41,28 +48,14 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
     public FrontendChessboard(PlayerColor humanPlayerColor) {
         this.gameService = new GameService();
         this.game = gameService.createGame(humanPlayerColor);
-    }
-
-    /**
-     * Creates a grid layout for the frontend representation of the chessboard.
-     *
-     * @return A grid layout.
-     */
-    public static @NotNull GridLayout createGrid() {
-        return new GridLayout(Chessboard.NUMBER_OF_COLUMNS_AND_ROWS, Chessboard.NUMBER_OF_COLUMNS_AND_ROWS);
+        this.createFields();
+        this.initialize();
+        this.updateFields();
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         // Ignored
-    }
-
-    public int getDimensionHeight() {
-        return this.dimension.height;
-    }
-
-    public int getDimensionWidth() {
-        return this.dimension.width;
     }
 
     @Override
@@ -81,7 +74,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
                 event.getButton(),
                 FrontendField.createButtonId(this.game.getHumanPlayerColor(), ((FrontendField) event.getSource()).getId()));
 
-        Application.getBoardBuilder().setBoard(this).updateFields();
+        this.updateFields();
     }
 
     @Override
@@ -99,10 +92,37 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         // Ignored
     }
 
-    /**
-     * Sets the dimension of the front-end chessboard.
-     */
-    public void setDimension() {
+    private static @NotNull GridLayout createGrid() {
+        return new GridLayout(Chessboard.NUMBER_OF_COLUMNS_AND_ROWS, Chessboard.NUMBER_OF_COLUMNS_AND_ROWS);
+    }
+
+    private void createFields() {
+        this.setFrontendFields(new ArrayList<>());
+        this.getGame().getChessboard().getFields().forEach((Field field) -> {
+            var button = new FrontendField(this, field);
+            this.getFrontendFields().add(field.getId(), button);
+            this.add(button);
+        });
+    }
+
+    private void initialize() {
+        this.setSize(WIDTH, HEIGHT);
+        this.setLayout(FrontendChessboard.createGrid());
+        this.setVisible(true);
+        this.setResizable(false);
         this.dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(this.dimension.width / SPLIT_IN_TWO - WIDTH / SPLIT_IN_TWO, this.dimension.height / SPLIT_IN_TWO - HEIGHT / SPLIT_IN_TWO);
+        this.getGameService().resetValidMoves(this.getGame());
+    }
+
+    private void updateFields() {
+        this.getGame().getChessboard().getFields().forEach((Field field) -> {
+            int buttonId = FrontendField.createButtonId(this.getGame().getHumanPlayerColor(), field.getId());
+
+            FrontendField frontendField = Objects.isNull(field.getPieceType())
+                    ? this.getFrontendFields().get(buttonId).reset(field).setId(buttonId)
+                    : this.getFrontendFields().get(buttonId).updateGraphics(field).setId(buttonId);
+            frontendField.setBackground(field.getBackgroundColor());
+        });
     }
 }

@@ -14,7 +14,6 @@ annotation SpringBootApplication
 'Application'
 '-----------'
 class Application {
-    - {static} frontendChessboardBuilder
     + {static} main()
 }
 
@@ -31,16 +30,7 @@ class FrontendChessboard{
     - game
     - gameService
     - frontendFields
-    + createGrid()
     + mousePressed()
-}
-
-class FrontendChessboardBuilder {
-    - frontendChessboard
-    + initialize()
-    + createFields()
-    + updateFields()
-    + build()
 }
 
 class FrontendField {
@@ -62,11 +52,9 @@ JFrame <|-- FrontendChessboard
 JButton <|-- FrontendField
 ActionListener <|-- FrontendChessboard
 MouseListener <|-- FrontendChessboard
-FrontendChessboard *-- FrontendChessboardBuilder : < updates board
 FrontendChessboard -left-* FrontendField : consists of >
-FrontendChessboard -right-o GameService : < updates game
-FrontendChessboardBuilder *-- Application : < creates a board
+FrontendChessboard -right-* GameService : interacts with the backend >
+FrontendChessboard <-- Application : < creates a board
 Application ..> SpringBootApplication
-Application ..> SpringApplicationBuilder : < builds Spring Application instance
 
 @enduml

@@ -13,6 +13,8 @@ class Game {
     - {static} moveDirector
     - {static} chessboardDirector
     - chessboard
+    - players
+    - move
     + {static} create()
     + {static} restart()
     + changeTurn()
@@ -53,9 +55,9 @@ class MoveDirector {
 '---------'
 GameService ..> Game
 GameService ..> Chessboard
-Game *-left- Chessboard
-Game *-right- MoveDirector
-Game *-- GameDirector : creates or restarts a Game <
-GameDirector *-- GameBuilder : builds a Game <
+Game -left-* Chessboard
+Game -right-* MoveDirector
+Game --* GameDirector : creates or restarts a Game >
+GameDirector *-- GameBuilder : builds a Game >
 
 @enduml
