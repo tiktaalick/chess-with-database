@@ -34,9 +34,6 @@ class GameTest {
     @Mock
     private Move move;
 
-    @Mock
-    private MoveDirector moveDirector;
-
     @Spy
     @InjectMocks
     private Game game = new Game(WHITE, chessboard);

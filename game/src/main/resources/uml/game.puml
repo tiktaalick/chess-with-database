@@ -37,10 +37,26 @@ class Chessboard {
     + resetValidMoves()
 }
 
+class Move {
+    - pieceType
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    + setFrom()
+    + setTo()
+}
+
 class MoveBuilder {
     + performFromMove()
     + performToMove()
     + performResetMove()
+}
+
+class Player {
+    - playerColor
+    - playerType
 }
 
 '---------'
@@ -50,5 +66,7 @@ GameService ..> Game
 GameService ..> Chessboard
 Game -left-* Chessboard
 Game -down-* MoveBuilder
+Game -right-* Move
+Game -up-* Player
 
 @enduml
