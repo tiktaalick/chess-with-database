@@ -15,7 +15,7 @@ class GameService {
 }
 
 class Game {
-    - {static} moveDirector
+    - {static} moveBuilder
     - chessboard
     - players
     - move
@@ -37,7 +37,7 @@ class Chessboard {
     + resetValidMoves()
 }
 
-class MoveDirector {
+class MoveBuilder {
     + performFromMove()
     + performToMove()
     + performResetMove()
@@ -49,6 +49,6 @@ class MoveDirector {
 GameService ..> Game
 GameService ..> Chessboard
 Game -left-* Chessboard
-Game -right-* MoveDirector
+Game -down-* MoveBuilder
 
 @enduml

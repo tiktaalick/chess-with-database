@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.move.Move;
-import org.mark.chess.move.MoveDirector;
+import org.mark.chess.move.MoveBuilder;
 import org.mark.chess.player.Computer;
 import org.mark.chess.player.Human;
 import org.mark.chess.player.Player;
@@ -29,7 +29,7 @@ public class Game {
     private static final int MAXIMUM_SQUARE_ID = 63;
     private static final int RIGHT_CLICK       = 3;
 
-    private static MoveDirector moveDirector = new MoveDirector();
+    private static final MoveBuilder moveBuilder = new MoveBuilder();
 
     private Chessboard   chessboard;
     private Move         move    = new Move(new Field(null));
@@ -72,15 +72,6 @@ public class Game {
     }
 
     /**
-     * Sets the move director.
-     *
-     * @param moveDirector The move director.
-     */
-    public static void setMoveDirector(MoveDirector moveDirector) {
-        Game.moveDirector = moveDirector;
-    }
-
-    /**
      * Changes the active player.
      */
     public void changeTurn() {
@@ -98,11 +89,11 @@ public class Game {
         var fieldClick = this.getChessboard().getFields().get(buttonId);
 
         if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && move.isFrom(this, fieldClick)) {
-            this.move = moveDirector.performFromMove(this, move, fieldClick);
+            this.move = moveBuilder.performFromMove(this, move, fieldClick);
         } else if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && !move.isFrom(this, fieldClick)) {
-            this.move = moveDirector.performToMove(this, move, fieldClick);
+            this.move = moveBuilder.performToMove(this, move, fieldClick);
         } else if (leftRightClick == RIGHT_CLICK) {
-            this.move = moveDirector.performResetMove(this, move);
+            this.move = moveBuilder.performResetMove(this, move);
         } else {
             // Clicks on fields that aren't occupied by the active player are ignored.
         }

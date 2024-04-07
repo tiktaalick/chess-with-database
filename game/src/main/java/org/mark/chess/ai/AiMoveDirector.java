@@ -3,7 +3,6 @@ package org.mark.chess.ai;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
-import org.mark.chess.move.MoveDirector;
 
 import java.util.logging.Logger;
 
@@ -12,7 +11,7 @@ import static org.mark.chess.player.PlayerType.HUMAN;
 /**
  * Contains all possible computer moves, which adds up to the staggering number of one.
  */
-public class AiMoveDirector extends MoveDirector {
+public class AiMoveDirector {
 
     private static final Logger LOGGER = Logger.getLogger(AiMoveDirector.class.getName());
 

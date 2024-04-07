@@ -19,12 +19,10 @@ import static org.mark.chess.piece.PieceType.KING;
  */
 public class MoveBuilder {
 
-    private static final Logger LOGGER = Logger.getLogger(MoveBuilder.class.getName());
-
-    private final AiMoveDirector aiMoveDirector = new AiMoveDirector();
-
-    protected Move         move;
-    private   MoveDirector rookMoveDirector = new MoveDirector();
+    private static final Logger         LOGGER          = Logger.getLogger(MoveBuilder.class.getName());
+    private static final AiMoveDirector aiMoveDirector  = new AiMoveDirector();
+    private static final MoveBuilder    rookMoveBuilder = new MoveBuilder();
+    protected            Move           move;
 
     /**
      * Returns the built move.
@@ -92,7 +90,7 @@ public class MoveBuilder {
                             ? KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_RIGHT
                             : KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_LEFT));
 
-            rookMoveDirector.performRookMove(game.getChessboard(), rookFromField, rookToField);
+            rookMoveBuilder.performRookMove(game.getChessboard(), rookFromField, rookToField);
         }
 
         LOGGER.log(Level.INFO, "MoveBuilder.moveRookIfCastling(): {0}", this.move);
@@ -101,17 +99,47 @@ public class MoveBuilder {
     }
 
     /**
-     * Performs a move based on artificial intelligence.
+     * Performs the from-part of a move.
+     *
+     * @param game       The game.
+     * @param move       The move.
+     * @param fieldClick The from-field that has been clicked upon.
+     * @return The built move.
+     */
+    public Move performFromMove(Game game, Move move, Field fieldClick) {
+        return this.setMove(move).setFrom(fieldClick).enableValidMoves(game).build();
+    }
+
+    /**
+     * Performs the resetting of a move.
      *
      * @param game The game.
-     * @return The builder.
+     * @param move The move.
+     * @return The built move.
      */
-    public MoveBuilder performAiMove(Game game) {
-        aiMoveDirector.performAiMove(game);
+    public Move performResetMove(Game game, Move move) {
+        return this.setMove(move).setKingFieldColors(game).build();
+    }
 
-        LOGGER.log(Level.INFO, "MoveBuilder.performAiMove(): {0}", this.move);
-
-        return this;
+    /**
+     * Performs the to-part of a move.
+     *
+     * @param game       The game.
+     * @param move       The move.
+     * @param fieldClick The to-field that has been clicked upon.
+     * @return The built move.
+     */
+    public Move performToMove(@NotNull Game game, Move move, Field fieldClick) {
+        return this
+                .setMove(move)
+                .setTo(game.getChessboard(), fieldClick)
+                .setPieceTypeSpecificAttributes(game)
+                .moveRookIfCastling(game)
+                .changeTurn(game)
+                .resetFrom()
+                .setKingFieldColors(game)
+                .performAiMove(game)
+                .build();
     }
 
     /**
@@ -123,20 +151,6 @@ public class MoveBuilder {
         move.getFrom().setPieceType(null);
 
         LOGGER.log(Level.INFO, "MoveBuilder.resetFrom(): {0}", this.move);
-
-        return this;
-    }
-
-    /**
-     * Sets the field as the from-part of the move.
-     *
-     * @param field The field.
-     * @return The builder.
-     */
-    public MoveBuilder setFrom(Field field) {
-        this.move.setFrom(field);
-
-        LOGGER.log(Level.INFO, "MoveBuilder.setFrom(): {0}", this.move);
 
         return this;
     }
@@ -188,28 +202,27 @@ public class MoveBuilder {
         return this;
     }
 
-    /**
-     * Sets the MoveDirector for the rook move.
-     *
-     * @param rookMoveDirector The move director.
-     * @return The move builder.
-     */
-    public MoveBuilder setRookMoveDirector(MoveDirector rookMoveDirector) {
-        this.rookMoveDirector = rookMoveDirector;
+    private MoveBuilder performAiMove(Game game) {
+        aiMoveDirector.performAiMove(game);
 
-        LOGGER.log(Level.INFO, "MoveBuilder.setRookMoveDirector(): {0}", this.move);
+        LOGGER.log(Level.INFO, "MoveBuilder.performAiMove(): {0}", this.move);
 
         return this;
     }
 
-    /**
-     * Sets the field as the to-part of the move.
-     *
-     * @param chessboard The back-end representation of a chessboard.
-     * @param field      The field.
-     * @return The builder.
-     */
-    public MoveBuilder setTo(Chessboard chessboard, Field field) {
+    private Move performRookMove(Chessboard chessboard, Field from, Field to) {
+        return this.setMove(new Move(from)).setTo(chessboard, to).resetFrom().build();
+    }
+
+    private MoveBuilder setFrom(Field field) {
+        this.move.setFrom(field);
+
+        LOGGER.log(Level.INFO, "MoveBuilder.setFrom(): {0}", this.move);
+
+        return this;
+    }
+
+    private MoveBuilder setTo(Chessboard chessboard, Field field) {
         this.move = this.move.setTo(chessboard, field);
 
         LOGGER.log(Level.INFO, "MoveBuilder.setTo(): {0}", this.move);
