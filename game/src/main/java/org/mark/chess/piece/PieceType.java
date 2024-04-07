@@ -22,7 +22,7 @@ public abstract class PieceType {
     public static final String ROOK   = "rook";
 
     private PlayerColor color;
-    private boolean     kickedOff;
+    private boolean     hasBeenKickedOffTheBoard;
     private boolean     isPawnBeingPromoted;
 
     /**
