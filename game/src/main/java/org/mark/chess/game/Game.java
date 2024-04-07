@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
-import org.mark.chess.board.ChessboardDirector;
 import org.mark.chess.board.Field;
 import org.mark.chess.move.Move;
 import org.mark.chess.move.MoveDirector;
@@ -30,8 +29,7 @@ public class Game {
     private static final int MAXIMUM_SQUARE_ID = 63;
     private static final int RIGHT_CLICK       = 3;
 
-    private static ChessboardDirector chessboardDirector = new ChessboardDirector();
-    private static MoveDirector       moveDirector       = new MoveDirector();
+    private static MoveDirector moveDirector = new MoveDirector();
 
     private Chessboard   chessboard;
     private Move         move    = new Move(new Field(null));
@@ -60,7 +58,7 @@ public class Game {
      * @return A new game.
      */
     public static @NotNull Game create(PlayerColor humanPlayerColor) {
-        return new Game(humanPlayerColor, chessboardDirector.createChessboard());
+        return new Game(humanPlayerColor, Chessboard.create());
     }
 
     /**

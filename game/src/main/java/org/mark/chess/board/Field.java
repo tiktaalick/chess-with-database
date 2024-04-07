@@ -146,7 +146,7 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = Chessboard.createFuture(chessboard, this, to);
+        var gridAfterMovement = Chessboard.createOneStepBeyond(chessboard, this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()

@@ -1,7 +1,7 @@
 package org.mark.chess.ai;
 
 import org.mark.chess.board.Chessboard;
-import org.mark.chess.board.ChessboardDirector;
+import org.mark.chess.board.ChessboardBuilder;
 
 import java.util.List;
 import java.util.function.Function;
@@ -13,9 +13,10 @@ import java.util.logging.Logger;
  */
 public class BestMove {
 
-    public static final  int    NUMBER_OF_MOVES_AHEAD = 1;
-    private static final int    EVEN                  = 2;
-    private static final Logger LOGGER                = Logger.getLogger(BestMove.class.getName());
+    public static final  int               NUMBER_OF_MOVES_AHEAD = 1;
+    private static final int               EVEN                  = 2;
+    private static final Logger            LOGGER                = Logger.getLogger(BestMove.class.getName());
+    private static final ChessboardBuilder chessboardBuilder     = new ChessboardBuilder();
 
     /**
      * Searches for the best move.
@@ -43,7 +44,7 @@ public class BestMove {
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "parentChessboard  = " + parentChessboard);
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", parentChessboard.getFromParentToChildMove());
 
-            List<Chessboard> chessboardChildren = ChessboardDirector.createChildren(parentChessboard, activePlayerColorLevel);
+            List<Chessboard> chessboardChildren = chessboardBuilder.createChildren(parentChessboard, activePlayerColorLevel);
 
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "number of children= " + chessboardChildren.size());
 

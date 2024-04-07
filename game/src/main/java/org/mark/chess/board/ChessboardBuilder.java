@@ -16,37 +16,31 @@ public class ChessboardBuilder {
     private Chessboard       chessboard;
     private List<Chessboard> children;
 
-    public Chessboard build() {
-        return chessboard;
+    public List<Chessboard> createChildren(Chessboard chessboard, PlayerColor activePlayerColor) {
+        return this.setChessboard(chessboard).resetValidMoves(activePlayerColor).createChildren().build();
     }
 
-    public List<Chessboard> buildChildren() {
-        return children;
+    private List<Chessboard> build() {
+        return new ArrayList<>(children);
     }
 
-    public ChessboardBuilder createChessboard() {
-        this.chessboard = Chessboard.create();
-
-        return this;
-    }
-
-    public ChessboardBuilder createChildren() {
+    private ChessboardBuilder createChildren() {
         this.children = new ArrayList<>();
 
         this.chessboard
                 .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> children.add(Chessboard.createFuture(this.chessboard, from, to))));
+                .forEach((from, toList) -> toList.forEach(to -> children.add(Chessboard.createOneStepBeyond(this.chessboard, from, to))));
 
         return this;
     }
 
-    public ChessboardBuilder resetValidMoves(PlayerColor activePlayerColor) {
+    private ChessboardBuilder resetValidMoves(PlayerColor activePlayerColor) {
         this.chessboard.resetValidMoves(NOT_DURING_A_MOVE, activePlayerColor);
 
         return this;
     }
 
-    public ChessboardBuilder setChessboard(Chessboard chessboard) {
+    private ChessboardBuilder setChessboard(Chessboard chessboard) {
         this.chessboard = chessboard;
 
         return this;

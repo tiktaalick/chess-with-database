@@ -114,7 +114,7 @@ public final class Chessboard {
      * @param to                      The field to which a piece is moving.
      * @return A chessboard with chess pieces in their future positions.
      */
-    public static @NotNull Chessboard createFuture(Chessboard chessboardBeforeTheMove, Field from, Field to) {
+    public static @NotNull Chessboard createOneStepBeyond(Chessboard chessboardBeforeTheMove, Field from, Field to) {
         return new Chessboard(chessboardBeforeTheMove, from, to);
     }
 
@@ -284,7 +284,7 @@ public final class Chessboard {
 
     private void createAbsoluteFieldValues(Field from, Field to, PlayerColor activePlayerColor) {
         if (from != null && from.getPieceType() != null) {
-            var chessboardAfterMovement = Chessboard.createFuture(this, from, to);
+            var chessboardAfterMovement = Chessboard.createOneStepBeyond(this, from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
                     .process(new ChessboardValueParameter(chessboardAfterMovement, activePlayerColor))
                     .getTotalValue());

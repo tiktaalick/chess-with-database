@@ -16,7 +16,6 @@ class GameService {
 
 class Game {
     - {static} moveDirector
-    - {static} chessboardDirector
     - chessboard
     - players
     - move
@@ -29,28 +28,13 @@ class Game {
 class Chessboard {
     + create()
     + createEmpty()
-    + createFuture()
+    + createOneStepBeyond()
     + getField()
     + getKingField()
     + setKingFieldColors()
     + setValidMoveColors()
     + enableValidMoves()
     + resetValidMoves()
-}
-
-class ChessboardDirector {
-    - {static} chessboardBuilder
-    + createChessboard()
-    + createChildren()
-}
-
-class ChessboardBuilder {
-    + setChessboard()
-    + createChessboard()
-    + createChildren()
-    + resetValidMoves()
-    + build()
-    + buildChildren()
 }
 
 class MoveDirector {
@@ -65,8 +49,6 @@ class MoveDirector {
 GameService ..> Game
 GameService ..> Chessboard
 Game -left-* Chessboard
-Game -down-* MoveDirector
-Game -down-* ChessboardDirector
-ChessboardDirector --* ChessboardBuilder
+Game -right-* MoveDirector
 
 @enduml
