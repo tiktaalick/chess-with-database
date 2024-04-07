@@ -9,19 +9,13 @@ hide empty members
 'Move'
 '----'
 class MoveBuilder {
-    - {static} aiMoveDirector
+    - {static} aiMoveBuilder
     - {static} rookMoveBuilder
-    + changeTurn()
-    + enableValidMoves()
-    + moveRookIfCastling()
     + performFromMove()
-    + performResetMove()
     + performToMove()
-    + resetFrom()
-    + setKingFieldColors()
-    + setMove()
-    + setPieceTypeSpecificAttributes()
-    + build()
+    + performResetMove()
+    # performAiMove()
+    # moveRookIfCastling()
 }
 
 class Move {
@@ -94,10 +88,12 @@ class Field {
 Game --* Move
 Game -right-* MoveBuilder
 MoveBuilder ..> KingIsValidCastlingRule
-MoveBuilder --> MoveBuilder : move rook if castling
+MoveBuilder --> MoveBuilder
+MoveBuilder --> MoveBuilder
 MoveBuilder -down-* AiMoveDirector
 MoveBuilder ..> Move
 Move -left-* PieceType
 Move --* Field
+Field --* PieceType
 
 @enduml

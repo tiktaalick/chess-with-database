@@ -1,26 +1,54 @@
-package org.mark.chess.ai;
+package org.mark.chess.move;
 
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
-import org.mark.chess.move.Move;
-import org.mark.chess.move.MoveBuilder;
 
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.mark.chess.player.PlayerType.HUMAN;
 
 public class AiMoveBuilder extends MoveBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(AiMoveBuilder.class.getName());
 
     /**
-     * Sets the from-part of the AI move.
+     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
      *
      * @param game The game.
      * @return The builder.
      */
-    public AiMoveBuilder createAiFrom(Game game) {
+    @Override
+    public AiMoveBuilder enableValidMoves(@NotNull Game game) {
+        LOGGER.log(Level.INFO, "AiMoveBuilder.enableValidMoves(): {0}", this.move);
+
+        return (AiMoveBuilder) super.enableValidMoves(game);
+    }
+
+    /**
+     * Performs a computer move if applicable.
+     *
+     * @param game The game.
+     * @return The built move.
+     */
+    public Move performAiMove(@NotNull Game game) {
+        return game.getActivePlayer().getPlayerType() == HUMAN
+                ? this.build()
+                : this
+                        .createAiFrom(game)
+                        .enableValidMoves(game)
+                        .createAiTo(game)
+                        .setPieceTypeSpecificAttributes(game)
+                        .moveRookIfCastling(game)
+                        .changeTurn(game)
+                        .resetFrom()
+                        .setKingFieldColors(game)
+                        .build();
+    }
+
+    private AiMoveBuilder createAiFrom(Game game) {
         setMove(new Move(game
                 .getChessboard()
                 .getFields()
@@ -36,13 +64,7 @@ public class AiMoveBuilder extends MoveBuilder {
         return this;
     }
 
-    /**
-     * Sets the to-part of the AI move.
-     *
-     * @param game The game.
-     * @return The builder.
-     */
-    public AiMoveBuilder createAiTo(Game game) {
+    private AiMoveBuilder createAiTo(Game game) {
         game.getChessboard().setKingFieldColors(game, game.getChessboard().getAllValidFromToCombinations().get(move.getFrom()));
 
         if (game.isInProgress()) {
@@ -60,18 +82,5 @@ public class AiMoveBuilder extends MoveBuilder {
         LOGGER.log(Level.INFO, "AiMoveBuilder.createAiTo(): {0}", this.move);
 
         return this;
-    }
-
-    /**
-     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
-     *
-     * @param game The game.
-     * @return The builder.
-     */
-    @Override
-    public AiMoveBuilder enableValidMoves(@NotNull Game game) {
-        LOGGER.log(Level.INFO, "AiMoveBuilder.enableValidMoves(): {0}", this.move);
-
-        return (AiMoveBuilder) super.enableValidMoves(game);
     }
 }
