@@ -43,7 +43,7 @@ public class BestMove {
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "parentChessboard  = " + parentChessboard);
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", parentChessboard.getFromParentToChildMove());
 
-            List<Chessboard> chessboardChildren = ChessboardDirector.createChessboardChildren(parentChessboard, activePlayerColorLevel);
+            List<Chessboard> chessboardChildren = ChessboardDirector.createChildren(parentChessboard, activePlayerColorLevel);
 
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "number of children= " + chessboardChildren.size());
 

@@ -35,7 +35,7 @@ public class ChessboardBuilder {
 
         this.chessboard
                 .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> children.add(Chessboard.createAfterMovement(this.chessboard, from, to))));
+                .forEach((from, toList) -> toList.forEach(to -> children.add(Chessboard.createFuture(this.chessboard, from, to))));
 
         return this;
     }

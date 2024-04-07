@@ -98,6 +98,15 @@ public final class Chessboard {
     }
 
     /**
+     * Creates a chessboard without chess pieces.
+     *
+     * @return A chessboard without chess pieces.
+     */
+    public static @NotNull Chessboard createEmpty() {
+        return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
+    }
+
+    /**
      * Creates a chessboard with chess pieces in their future positions, based on their current positions and the current move.
      *
      * @param chessboardBeforeTheMove The chessboard with the chess pieces in their positions
@@ -105,17 +114,8 @@ public final class Chessboard {
      * @param to                      The field to which a piece is moving.
      * @return A chessboard with chess pieces in their future positions.
      */
-    public static @NotNull Chessboard createAfterMovement(Chessboard chessboardBeforeTheMove, Field from, Field to) {
+    public static @NotNull Chessboard createFuture(Chessboard chessboardBeforeTheMove, Field from, Field to) {
         return new Chessboard(chessboardBeforeTheMove, from, to);
-    }
-
-    /**
-     * Creates a chessboard without chess pieces.
-     *
-     * @return A chessboard without chess pieces.
-     */
-    public static @NotNull Chessboard createEmpty() {
-        return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
     }
 
     /**
@@ -150,16 +150,6 @@ public final class Chessboard {
                 .filter(field -> field.getCoordinates().getY() == coordinates.getY())
                 .findAny()
                 .orElse(null);
-    }
-
-    /**
-     * Retrieves a field based on its code.
-     *
-     * @param code The code of the field.
-     * @return The field.
-     */
-    public Field getField(String code) {
-        return this.getFields().stream().filter(field -> field.getCode().equals(code)).findAny().orElse(null);
     }
 
     /**
@@ -254,9 +244,7 @@ public final class Chessboard {
         int minValue = getMinValue(allValidMoves);
         int maxValue = getMaxValue(allValidMoves);
         validMoves.forEach((Field gridField) -> {
-            double relativeValue = maxValue - minValue <= 0
-                    ? MAXIMUM_COLOR_VALUE
-                    : calculateRelativeValue(minValue, maxValue, gridField);
+            double relativeValue = maxValue - minValue <= 0 ? MAXIMUM_COLOR_VALUE : calculateRelativeValue(minValue, maxValue, gridField);
 
             gridField.setRelativeValue((int) relativeValue);
 
@@ -275,9 +263,7 @@ public final class Chessboard {
     }
 
     private static int getMaxValue(Collection<Field> validMoves) {
-        return validMoves == null
-                ? 0
-                : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).max().orElse(0);
+        return validMoves == null ? 0 : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).max().orElse(0);
     }
 
     private static int getMaximumFieldValueComparedToMinimumValue(int minValue, int maxValue) {
@@ -285,20 +271,11 @@ public final class Chessboard {
     }
 
     private static int getMinValue(Collection<Field> validMoves) {
-        return validMoves == null
-                ? 0
-                : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
+        return validMoves == null ? 0 : validMoves.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
     }
 
-    /**
-     * Sets the checkmate or stalemate flag on a field that contains a king, if applicable.
-     *
-     * @param game          The game.
-     * @param allValidMoves All the valid moves.
-     * @param kingField     The field that contains a king.
-     */
     private static void setKingFieldFlags(@NotNull Game game, Collection<Field> allValidMoves, @NotNull Field kingField) {
-        boolean isInCheckNow = kingField.isInCheckNow(game.getChessboard(), false);
+        boolean isInCheckNow = kingField.isInCheckNow(game.getChessboard());
         boolean isCheckMate = kingField.isCheckMate() || (kingField.isNotAbleToMove(game, allValidMoves) && isInCheckNow);
         boolean isStaleMate = kingField.isStaleMate() || (kingField.isNotAbleToMove(game, allValidMoves) && !isInCheckNow);
 
@@ -307,31 +284,20 @@ public final class Chessboard {
 
     private void createAbsoluteFieldValues(Field from, Field to, PlayerColor activePlayerColor) {
         if (from != null && from.getPieceType() != null) {
-            var chessboardAfterMovement = Chessboard.createAfterMovement(this, from, to);
+            var chessboardAfterMovement = Chessboard.createFuture(this, from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
                     .process(new ChessboardValueParameter(chessboardAfterMovement, activePlayerColor))
                     .getTotalValue());
-            from.setValue(from.getValue() == null
-                    ? to.getValue()
-                    : Math.max(from.getValue(), to.getValue()));
+            from.setValue(from.getValue() == null ? to.getValue() : Math.max(from.getValue(), to.getValue()));
         }
     }
 
-    /**
-     * Creates a list of valid moves.
-     *
-     * @param from              The field from which the chess piece moves.
-     * @param activePlayerColor
-     * @return A list of valid moves.
-     */
     private List<Field> createValidToFields(@NotNull Field from, PlayerColor activePlayerColor) {
-        return from.isActivePlayerField(activePlayerColor)
-                ? this
+        return from.isActivePlayerField(activePlayerColor) ? this
                 .getFields()
                 .stream()
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this, from, to, false)))
-                .collect(Collectors.toList())
-                : new ArrayList<>();
+                .collect(Collectors.toList()) : new ArrayList<>();
     }
 
     private void setValidMoves(Map<Field, List<Field>> allValidFromToCombinations,

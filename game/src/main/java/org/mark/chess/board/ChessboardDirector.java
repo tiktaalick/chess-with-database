@@ -6,9 +6,9 @@ import java.util.List;
 
 public class ChessboardDirector {
 
-    private static ChessboardBuilder chessboardBuilder = new ChessboardBuilder();
+    private static final ChessboardBuilder chessboardBuilder = new ChessboardBuilder();
 
-    public static List<Chessboard> createChessboardChildren(Chessboard chessboard, PlayerColor activePlayerColor) {
+    public static List<Chessboard> createChildren(Chessboard chessboard, PlayerColor activePlayerColor) {
         return chessboardBuilder.setChessboard(chessboard).resetValidMoves(activePlayerColor).createChildren().buildChildren();
     }
 

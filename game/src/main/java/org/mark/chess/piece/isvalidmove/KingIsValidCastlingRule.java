@@ -1,9 +1,9 @@
 package org.mark.chess.piece.isvalidmove;
 
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Chessboard;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.PieceType;
 import org.mark.chess.piece.Rook;
@@ -31,7 +31,7 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
         return !isOpponent &&
                 isValidCastlingPositions(from, to, direction) &&
                 isValidCastlingPieces(chessboard, from, direction, isNowCastling) &&
-                !from.isInCheckNow(chessboard, false);
+                !from.isInCheckNow(chessboard);
     }
 
     @Override

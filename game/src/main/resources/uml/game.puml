@@ -8,8 +8,13 @@ hide empty members
 '----'
 'Game'
 '----'
+class GameService {
+    + createGame()
+    + handleButtonClick()
+    + resetValidMoves()
+}
+
 class Game {
-    - {static} gameDirector
     - {static} moveDirector
     - {static} chessboardDirector
     - chessboard
@@ -21,27 +26,31 @@ class Game {
     + handleButtonClick()
 }
 
-class GameDirector {
-    - gameBuilder
-    + createGame()
-    + restartGame()
+class Chessboard {
+    + create()
+    + createEmpty()
+    + createFuture()
+    + getField()
+    + getKingField()
+    + setKingFieldColors()
+    + setValidMoveColors()
+    + enableValidMoves()
+    + resetValidMoves()
 }
 
-class GameBuilder {
-    - game
-    + createGame()
+class ChessboardDirector {
+    - {static} chessboardBuilder
+    + createChessboard()
+    + createChildren()
+}
+
+class ChessboardBuilder {
+    + setChessboard()
+    + createChessboard()
+    + createChildren()
     + resetValidMoves()
     + build()
-}
-
-class GameService {
-    + createGame()
-    + handleButtonClick()
-    + resetValidMoves()
-}
-
-class Chessboard {
-    + resetValidMoves()
+    + buildChildren()
 }
 
 class MoveDirector {
@@ -56,8 +65,8 @@ class MoveDirector {
 GameService ..> Game
 GameService ..> Chessboard
 Game -left-* Chessboard
-Game -right-* MoveDirector
-Game --* GameDirector : creates or restarts a Game >
-GameDirector *-- GameBuilder : builds a Game >
+Game -down-* MoveDirector
+Game -down-* ChessboardDirector
+ChessboardDirector --* ChessboardBuilder
 
 @enduml

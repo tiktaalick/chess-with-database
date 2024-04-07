@@ -31,7 +31,6 @@ public class Game {
     private static final int RIGHT_CLICK       = 3;
 
     private static ChessboardDirector chessboardDirector = new ChessboardDirector();
-    private static GameDirector       gameDirector       = new GameDirector();
     private static MoveDirector       moveDirector       = new MoveDirector();
 
     private Chessboard   chessboard;
@@ -61,7 +60,7 @@ public class Game {
      * @return A new game.
      */
     public static @NotNull Game create(PlayerColor humanPlayerColor) {
-        return gameDirector.createGame(humanPlayerColor);
+        return new Game(humanPlayerColor, chessboardDirector.createChessboard());
     }
 
     /**
@@ -71,7 +70,7 @@ public class Game {
      * @return The new game.
      */
     public static @NotNull Game restart(@NotNull Game oldGame) {
-        return gameDirector.restartGame(oldGame.getHumanPlayerColor().getOpposite());
+        return create(oldGame.getHumanPlayerColor().getOpposite()).resetValidMoves();
     }
 
     /**
@@ -119,8 +118,12 @@ public class Game {
      * @param kingField A king, which might be in checkmate or stalemate.
      */
     public void setGameProgress(Field kingField) {
-        this.setInProgress(this.isInProgress()
-                ? (!kingField.isCheckMate() && !kingField.isStaleMate())
-                : this.isInProgress());
+        this.setInProgress(this.isInProgress() && !kingField.isCheckMate() && !kingField.isStaleMate());
+    }
+
+    private @NotNull Game resetValidMoves() {
+        this.getChessboard().resetValidMoves(this.getMove(), PlayerColor.WHITE);
+
+        return this;
     }
 }

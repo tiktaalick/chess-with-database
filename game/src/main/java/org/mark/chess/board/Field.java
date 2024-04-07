@@ -34,6 +34,7 @@ public class Field implements Comparable<Field> {
     private static final Integer                    VALUE_NOT_CALCULATED       = null;
     private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
 
+    @Getter
     private int         id            = ID_UNKNOWN;
     private String      code          = CODE_UNKNOWN;
     private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
@@ -62,10 +63,6 @@ public class Field implements Comparable<Field> {
     @Override
     public int compareTo(@NotNull Field other) {
         return this.id - other.id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Field setId(int id) {
@@ -124,14 +121,9 @@ public class Field implements Comparable<Field> {
      * True if the active player is in check now.
      *
      * @param chessboard The chessboard.
-     * @param isOpponent Indicates whether the player is the opponent of the active player.
      * @return True if the active player is in check now.
      */
-    public boolean isInCheckNow(Chessboard chessboard, boolean isOpponent) {
-        if (isOpponent) {
-            return false;
-        }
-
+    public boolean isInCheckNow(Chessboard chessboard) {
         chessboard.getFields().forEach(field -> field.setUnderAttack(false));
 
         List<Field> attackers = chessboard.getFields().stream().filter(isAttacking(chessboard)).collect(Collectors.toList());
@@ -154,7 +146,7 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = Chessboard.createAfterMovement(chessboard, this, to);
+        var gridAfterMovement = Chessboard.createFuture(chessboard, this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
