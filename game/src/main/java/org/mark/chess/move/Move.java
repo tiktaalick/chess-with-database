@@ -10,6 +10,7 @@ import org.mark.chess.game.Game;
 import org.mark.chess.piece.PieceType;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.mark.chess.piece.PieceType.PAWN;
 
@@ -20,9 +21,8 @@ import static org.mark.chess.piece.PieceType.PAWN;
 @Accessors(chain = true)
 public class Move {
 
-    private PieceType pieceType;
-    private Field     from;
-    private Field     to;
+    private Field from;
+    private Field to;
 
     /**
      * Constructor.
@@ -30,7 +30,6 @@ public class Move {
      * @param from The field from which a chess piece will move.
      */
     public Move(@NotNull Field from) {
-        this.pieceType = from.getPieceType();
         this.from = from;
     }
 
@@ -57,7 +56,7 @@ public class Move {
     }
 
     public boolean isValid() {
-        return isValidField(this.from) && isValidField(this.to) && this.pieceType != null;
+        return isValidField(this.from) && isValidField(this.to) && this.getPieceType() != null;
     }
 
     /**
@@ -67,7 +66,6 @@ public class Move {
      * @return The move.
      */
     public Move setFrom(@NotNull Field from) {
-        this.pieceType = from.getPieceType();
         this.from = from;
         this.to = null;
 
@@ -106,6 +104,10 @@ public class Move {
         chessboard.getField(new Coordinates(to.getCoordinates().getX(), from.getCoordinates().getY())).setPieceType(null);
     }
 
+    private static Optional<PieceType> getOptionalPieceType(Field field) {
+        return Optional.ofNullable(field).map(Field::getPieceType);
+    }
+
     private static boolean isCaptureEnPassant(@NotNull Move move, Field to) {
         return move.isValid() &&
                 move.getFrom().getPieceType().getName().equals(PAWN) &&
@@ -115,5 +117,9 @@ public class Move {
 
     private static boolean isValidField(Field field) {
         return field != null && field.isValid();
+    }
+
+    private PieceType getPieceType() {
+        return getOptionalPieceType(to).orElse(getOptionalPieceType(from).orElse(null));
     }
 }
