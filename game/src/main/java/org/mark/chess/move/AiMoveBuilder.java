@@ -54,7 +54,8 @@ public class AiMoveBuilder extends MoveBuilder {
                 .getFields()
                 .stream()
                 .filter(field -> field.getValue() != null)
-                .filter(field -> field.getPieceType() != null)
+                .filter(field -> field.getPieceType() !=
+                        null)
                 .filter(field -> field.getPieceType().getColor() == game.getActivePlayer().getColor())
                 .max(Comparator.comparing(Field::getValue))
                 .orElse(new Field(null))));
@@ -65,16 +66,8 @@ public class AiMoveBuilder extends MoveBuilder {
     }
 
     private AiMoveBuilder createAiTo(Game game) {
-        game.getChessboard().setKingFieldColors(game, game.getChessboard().getAllValidFromToCombinations().get(move.getFrom()));
-
         if (game.isInProgress()) {
-            var toField = game
-                    .getChessboard()
-                    .getAllValidFromToCombinations()
-                    .get(move.getFrom())
-                    .stream()
-                    .max(Comparator.comparing(Field::getValue))
-                    .orElse(new Field(null));
+            var toField = game.getChessboard().getChildren().getLast().getFromParentToChildMove().getTo();
 
             this.move = this.move.setTo(game.getChessboard(), toField);
         }

@@ -44,16 +44,14 @@ public class BestMove {
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "parentChessboard  = " + parentChessboard);
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", parentChessboard.getFromParentToChildMove());
 
-            List<Chessboard> chessboardChildren = chessboardBuilder.createChildren(parentChessboard, activePlayerColorLevel);
+            List<Chessboard> chessboardChildren = parentChessboard.getChildren();
 
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "number of children= " + chessboardChildren.size());
 
-            returnValue = chessboardChildren
-                    .stream()
-                    .peek(child -> LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "childChessboard   = " + child))
-                    .mapToInt(chessboard -> calculate(typeOfCalculation, new ChessboardValueParameter(chessboard, activePlayerColorLevel)))
-                    .max()
-                    .orElse(Integer.MIN_VALUE);
+            returnValue = chessboardChildren.stream().peek(child -> LOGGER.log(Level.INFO,
+                    "BestMove.calculate(): {0}",
+                    "childChessboard   = " + child)).mapToInt(chessboard -> calculate(typeOfCalculation,
+                    new ChessboardValueParameter(chessboard, activePlayerColorLevel))).max().orElse(Integer.MIN_VALUE);
 
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "returnValue       = " + returnValue);
             LOGGER.log(Level.INFO, "BestMove.calculate(): {0}", "");

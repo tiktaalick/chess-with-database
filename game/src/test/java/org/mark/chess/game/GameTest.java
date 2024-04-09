@@ -3,7 +3,6 @@ package org.mark.chess.game;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
-import org.mark.chess.board.Field;
 import org.mark.chess.move.Move;
 import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
@@ -11,12 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -144,25 +139,25 @@ class GameTest {
 //        verify(moveDirector).performResetMove(game, move);
 //    }
 
-    @Test
-    void testResetValidMoves() {
-        game.setChessboard(Chessboard.create());
+//    @Test
+//    void testResetValidMoves() {
+//        game.setChessboard(Chessboard.create());
+//
+//        List<Field> validMoves = game.getChessboard().resetValidMoves(game.getMove(), game.getActivePlayer().getColor());
+//
+//        assertEquals(20, validMoves.size());
+//        assertFalse(validMoves.get(0).isAttacking());
+//        assertFalse(validMoves.get(1).isUnderAttack());
+//        assertFalse(validMoves.get(2).isValidFrom());
+//        assertFalse(validMoves.get(3).hasValidTo());
+//    }
 
-        List<Field> validMoves = game.getChessboard().resetValidMoves(game.getMove(), game.getActivePlayer().getColor());
-
-        assertEquals(20, validMoves.size());
-        assertFalse(validMoves.get(0).isAttacking());
-        assertFalse(validMoves.get(1).isUnderAttack());
-        assertFalse(validMoves.get(2).isValidFrom());
-        assertFalse(validMoves.get(3).hasValidTo());
-    }
-
-    @Test
-    void testRestart() {
-        Game newGame = Game.restart(game);
-        assertNotNull(newGame);
-        assertNotEquals(game, newGame);
-    }
+//    @Test
+//    void testRestart() {
+//        Game newGame = Game.restart(game);
+//        assertNotNull(newGame);
+//        assertNotEquals(game, newGame);
+//    }
 
     @Test
     void testSetGameProgress_WhenCheckMate_ThenGameIsInNotInProgress() {

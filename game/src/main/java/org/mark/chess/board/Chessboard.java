@@ -38,49 +38,36 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public final class Chessboard {
 
-    public static final  int                        MAXIMUM_COLOR_VALUE           = 255;
-    public static final  int                        MAXIMUM_SQUARE_ID             = 63;
-    public static final  int                        MINIMUM_COLOR_VALUE           = 0;
-    public static final  int                        MINIMUM_SQUARE_ID             = 0;
-    public static final  int                        NUMBER_OF_COLUMNS_AND_ROWS    = 8;
+    public static final int MAXIMUM_COLOR_VALUE        = 255;
+    public static final int MAXIMUM_SQUARE_ID          = 63;
+    public static final int MINIMUM_COLOR_VALUE        = 0;
+    public static final int MINIMUM_SQUARE_ID          = 0;
+    public static final int NUMBER_OF_COLUMNS_AND_ROWS = 8;
+
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
     private static final int                        ONE_LEVEL                     = 1;
 
-    private Map<Field, List<Field>> allValidFromToCombinations;
-    private List<Field>             fields;
-    private int                     gridValue;
-    private Field                   kingField;
-    private Field                   opponentKingField;
-    private int                     level = BestMove.NUMBER_OF_MOVES_AHEAD;
-    private Move                    fromParentToChildMove;
+    private List<Field> fields;
+    private Field       kingField;
+    private Field       opponentKingField;
+
+    // Hoort hier niet thuis
+    private int              level    = BestMove.NUMBER_OF_MOVES_AHEAD;
+    private Move             fromParentToChildMove;
+    private List<Chessboard> children = new ArrayList<>();
 
     private Chessboard(List<Field> fields) {
         this.fields = new ArrayList<>(fields);
-        this.kingField = getKingField(this, WHITE);
-        this.opponentKingField = getKingField(this, BLACK);
+        this.kingField = getKingField(WHITE);
+        this.opponentKingField = getKingField(BLACK);
     }
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
-        this.fields = chessboardBeforeTheMove
-                .getFields()
-                .stream()
-                .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
-                .collect(Collectors.toList());
-
-        List<Field> movementList = chessboardBeforeTheMove
-                .getFields()
-                .stream()
-                .filter(field -> Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
-                .map(field -> Objects.equals(field.getCode(), from.getCode())
-                        ? new Field(null).setCoordinates(from.getCoordinates())
-                        : new Field(from.getPieceType()).setCoordinates(to.getCoordinates()))
-                .collect(Collectors.toList());
-
-        this.fields.addAll(movementList);
-
-        this.kingField = getKingField(this, from.getPieceType().getColor());
-        this.opponentKingField = getKingField(this, from.getPieceType().getColor().getOpposite());
+        this.fields = createFieldsWithoutThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to);
+        this.fields.addAll(createFieldsOnlyContainingThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to));
+        this.kingField = getKingField(from.getPieceType().getColor());
+        this.opponentKingField = getKingField(from.getPieceType().getColor().getOpposite());
         this.level = chessboardBeforeTheMove.level - ONE_LEVEL;
         this.fromParentToChildMove = new Move(from).setTo(to);
     }
@@ -109,13 +96,12 @@ public final class Chessboard {
     /**
      * Creates a chessboard with chess pieces in their future positions, based on their current positions and the current move.
      *
-     * @param chessboardBeforeTheMove The chessboard with the chess pieces in their positions
-     * @param from                    The field from which a piece is moving.
-     * @param to                      The field to which a piece is moving.
+     * @param from The field from which a piece is moving.
+     * @param to   The field to which a piece is moving.
      * @return A chessboard with chess pieces in their future positions.
      */
-    public static @NotNull Chessboard createOneStepBeyond(Chessboard chessboardBeforeTheMove, Field from, Field to) {
-        return new Chessboard(chessboardBeforeTheMove, from, to);
+    public @NotNull Chessboard createOneStepBeyond(Field from, Field to) {
+        return new Chessboard(this, from, to);
     }
 
     /**
@@ -128,6 +114,7 @@ public final class Chessboard {
         this.getFields().forEach(field -> field.setValidFrom(false).setValidTo(false).setAttacking(false).setUnderAttack(false));
 
         List<Field> validMoves = this.createValidToFields(from, activePlayerColor);
+
         validMoves.forEach((Field validMove) -> {
             from.setValidFrom(true);
             validMove.setValidTo(true);
@@ -143,31 +130,9 @@ public final class Chessboard {
      * @return The field.
      */
     public Field getField(Coordinates coordinates) {
-        return this
-                .getFields()
-                .stream()
-                .filter(field -> field.getCoordinates().getX() == coordinates.getX())
-                .filter(field -> field.getCoordinates().getY() == coordinates.getY())
-                .findAny()
-                .orElse(null);
-    }
-
-    /**
-     * Retrieves a field that contains a king in the given color.
-     *
-     * @param chessboard The backend representation of a chessboard.
-     * @param color      The color of the king.
-     * @return The field that contains a king in the given color.
-     */
-    public Field getKingField(@NotNull Chessboard chessboard, PlayerColor color) {
-        return chessboard
-                .getFields()
-                .stream()
-                .filter(field -> field.getPieceType() != null)
-                .filter(field -> field.getPieceType().getColor() == color)
-                .filter(field -> field.getPieceType().getName().equals(KING))
-                .findAny()
-                .orElse(null);
+        return this.getFields().stream().filter(field -> field.getCoordinates().getX() == coordinates.getX()).filter(field -> field
+                .getCoordinates()
+                .getY() == coordinates.getY()).findAny().orElse(null);
     }
 
     /**
@@ -178,23 +143,19 @@ public final class Chessboard {
      * @return A list of fields.
      */
     public List<Field> resetValidMoves(Move move, PlayerColor activePlayerColor) {
-        this.allValidFromToCombinations = new HashMap<>();
+        Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
         List<Field> allValidToFields = new ArrayList<>();
 
-        this.getFields().forEach((Field from) -> {
-            from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
+        this.getFields().forEach((Field from) -> collectAllValidFromToCombinations(move,
+                activePlayerColor,
+                from,
+                allValidFromToCombinations,
+                allValidToFields));
 
-            setValidMoves(this.allValidFromToCombinations, from, allValidToFields, activePlayerColor);
-
-            if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
-                ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
-            }
+        allValidFromToCombinations.forEach((from, validToFields) -> {
+            setValidMoveColors(from, validToFields, allValidToFields, activePlayerColor);
+            validToFields.forEach(to -> this.children.add(this.createOneStepBeyond(from, to)));
         });
-
-        this.allValidFromToCombinations.forEach((from, validToFields) -> setValidMoveColors(from,
-                validToFields,
-                allValidToFields,
-                activePlayerColor));
 
         return allValidToFields;
     }
@@ -218,26 +179,32 @@ public final class Chessboard {
         });
     }
 
-    /**
-     * Gives all valid moves a color.
-     *
-     * @param from              The field from which the chess piece moves.
-     * @param validMoves        The list of valid moves for the chess piece standing on the from field.
-     * @param allValidMoves     The list of valid moves for all the chess pieces of the active player.
-     * @param activePlayerColor The active player color.
-     */
-    public void setValidMoveColors(Field from,
-            Collection<Field> validMoves,
-            @NotNull Collection<Field> allValidMoves,
-            PlayerColor activePlayerColor) {
-        this.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
-        allValidMoves.forEach(to -> createAbsoluteFieldValues(from, to, activePlayerColor));
-        createRelativeFieldValues(validMoves, allValidMoves, from);
+    private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
+        return (((double) getCurrentFieldValueComparedToMinimumValue(gridField, minValue)) / getMaximumFieldValueComparedToMinimumValue(minValue,
+                maxValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE;
     }
 
-    private static double calculateRelativeValue(int minValue, int maxValue, Field gridField) {
-        return (((double) getCurrentFieldValueComparedToMinimumValue(gridField, minValue)) /
-                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE;
+    private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,
+            @NotNull Field from,
+            Field to) {
+        return chessboardBeforeTheMove
+                .getFields()
+                .stream()
+                .filter(field -> Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
+                .map(field -> Objects.equals(field.getCode(), from.getCode())
+                        ? new Field(null).setCoordinates(from.getCoordinates())
+                        : new Field(from.getPieceType()).setCoordinates(to.getCoordinates()))
+                .collect(Collectors.toList());
+    }
+
+    private static @NotNull List<Field> createFieldsWithoutThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,
+            @NotNull Field from,
+            Field to) {
+        return chessboardBeforeTheMove
+                .getFields()
+                .stream()
+                .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
+                .collect(Collectors.toList());
     }
 
     private static void createRelativeFieldValues(@NotNull Collection<Field> validMoves, Collection<Field> allValidMoves, @NotNull Field from) {
@@ -282,9 +249,23 @@ public final class Chessboard {
         kingField.setCheckMate(isCheckMate).setStaleMate(isStaleMate);
     }
 
+    private void collectAllValidFromToCombinations(Move move,
+            PlayerColor activePlayerColor,
+            Field from,
+            Map<Field, List<Field>> allValidFromToCombinations,
+            List<Field> allValidToFields) {
+        from.setAttacking(false).setUnderAttack(false).setValidFrom(false);
+
+        setValidMoves(allValidFromToCombinations, from, allValidToFields, activePlayerColor);
+
+        if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
+            ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
+        }
+    }
+
     private void createAbsoluteFieldValues(Field from, Field to, PlayerColor activePlayerColor) {
         if (from != null && from.getPieceType() != null) {
-            var chessboardAfterMovement = Chessboard.createOneStepBeyond(this, from, to);
+            var chessboardAfterMovement = this.createOneStepBeyond(from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
                     .process(new ChessboardValueParameter(chessboardAfterMovement, activePlayerColor))
                     .getTotalValue());
@@ -293,11 +274,29 @@ public final class Chessboard {
     }
 
     private List<Field> createValidToFields(@NotNull Field from, PlayerColor activePlayerColor) {
-        return from.isActivePlayerField(activePlayerColor) ? this
+        return from.isActivePlayerField(activePlayerColor) ? this.getFields().stream().filter(to -> from
+                .getPieceType()
+                .isValidMove(new IsValidMoveParameter(this, from, to, false))).collect(Collectors.toList()) : new ArrayList<>();
+    }
+
+    private Field getKingField(PlayerColor color) {
+        return this
                 .getFields()
                 .stream()
-                .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this, from, to, false)))
-                .collect(Collectors.toList()) : new ArrayList<>();
+                .filter(field -> field.getPieceType() != null)
+                .filter(field -> field.getPieceType().getColor() == color)
+                .filter(field -> field.getPieceType().getName().equals(KING))
+                .findAny()
+                .orElse(null);
+    }
+
+    private void setValidMoveColors(Field from,
+            Collection<Field> validMoves,
+            @NotNull Collection<Field> allValidMoves,
+            PlayerColor activePlayerColor) {
+        this.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+        allValidMoves.forEach(to -> createAbsoluteFieldValues(from, to, activePlayerColor));
+        createRelativeFieldValues(validMoves, allValidMoves, from);
     }
 
     private void setValidMoves(Map<Field, List<Field>> allValidFromToCombinations,
@@ -305,8 +304,9 @@ public final class Chessboard {
             @NotNull List<Field> allValidToFields,
             PlayerColor activePlayerColor) {
         List<Field> validToFields = createValidToFields(from, activePlayerColor);
-        from.setValidTo(!validToFields.isEmpty());
-        from.setValidFrom(from.hasValidTo());
+
+        from.setValidTo(!validToFields.isEmpty()).setValidFrom(from.hasValidTo());
+
         allValidToFields.addAll(validToFields);
 
         if (from.isValidFrom()) {

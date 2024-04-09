@@ -16,20 +16,12 @@ public class ChessboardBuilder {
     private Chessboard       chessboard;
     private List<Chessboard> children;
 
-    public List<Chessboard> createChildren(Chessboard chessboard, PlayerColor activePlayerColor) {
-        return this.setChessboard(chessboard).resetValidMoves(activePlayerColor).createChildren().build();
-    }
-
     private List<Chessboard> build() {
         return new ArrayList<>(children);
     }
 
     private ChessboardBuilder createChildren() {
         this.children = new ArrayList<>();
-
-        this.chessboard
-                .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> children.add(Chessboard.createOneStepBeyond(this.chessboard, from, to))));
 
         return this;
     }

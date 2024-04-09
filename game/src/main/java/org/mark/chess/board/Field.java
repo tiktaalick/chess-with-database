@@ -65,14 +65,6 @@ public class Field implements Comparable<Field> {
         return this.id - other.id;
     }
 
-    public Field setId(int id) {
-        this.id = id;
-        this.code = Coordinates.createCode(id);
-        this.coordinates = Coordinates.create(id);
-
-        return this;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hashCode(id, code, coordinates);
@@ -146,7 +138,7 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = Chessboard.createOneStepBeyond(chessboard, this, to);
+        var gridAfterMovement = chessboard.createOneStepBeyond(this, to);
 
         List<Field> attackers = gridAfterMovement
                 .getFields()
@@ -221,6 +213,14 @@ public class Field implements Comparable<Field> {
         this.id = Coordinates.createId(coordinates);
         this.code = Coordinates.createCode(coordinates);
         this.coordinates = coordinates;
+        return this;
+    }
+
+    public Field setId(int id) {
+        this.id = id;
+        this.code = Coordinates.createCode(id);
+        this.coordinates = Coordinates.create(id);
+
         return this;
     }
 
