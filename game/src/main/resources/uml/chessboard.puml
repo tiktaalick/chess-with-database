@@ -1,0 +1,121 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----------'
+'Chessboard'
+'----------'
+class Chessboard {
+    - BackgroundColorRulesEngine
+    - ChessboardValueRulesEngine
+    - fields
+    - kingField
+    - opponentKingField
+    - level
+    - fromParentToChildMove
+    - children
+    + create()
+    + createEmpty()
+    + createOneStepBeyond()
+    + enableValidMoves()
+    + getField()
+    + resetValidMoves()
+    + setKingFieldColors()
+}
+
+class BackgroundColorRulesEngine {
+
+}
+
+class Field {
+    - BackgroundColorRulesEngine
+    - id
+    - code
+    - coordinates
+    - pieceType
+    - backgroundColor
+    - value
+    - relativeValue
+    - isValidFrom
+    - hasValidTo
+    - isAttacking
+    - isUnderAttack
+    - isCheckMate
+    - isStaleMate
+    + isActivePlayerField()
+    + isInCheckNow()
+    + isMovingIntoCheck()
+    + isNotAbleToMove()
+    + isValid()
+    + setAttackingColors()
+}
+
+class Move {
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    + setFrom()
+    + setTo()
+}
+
+class Coordinates {
+    - x
+    - y
+    + create()
+    + createCode()
+    + createId()
+}
+
+class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isPawnBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+class Rule {
+    + hasResult()
+    + createResult()
+}
+
+'---------'
+'Relations'
+'---------'
+Chessboard -up-* BackgroundColorRulesEngine
+Chessboard -right-* ChessboardValueRulesEngine
+Chessboard -left-* Field
+Chessboard -right-* Move
+Chessboard --* Chessboard
+Field -up-* BackgroundColorRulesEngine
+Field -left-* Coordinates
+Field --* PieceType
+Field *-- Move
+BackgroundColorRulesEngine .up.> HardwoodRule
+BackgroundColorRulesEngine .up.> FieldValueRule
+BackgroundColorRulesEngine .up.> AttackingRule
+BackgroundColorRulesEngine .up.> StalemateRule
+BackgroundColorRulesEngine .up.> CheckmateRule
+BackgroundColorRulesEngine .right.> BackgroundColor
+BackgroundColorRulesEngine -left-|> RulesEngine
+HardwoodRule -up-|> Rule
+FieldValueRule -up-|> Rule
+AttackingRule -up-|> Rule
+StalemateRule -up-|> Rule
+CheckmateRule -up-|> Rule
+
+@enduml

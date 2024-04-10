@@ -47,17 +47,6 @@ class AiMoveDirector {
     + performAiMove()
 }
 
-'class PieceType {
-'    - color
-'    - hasBeenKickedOffTheBoard
-'    - isPawnBeingPromoted
-'    + getName()
-'    + getNextPawnPromotion()
-'    + getValue()
-'    + isValidMove()
-'    + setPieceTypeSpecificAttributes()
-'}
-
 class Field {
     - BackgroundColorRulesEngine
     - id
@@ -92,6 +81,5 @@ MoveBuilder --> MoveBuilder
 MoveBuilder -down-* AiMoveDirector
 MoveBuilder ..> Move
 Move --* Field
-'Field --* PieceType
 
 @enduml

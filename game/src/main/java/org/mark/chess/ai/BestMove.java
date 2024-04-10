@@ -1,7 +1,6 @@
 package org.mark.chess.ai;
 
 import org.mark.chess.board.Chessboard;
-import org.mark.chess.board.ChessboardBuilder;
 
 import java.util.List;
 import java.util.function.Function;
@@ -13,10 +12,9 @@ import java.util.logging.Logger;
  */
 public class BestMove {
 
-    public static final  int               NUMBER_OF_MOVES_AHEAD = 1;
-    private static final int               EVEN                  = 2;
-    private static final Logger            LOGGER                = Logger.getLogger(BestMove.class.getName());
-    private static final ChessboardBuilder chessboardBuilder     = new ChessboardBuilder();
+    public static final  int    NUMBER_OF_MOVES_AHEAD = 1;
+    private static final int    EVEN                  = 2;
+    private static final Logger LOGGER                = Logger.getLogger(BestMove.class.getName());
 
     /**
      * Searches for the best move.
