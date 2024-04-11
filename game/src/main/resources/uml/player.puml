@@ -1,0 +1,39 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----------'
+'Player'
+'----------'
+class Player {
+    - color
+    - playerType
+}
+
+enum PlayerColor {
+    + BLACK
+    + WHITE
+    - name
+    - baseline
+    - baselinePawn
+    - opposite
+}
+
+enum PlayerType {
+    + HUMAN
+    + COMPUTER
+    -opposite
+}
+
+'---------'
+'Relations'
+'---------'
+Player *-left- PlayerColor
+Player *-right- PlayerType
+Player <|-- Human
+Player <|-- Computer
+
+@enduml

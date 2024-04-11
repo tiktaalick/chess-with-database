@@ -1,5 +1,8 @@
 package org.mark.chess.player;
 
+import lombok.Getter;
+
+@Getter
 public enum PlayerType {
     HUMAN,
     COMPUTER;
@@ -13,12 +16,7 @@ public enum PlayerType {
 
     PlayerType() { }
 
-    public PlayerType getOpposite() {
-        return opposite;
-    }
-
-    private PlayerType setOpposite(PlayerType opposite) {
+    private void setOpposite(PlayerType opposite) {
         this.opposite = opposite;
-        return this;
     }
 }

@@ -43,7 +43,7 @@ class KingIsValidCastlingRule {
     + isValidCastling()
 }
 
-class AiMoveDirector {
+class AiMoveBuilder {
     + performAiMove()
 }
 
@@ -73,13 +73,12 @@ class Field {
 '---------'
 'Relations'
 '---------'
-Game --* Move
-Game -right-* MoveBuilder
-MoveBuilder ..> KingIsValidCastlingRule
-MoveBuilder --> MoveBuilder
-MoveBuilder --> MoveBuilder
-MoveBuilder -down-* AiMoveDirector
-MoveBuilder ..> Move
-Move --* Field
+Game *-- Move
+Game *-right- MoveBuilder
+MoveBuilder .[#blue].> KingIsValidCastlingRule
+MoveBuilder --* MoveBuilder
+MoveBuilder *-down- AiMoveBuilder
+MoveBuilder -[#red]-> Move : performs move
+Move *-- Field
 
 @enduml

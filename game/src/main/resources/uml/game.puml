@@ -61,12 +61,12 @@ class Player {
 '---------'
 'Relations'
 '---------'
-GameService ..> Game
-GameService ..> Chessboard
-Game -left-* Chessboard
-Game -down-* MoveBuilder
-MoveBuilder .up.> Move
-Game -right-* Move
-Game -up-* Player
+GameService -[#red]-> Game : updates the game
+GameService -[#red]-> Chessboard : resets valid moves
+Game *-left- Chessboard
+Game *-down- MoveBuilder
+MoveBuilder -up[#red]-> Move : performs a move
+Game *-right- Move
+Game *-up- Player
 
 @enduml
