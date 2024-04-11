@@ -52,8 +52,8 @@ JFrame <|-- FrontendChessboard
 JButton <|-- FrontendField
 ActionListener <|-- FrontendChessboard
 MouseListener <|-- FrontendChessboard
-FrontendChessboard *-left- FrontendField : consists of >
-FrontendChessboard *-right- GameService : interacts with the backend >
+FrontendChessboard *-left- FrontendField
+FrontendChessboard *-right- GameService : interacts with the backend
 FrontendChessboard <-[#red]- Application : creates a board
 Application .down[#blue].> SpringBootApplication
 

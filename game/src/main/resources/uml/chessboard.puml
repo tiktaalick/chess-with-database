@@ -110,7 +110,7 @@ Chessboard *-up- BackgroundColorRulesEngine
 Chessboard *-right- ChessboardValueRulesEngine
 Chessboard *-left- Field
 Chessboard *-right- Move
-Chessboard --* Chessboard
+Chessboard "0..*"--o Chessboard
 Field *-up- BackgroundColorRulesEngine
 Field *-left- Coordinates
 Field *-- PieceType
