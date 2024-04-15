@@ -2,8 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Pawn;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +27,7 @@ class PawnIsValidBasicMoveRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertFalse(pawnIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -39,7 +39,7 @@ class PawnIsValidBasicMoveRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(pawnIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(pawnIsValidBasicMoveRule.createResult());
+        assertTrue(pawnIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidBasicMoveRule.getResult());
     }
 }

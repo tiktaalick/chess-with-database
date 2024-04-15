@@ -12,12 +12,12 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
     private static final int GOING_UP   = 1;
 
     @Override
-    public Boolean createResult() {
+    public Boolean getResult() {
         return false;
     }
 
     @Override
-    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return !isValidDirection(getFrom(), getTo());
@@ -25,8 +25,6 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
 
     private static boolean isValidDirection(@NotNull Field from, @NotNull Field to) {
         return Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()) ==
-                (from.getPieceType().getColor() == WHITE
-                        ? GOING_UP
-                        : GOING_DOWN);
+                (from.getPieceType().getColor() == WHITE ? GOING_UP : GOING_DOWN);
     }
 }

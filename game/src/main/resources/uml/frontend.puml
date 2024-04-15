@@ -34,8 +34,8 @@ class FrontendChessboard{
 }
 
 class FrontendField {
+    + {static} createButtonId()
     + updateGraphics()
-    + createButtonId()
     + reset()
 }
 

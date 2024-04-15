@@ -2,8 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Pawn;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,8 +27,8 @@ class PawnIsNotValidDirectionRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(pawnIsNotValidDirectionRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(pawnIsNotValidDirectionRule.createResult());
+        assertTrue(pawnIsNotValidDirectionRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsNotValidDirectionRule.getResult());
     }
 
     @Test
@@ -39,7 +39,7 @@ class PawnIsNotValidDirectionRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(pawnIsNotValidDirectionRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(pawnIsNotValidDirectionRule.createResult());
+        assertFalse(pawnIsNotValidDirectionRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsNotValidDirectionRule.getResult());
     }
 }

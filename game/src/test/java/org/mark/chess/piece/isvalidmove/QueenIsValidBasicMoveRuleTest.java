@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Queen;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,11 +30,12 @@ class QueenIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(queenIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"e3;c1", "e3;g1", "a1;a8", "a8;a1"}, delimiter = DELIMITER)
+    @CsvSource(value = {"e3;c1", "e3;g1", "a1;a8", "a8;a1"},
+            delimiter = DELIMITER)
     void testRule_WhenValidBasicMove_ThenReturnTrue(String codeFrom, String codeTo) {
         Field from = new Field(new Queen(WHITE)).setCode(codeFrom);
         Field to = new Field(null).setCode(codeTo);
@@ -42,7 +43,7 @@ class QueenIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(queenIsValidBasicMoveRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(queenIsValidBasicMoveRule.createResult());
+        assertTrue(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(queenIsValidBasicMoveRule.getResult());
     }
 }

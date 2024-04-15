@@ -14,20 +14,18 @@ public class FieldValueRule implements Rule<Field, Color> {
     private              Field field  = new Field(null);
 
     @Override
-    public Color createResult() {
+    public Color getResult() {
         return getValueColor(field);
     }
 
     @Override
-    public boolean hasResult(@NotNull Field field) {
+    public boolean isApplicable(@NotNull Field field) {
         this.field = field;
         return field.isValidFrom() || field.hasValidTo();
     }
 
     private static @NotNull Color getValueColor(@NotNull Field field) {
-        int relativeValue = field.getRelativeValue() == null
-                ? 0
-                : field.getRelativeValue();
+        int relativeValue = field.getRelativeValue() == null ? 0 : field.getRelativeValue();
         return new Color(MAXIMUM_COLOR_VALUE - relativeValue,
                 Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue),
                 MAXIMUM_COLOR_VALUE - (Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue)));

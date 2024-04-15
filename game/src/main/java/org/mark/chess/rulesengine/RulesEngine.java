@@ -33,6 +33,6 @@ public class RulesEngine<T, U> {
      * @return The created result for the first rule that should create a result.
      */
     public U process(T ruleParameter) {
-        return rules.stream().filter(rule -> rule.hasResult(ruleParameter)).findFirst().orElseThrow(RuleNotFoundException::new).createResult();
+        return rules.stream().filter(rule -> rule.isApplicable(ruleParameter)).findFirst().orElseThrow(RuleNotFoundException::new).getResult();
     }
 }

@@ -40,7 +40,7 @@ class Game {
 }
 
 class KingIsValidCastlingRule {
-    + isValidCastling()
+    + {static} isValidCastling()
 }
 
 class AiMoveBuilder {

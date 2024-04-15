@@ -1,19 +1,19 @@
 package org.mark.chess.piece.isvalidmove;
 
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.rulesengine.Rule;
 
 public class PawnIsValidEnPassantMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean createResult() {
+    public Boolean getResult() {
         return true;
     }
 
     @Override
-    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isValidEnPassantMove(getGrid(), getFrom(), getTo());

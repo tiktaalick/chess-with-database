@@ -66,9 +66,9 @@ class Move {
 class Coordinates {
     - x
     - y
-    + create()
-    + createCode()
-    + createId()
+    + {static} create()
+    + {static} createCode()
+    + {static} createId()
 }
 
 class PieceType {
@@ -89,8 +89,8 @@ interface RulesEngine {
 }
 
 interface Rule {
-    + hasResult()
-    + createResult()
+    + isApplicable()
+    + getResult()
 }
 
 enum BackgroundColor {

@@ -1,20 +1,20 @@
 package org.mark.chess.piece.isvalidmove;
 
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Chessboard;
 import org.mark.chess.rulesengine.Rule;
 
 public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean createResult() {
+    public Boolean getResult() {
         return false;
     }
 
     @Override
-    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isJumping(getGrid(), getFrom(), getTo());
@@ -44,12 +44,8 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
     }
 
     private static boolean isFieldOccupied(@NotNull Chessboard chessboard, Coordinates currentCoordinates) {
-        return chessboard
-                .getFields()
-                .stream()
-                .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
-                        field.getCoordinates().getY() == currentCoordinates.getY())
-                .anyMatch(field -> field.getPieceType() != null);
+        return chessboard.getFields().stream().filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
+                field.getCoordinates().getY() == currentCoordinates.getY()).anyMatch(field -> field.getPieceType() != null);
     }
 
     private static boolean movingTowardsDestination(@NotNull Coordinates currentCoordinates, @NotNull Coordinates to, Coordinates step) {

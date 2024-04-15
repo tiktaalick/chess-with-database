@@ -17,12 +17,12 @@ public class TotalValueRule implements Rule<ChessboardValueParameter, Chessboard
     public TotalValueRule(ChessboardValue chessboardValue) { this.chessboardValue = chessboardValue; }
 
     @Override
-    public ChessboardValue createResult() {
+    public ChessboardValue getResult() {
         return chessboardValue;
     }
 
     @Override
-    public boolean hasResult(ChessboardValueParameter ruleParameter) {
+    public boolean isApplicable(ChessboardValueParameter ruleParameter) {
         chessboardValue.setTotalValue(chessboardValue.getPieceValue());
 
         return true;

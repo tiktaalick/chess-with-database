@@ -35,16 +35,20 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     @Override
-    public Boolean createResult() {
+    public Boolean getResult() {
         return true;
     }
 
     @Override
-    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||
-                isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
+        return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) || isValidCastling(getGrid(),
+                getFrom(),
+                getTo(),
+                KING_CASTLING_TO_THE_RIGHT,
+                isOpponent(),
+                false);
     }
 
     private static Field getRookField(@NotNull Chessboard chessboard, @NotNull Field from, int direction) {
@@ -58,8 +62,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     private static boolean isRookValid(Field rookField) {
-        return Optional.ofNullable(rookField).map(Field::getPieceType).map(PieceType::getName).orElse(QUEEN).equals(ROOK) &&
-                !((Rook) Optional.of(rookField).map(Field::getPieceType).orElse(new Rook(PlayerColor.BLACK))).isHasMovedAtLeastOnce();
+        return Optional.ofNullable(rookField).map(Field::getPieceType).map(PieceType::getName).orElse(QUEEN).equals(ROOK) && !((Rook) Optional.of(
+                rookField).map(Field::getPieceType).orElse(new Rook(PlayerColor.BLACK))).isHasMovedAtLeastOnce();
     }
 
     private static boolean isValidCastlingPieces(Chessboard chessboard, Field from, int direction, boolean isNowCastling) {

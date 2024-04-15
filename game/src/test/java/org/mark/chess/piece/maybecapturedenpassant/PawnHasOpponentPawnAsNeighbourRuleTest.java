@@ -2,8 +2,8 @@ package org.mark.chess.piece.maybecapturedenpassant;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Bishop;
 import org.mark.chess.piece.Pawn;
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
@@ -32,7 +32,7 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(pawnHasOpponentPawnAsNeighbourRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -46,7 +46,7 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(pawnHasOpponentPawnAsNeighbourRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertTrue(pawnHasOpponentPawnAsNeighbourRule.createResult());
+        assertTrue(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnHasOpponentPawnAsNeighbourRule.getResult());
     }
 }

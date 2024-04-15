@@ -28,7 +28,7 @@ public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter,
     }
 
     @Override
-    public ChessboardValue createResult() {
+    public ChessboardValue getResult() {
         return chessboardValue;
     }
 
@@ -39,7 +39,7 @@ public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter,
      * @return Returns false. Only the {@link TotalValueRule} will eventually return with a result.
      */
     @Override
-    public boolean hasResult(ChessboardValueParameter chessboardValueParameter) {
+    public boolean isApplicable(ChessboardValueParameter chessboardValueParameter) {
         chessboardValue.setPieceValue(BEST_MOVE.calculate(TOTAL_PIECES_VALUE, chessboardValueParameter));
 
         return false;

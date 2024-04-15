@@ -11,12 +11,12 @@ import static org.mark.chess.board.backgroundcolor.BackgroundColor.ATTACKING;
 public class AttackingRule implements Rule<Field, Color> {
 
     @Override
-    public Color createResult() {
+    public Color getResult() {
         return ATTACKING.getAwtColor();
     }
 
     @Override
-    public boolean hasResult(@NotNull Field field) {
+    public boolean isApplicable(@NotNull Field field) {
         return (field.isAttacking() || field.isUnderAttack()) && !field.isValidFrom();
     }
 }

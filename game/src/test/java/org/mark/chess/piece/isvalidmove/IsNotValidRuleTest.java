@@ -10,12 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class IsNotValidRuleTest {
+
     @InjectMocks
     IsNotValidRule isNotValidRule;
 
     @Test
     void testRule_Always_ReturnTrue() {
-        assertTrue(isNotValidRule.hasResult(null));
-        assertFalse(isNotValidRule.createResult());
+        assertTrue(isNotValidRule.isApplicable(null));
+        assertFalse(isNotValidRule.getResult());
     }
 }

@@ -2,8 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Bishop;
 import org.mark.chess.piece.King;
 import org.mark.chess.piece.Queen;
@@ -33,8 +33,8 @@ class IsMovingIntoCheckRuleTest {
         chessboard.getFields().set(kingField.getId(), kingField);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(isMovingIntoCheckRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(isMovingIntoCheckRule.createResult());
+        assertTrue(isMovingIntoCheckRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isMovingIntoCheckRule.getResult());
     }
 
     @Test
@@ -49,6 +49,6 @@ class IsMovingIntoCheckRuleTest {
         chessboard.getFields().set(kingField.getId(), kingField);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(isMovingIntoCheckRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isMovingIntoCheckRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

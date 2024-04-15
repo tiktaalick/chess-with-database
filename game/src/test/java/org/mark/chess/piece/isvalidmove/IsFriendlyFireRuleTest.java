@@ -2,8 +2,8 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.piece.Bishop;
 import org.mark.chess.piece.Pawn;
 import org.mockito.InjectMocks;
@@ -28,8 +28,8 @@ class IsFriendlyFireRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(isFriendlyFireRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
-        assertFalse(isFriendlyFireRule.createResult());
+        assertTrue(isFriendlyFireRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isFriendlyFireRule.getResult());
     }
 
     @Test
@@ -40,6 +40,6 @@ class IsFriendlyFireRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(isFriendlyFireRule.hasResult(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isFriendlyFireRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

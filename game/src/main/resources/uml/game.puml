@@ -26,8 +26,8 @@ class Game {
 }
 
 class Chessboard {
-    + create()
-    + createEmpty()
+    + {static} create()
+    + {static} createEmpty()
     + createOneStepBeyond()
     + getField()
     + getKingField()

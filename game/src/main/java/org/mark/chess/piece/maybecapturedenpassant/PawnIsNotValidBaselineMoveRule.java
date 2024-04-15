@@ -1,18 +1,18 @@
 package org.mark.chess.piece.maybecapturedenpassant;
 
 import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
-import org.mark.chess.rulesengine.Rule;
 import org.mark.chess.piece.isvalidmove.PieceTypeSharedRules;
+import org.mark.chess.rulesengine.Rule;
 
 public class PawnIsNotValidBaselineMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
-    public Boolean createResult() {
+    public Boolean getResult() {
         return false;
     }
 
     @Override
-    public boolean hasResult(IsValidMoveParameter isValidMoveParameter) {
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return !pawnIsValidBaselineMove();
