@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.Bishop;
-import org.mark.chess.piece.King;
-import org.mark.chess.piece.Queen;
+import org.mark.chess.piece.bishop.Bishop;
+import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.king.King;
+import org.mark.chess.piece.queen.Queen;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 

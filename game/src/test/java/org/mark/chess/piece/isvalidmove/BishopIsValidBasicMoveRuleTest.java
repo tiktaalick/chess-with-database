@@ -6,7 +6,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.Bishop;
+import org.mark.chess.piece.bishop.Bishop;
+import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidBasicMoveRule;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 

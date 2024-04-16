@@ -2,11 +2,11 @@ package org.mark.chess.move;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.board.Field;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
-import org.mark.chess.piece.Pawn;
-import org.mark.chess.piece.PieceType;
+import org.mark.chess.piece.general.PieceType;
+import org.mark.chess.piece.pawn.Pawn;
 import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -10,9 +10,9 @@ import org.mark.chess.ai.ChessboardValueRulesEngine;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
-import org.mark.chess.piece.InitialPieceRepository;
-import org.mark.chess.piece.Pawn;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.general.InitialPieceFactory;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.pawn.Pawn;
 import org.mark.chess.player.PlayerColor;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.mark.chess.piece.PieceType.KING;
-import static org.mark.chess.piece.PieceType.PAWN;
+import static org.mark.chess.piece.general.PieceType.KING;
+import static org.mark.chess.piece.general.PieceType.PAWN;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
 
@@ -80,7 +80,7 @@ public final class Chessboard {
     public static @NotNull Chessboard create() {
         return new Chessboard(IntStream
                 .rangeClosed(0, MAXIMUM_SQUARE_ID)
-                .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceRepository.getInitialPiece(id)))
+                .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceFactory.createInitialPiece(id)))
                 .collect(Collectors.toList()));
     }
 

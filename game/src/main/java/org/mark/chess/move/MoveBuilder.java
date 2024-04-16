@@ -5,13 +5,13 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
-import org.mark.chess.piece.isvalidmove.KingIsValidCastlingRule;
+import org.mark.chess.piece.king.isvalidmove.KingIsValidCastlingRule;
 
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.mark.chess.piece.PieceType.KING;
+import static org.mark.chess.piece.general.PieceType.KING;
 
 /**
  * Builds moves.
@@ -55,16 +55,8 @@ public class MoveBuilder {
      * @return The built move.
      */
     public Move performToMove(@NotNull Game game, Move move, Field fieldClick) {
-        return this
-                .setMove(move)
-                .setTo(game.getChessboard(), fieldClick)
-                .setPieceTypeSpecificAttributes(game)
-                .moveRookIfCastling(game)
-                .changeTurn(game)
-                .resetFrom()
-                .setKingFieldColors(game)
-                .performAiMove(game)
-                .build();
+        return this.setMove(move).setTo(game.getChessboard(), fieldClick).setPieceTypeSpecificAttributes(game).moveRookIfCastling(game).changeTurn(
+                game).resetFrom().setKingFieldColors(game).performAiMove(game).build();
     }
 
     protected Move build() {
@@ -104,11 +96,10 @@ public class MoveBuilder {
                     : KingIsValidCastlingRule.ROOK_CASTLING_FROM_THE_RIGHT), this.move.getFrom().getPieceType().getColor().getBaseline());
 
             var rookFromField = game.getChessboard().getField(rookCoordinates);
-            var rookToField = game
-                    .getChessboard()
-                    .getField(rookCoordinates.setX(this.move.getTo().getCoordinates().getX() == KingIsValidCastlingRule.KING_CASTLING_TO_THE_LEFT
-                            ? KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_RIGHT
-                            : KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_LEFT));
+            var rookToField = game.getChessboard().getField(rookCoordinates.setX(this.move.getTo().getCoordinates().getX() ==
+                    KingIsValidCastlingRule.KING_CASTLING_TO_THE_LEFT
+                    ? KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_RIGHT
+                    : KingIsValidCastlingRule.ROOK_CASTLING_TO_THE_LEFT));
 
             rookMoveBuilder.performRookMove(game.getChessboard(), rookFromField, rookToField);
         }

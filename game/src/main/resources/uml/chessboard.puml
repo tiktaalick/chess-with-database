@@ -26,10 +26,6 @@ class Chessboard {
     + setKingFieldColors()
 }
 
-class BackgroundColorRulesEngine {
-
-}
-
 class Field {
     - BackgroundColorRulesEngine
     - id

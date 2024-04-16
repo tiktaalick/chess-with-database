@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
-import org.mark.chess.piece.Queen;
+import org.mark.chess.piece.queen.Queen;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

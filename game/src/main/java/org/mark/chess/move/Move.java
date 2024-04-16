@@ -7,12 +7,12 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
-import org.mark.chess.piece.PieceType;
+import org.mark.chess.piece.general.PieceType;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.mark.chess.piece.PieceType.PAWN;
+import static org.mark.chess.piece.general.PieceType.PAWN;
 
 /**
  * Contains methods that are move related.
@@ -51,8 +51,10 @@ public class Move {
      * @return True if the field is a from-field.
      */
     public boolean isFrom(Game game, @NotNull Field field) {
-        return field.getPieceType() != null &&
-                field.getPieceType().getColor() == game.getPlayers().get(game.getActivePlayer().getColor().ordinal()).getColor();
+        return field.getPieceType() != null && field.getPieceType().getColor() == game
+                .getPlayers()
+                .get(game.getActivePlayer().getColor().ordinal())
+                .getColor();
     }
 
     public boolean isValid() {

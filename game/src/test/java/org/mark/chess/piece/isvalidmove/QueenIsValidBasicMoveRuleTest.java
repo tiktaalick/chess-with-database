@@ -6,7 +6,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.Queen;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.queen.Queen;
+import org.mark.chess.piece.queen.isvalidmove.QueenIsValidBasicMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 

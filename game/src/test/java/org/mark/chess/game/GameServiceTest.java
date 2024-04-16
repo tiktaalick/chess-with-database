@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.move.Move;
-import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.pawn.Pawn;
 import org.mark.chess.player.Human;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

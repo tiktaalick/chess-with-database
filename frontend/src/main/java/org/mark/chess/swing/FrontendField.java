@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
-import org.mark.chess.piece.PieceType;
+import org.mark.chess.piece.general.PieceType;
 import org.mark.chess.player.PlayerColor;
 
 import javax.imageio.ImageIO;

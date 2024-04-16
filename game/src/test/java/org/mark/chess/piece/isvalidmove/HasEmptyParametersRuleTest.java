@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
+import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -2,10 +2,10 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.piece.maybecapturedenpassant.PawnMayBeCapturedEnPassantRulesEngine;
-import org.mark.chess.piece.maybecapturedenpassant.PawnHasOpponentPawnAsNeighbourRule;
-import org.mark.chess.piece.maybecapturedenpassant.PawnIsNotValidBaselineMoveRule;
-import org.mark.chess.piece.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.pawn.maybecapturedenpassant.PawnHasOpponentPawnAsNeighbourRule;
+import org.mark.chess.piece.pawn.maybecapturedenpassant.PawnIsNotValidBaselineMoveRule;
+import org.mark.chess.piece.pawn.maybecapturedenpassant.PawnMayBeCapturedEnPassantRulesEngine;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class PawnMayBeCapturedEnPassantRulesEngineTest {
+
     @InjectMocks
     private PawnMayBeCapturedEnPassantRulesEngine pawnMayBeCapturedEnPassantRulesEngine;
 

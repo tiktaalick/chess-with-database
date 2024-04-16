@@ -1,0 +1,21 @@
+package org.mark.chess.piece.pawn.isvalidmove;
+
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules;
+import org.mark.chess.rulesengine.Rule;
+
+public class PawnIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
+
+    @Override
+    public Boolean getResult() {
+        return true;
+    }
+
+    @Override
+    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+        setParameter(isValidMoveParameter);
+
+        return !isCaptureMove(getFrom(), getTo()) && getAbsoluteHorizontalMove(getFrom(), getTo()) == ZERO_STEPS && getAbsoluteVerticalMove(getFrom(),
+                getTo()) == ONE_STEP;
+    }
+}

@@ -7,8 +7,8 @@ import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
-import org.mark.chess.piece.PieceType;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.general.PieceType;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.player.PlayerColor;
 import org.springframework.util.CollectionUtils;
 
@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.mark.chess.piece.PieceType.KING;
+import static org.mark.chess.piece.general.PieceType.KING;
 
 /**
  * Contains methods that are Field related.
@@ -140,13 +140,10 @@ public class Field implements Comparable<Field> {
 
         var gridAfterMovement = chessboard.createOneStepBeyond(this, to);
 
-        List<Field> attackers = gridAfterMovement
-                .getFields()
-                .stream()
-                .filter(opponentField -> opponentField.getPieceType() != null)
-                .filter(opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor())
-                .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
-                .collect(Collectors.toList());
+        List<Field> attackers = gridAfterMovement.getFields().stream().filter(opponentField -> opponentField.getPieceType() != null).filter(
+                opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor()).filter(opponentField -> isValidMove(
+                gridAfterMovement,
+                opponentField)).collect(Collectors.toList());
 
         return !attackers.isEmpty();
     }
@@ -245,9 +242,10 @@ public class Field implements Comparable<Field> {
     }
 
     private static boolean isValidMove(Chessboard chessboardAfterMovement, @NotNull Field opponentField) {
-        return opponentField
-                .getPieceType()
-                .isValidMove(new IsValidMoveParameter(chessboardAfterMovement, opponentField, chessboardAfterMovement.getKingField(), true));
+        return opponentField.getPieceType().isValidMove(new IsValidMoveParameter(chessboardAfterMovement,
+                opponentField,
+                chessboardAfterMovement.getKingField(),
+                true));
     }
 
     private static void setUnderAttackColor(@NotNull Field attackedKingField) {

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
-import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.pawn.Pawn;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -14,6 +14,7 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 
 @ExtendWith(MockitoExtension.class)
 class PawnTest {
+
     @InjectMocks
     private Pawn pawn;
 
@@ -22,7 +23,7 @@ class PawnTest {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
         Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 1));
 
-        assertTrue(pawn.setPawnBeingPromoted(from, to).isPawnBeingPromoted());
+        assertTrue(pawn.setBeingPromoted(from, to).isBeingPromoted());
     }
 
     @Test
@@ -30,15 +31,15 @@ class PawnTest {
         Field from = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(4, 1));
         Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
 
-        assertTrue(pawn.setPawnBeingPromoted(from, to).isPawnBeingPromoted());
+        assertTrue(pawn.setBeingPromoted(from, to).isBeingPromoted());
     }
 
     @Test
     void testIsPawnBeingPromoted_WhenPawnBeingPromoted_ThenReturnTrue() {
-        Field from = new Field(new Pawn(WHITE).setPawnBeingPromoted(true));
+        Field from = new Field(new Pawn(WHITE).setBeingPromoted(true));
         Field to = new Field(null);
 
-        assertTrue(pawn.setPawnBeingPromoted(from, to).isPawnBeingPromoted());
+        assertTrue(pawn.setBeingPromoted(from, to).isBeingPromoted());
     }
 
     @Test
@@ -46,7 +47,7 @@ class PawnTest {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(6, 6));
         Field to = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 8));
 
-        assertTrue(pawn.setPawnBeingPromoted(from, to).isPawnBeingPromoted());
+        assertTrue(pawn.setBeingPromoted(from, to).isBeingPromoted());
     }
 
     @Test
@@ -54,6 +55,6 @@ class PawnTest {
         Field from = new Field(new Pawn(WHITE)).setCoordinates(new Coordinates(4, 8));
         Field to = new Field(new Pawn(BLACK)).setCoordinates(new Coordinates(6, 6));
 
-        assertTrue(pawn.setPawnBeingPromoted(from, to).isPawnBeingPromoted());
+        assertTrue(pawn.setBeingPromoted(from, to).isBeingPromoted());
     }
 }
