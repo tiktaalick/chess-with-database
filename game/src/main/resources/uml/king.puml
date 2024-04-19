@@ -1,0 +1,67 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class King {
+    - {static} kingIsValidMoveRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- King
+King *-- KingIsValidMoveRulesEngine
+KingIsValidMoveRulesEngine -up-|> RulesEngine
+KingIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
+KingIsValidMoveRulesEngine .down[#blue].> IsValidMoveParameter
+HasEmptyParametersRule -up-* KingIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* KingIsValidMoveRulesEngine
+IsJumpingRule -up-* KingIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* KingIsValidMoveRulesEngine
+KingIsValidBasicMoveRule -up-* KingIsValidMoveRulesEngine
+KingIsValidCastlingRule -up-* KingIsValidMoveRulesEngine
+IsNotValidRule -up-* KingIsValidMoveRulesEngine
+HasEmptyParametersRule --|> Rule
+IsFriendlyFireRule --|> Rule
+IsJumpingRule --|> Rule
+IsMovingIntoCheckRule --|> Rule
+KingIsValidBasicMoveRule --|> Rule
+KingIsValidCastlingRule --|> Rule
+IsNotValidRule --|> Rule
+
+@enduml
