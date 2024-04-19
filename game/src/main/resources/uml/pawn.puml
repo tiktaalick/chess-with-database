@@ -1,0 +1,88 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Pawn {
+    - {static} pawnIsValidMoveRulesEngine
+    - {static} pawnMayBeCapturedEnPassantRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Pawn
+Pawn *-- PawnIsValidMoveRulesEngine
+PawnIsValidMoveRulesEngine -up-|> RulesEngine
+PawnIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
+PawnIsValidMoveRulesEngine .[#blue].> IsValidMoveParameter
+
+HasEmptyParametersRule --* PawnIsValidMoveRulesEngine
+IsFriendlyFireRule --* PawnIsValidMoveRulesEngine
+IsJumpingRule --* PawnIsValidMoveRulesEngine
+IsMovingIntoCheckRule --* PawnIsValidMoveRulesEngine
+PawnIsValidBasicMoveRule --* PawnIsValidMoveRulesEngine
+PawnIsNotValidDirectionRule --* PawnIsValidMoveRulesEngine
+PawnIsValidBaselineMoveRule --* PawnIsValidMoveRulesEngine
+PawnIsValidCaptureMoveRule --* PawnIsValidMoveRulesEngine
+PawnIsValidEnPassantMoveRule --* PawnIsValidMoveRulesEngine
+IsNotValidRule --* PawnIsValidMoveRulesEngine
+
+HasEmptyParametersRule -up-|> Rule
+IsFriendlyFireRule -up-|> Rule
+IsJumpingRule -up-|> Rule
+IsMovingIntoCheckRule -up-|> Rule
+PawnIsValidBasicMoveRule -up-|> Rule
+PawnIsNotValidDirectionRule -up-|> Rule
+PawnIsValidBaselineMoveRule -up-|> Rule
+PawnIsValidCaptureMoveRule -up-|> Rule
+PawnIsValidEnPassantMoveRule -up-|> Rule
+IsNotValidRule -up-|> Rule
+
+Pawn *-- PawnMayBeCapturedEnPassantRulesEngine
+PawnMayBeCapturedEnPassantRulesEngine -up-|> RulesEngine
+PawnMayBeCapturedEnPassantRulesEngine -up-|> PieceTypeSharedRules
+PawnMayBeCapturedEnPassantRulesEngine .[#blue].> IsValidMoveParameter
+
+PawnIsNotValidBaselineMoveRule --* PawnMayBeCapturedEnPassantRulesEngine
+PawnHasOpponentPawnAsNeighbourRule --* PawnMayBeCapturedEnPassantRulesEngine
+IsNotValidRule --* PawnMayBeCapturedEnPassantRulesEngine
+
+PawnIsNotValidBaselineMoveRule -up-|> Rule
+PawnHasOpponentPawnAsNeighbourRule -up-|> Rule
+
+@enduml
