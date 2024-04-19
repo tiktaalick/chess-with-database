@@ -1,0 +1,63 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Knight {
+    - {static} knightIsValidMoveRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Knight
+Knight *-- KnightIsValidMoveRulesEngine
+KnightIsValidMoveRulesEngine -up-|> RulesEngine
+KnightIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
+KnightIsValidMoveRulesEngine .down[#blue].> IsValidMoveParameter
+HasEmptyParametersRule -up-* KnightIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* KnightIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
+KnightIsValidBasicMoveRule -up-* KnightIsValidMoveRulesEngine
+IsNotValidRule -up-* KnightIsValidMoveRulesEngine
+HasEmptyParametersRule --|> Rule
+IsFriendlyFireRule --|> Rule
+IsMovingIntoCheckRule --|> Rule
+KnightIsValidBasicMoveRule --|> Rule
+IsNotValidRule --|> Rule
+
+@enduml
