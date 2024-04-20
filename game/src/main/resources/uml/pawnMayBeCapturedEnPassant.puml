@@ -58,5 +58,6 @@ IsNotValidRule -up-* PawnMayBeCapturedEnPassantRulesEngine
 
 PawnIsNotValidBaselineMoveRule -down-|> Rule
 PawnHasOpponentPawnAsNeighbourRule -down-|> Rule
+IsNotValidRule -down-|> Rule
 
 @enduml

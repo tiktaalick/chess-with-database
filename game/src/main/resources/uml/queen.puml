@@ -19,8 +19,8 @@ abstract class PieceType {
     + setPieceTypeSpecificAttributes()
 }
 
-class Bishop {
-    - {static} bishopIsValidMoveRulesEngine
+class Queen {
+    - {static} queenIsValidMoveRulesEngine
 }
 
 class IsValidMoveParameter {
@@ -44,22 +44,22 @@ interface Rule {
 '---------'
 'Relations'
 '---------'
-PieceType <|-down- Bishop
-Bishop *-- BishopIsValidMoveRulesEngine
-BishopIsValidMoveRulesEngine -up-|> RulesEngine
-BishopIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
-BishopIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
-HasEmptyParametersRule -up-* BishopIsValidMoveRulesEngine
-IsFriendlyFireRule -up-* BishopIsValidMoveRulesEngine
-IsJumpingRule -up-* BishopIsValidMoveRulesEngine
-IsMovingIntoCheckRule -up-* BishopIsValidMoveRulesEngine
-BishopIsValidBasicMoveRule -up-* BishopIsValidMoveRulesEngine
-IsNotValidRule -up-* BishopIsValidMoveRulesEngine
+PieceType <|-down- Queen
+Queen *-- QueenIsValidMoveRulesEngine
+QueenIsValidMoveRulesEngine -up-|> RulesEngine
+QueenIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
+QueenIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+HasEmptyParametersRule -up-* QueenIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* QueenIsValidMoveRulesEngine
+IsJumpingRule -up-* QueenIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* QueenIsValidMoveRulesEngine
+QueenIsValidBasicMoveRule -up-* QueenIsValidMoveRulesEngine
+IsNotValidRule -up-* QueenIsValidMoveRulesEngine
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
-BishopIsValidBasicMoveRule --|> Rule
+QueenIsValidBasicMoveRule --|> Rule
 IsNotValidRule --|> Rule
 
 @enduml

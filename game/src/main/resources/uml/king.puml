@@ -48,7 +48,7 @@ PieceType <|-down- King
 King *-- KingIsValidMoveRulesEngine
 KingIsValidMoveRulesEngine -up-|> RulesEngine
 KingIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
-KingIsValidMoveRulesEngine .down[#blue].> IsValidMoveParameter
+KingIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
 HasEmptyParametersRule -up-* KingIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* KingIsValidMoveRulesEngine
 IsJumpingRule -up-* KingIsValidMoveRulesEngine

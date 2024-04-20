@@ -48,7 +48,7 @@ PieceType <|-down- Knight
 Knight *-- KnightIsValidMoveRulesEngine
 KnightIsValidMoveRulesEngine -up-|> RulesEngine
 KnightIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
-KnightIsValidMoveRulesEngine .down[#blue].> IsValidMoveParameter
+KnightIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
 HasEmptyParametersRule -up-* KnightIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* KnightIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
