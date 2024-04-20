@@ -1,0 +1,62 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Pawn {
+    - {static} pawnIsValidMoveRulesEngine
+    - {static} pawnMayBeCapturedEnPassantRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Pawn
+
+Pawn *-down- PawnMayBeCapturedEnPassantRulesEngine
+PawnMayBeCapturedEnPassantRulesEngine -up-|> RulesEngine
+PawnMayBeCapturedEnPassantRulesEngine -up-|> PieceTypeSharedRules
+PawnMayBeCapturedEnPassantRulesEngine .left[#blue].> IsValidMoveParameter
+
+PawnIsNotValidBaselineMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+PawnHasOpponentPawnAsNeighbourRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+IsNotValidRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+
+PawnIsNotValidBaselineMoveRule -down-|> Rule
+PawnHasOpponentPawnAsNeighbourRule -down-|> Rule
+
+@enduml

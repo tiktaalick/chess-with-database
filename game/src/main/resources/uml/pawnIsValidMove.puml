@@ -1,0 +1,75 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Pawn {
+    - {static} pawnIsValidMoveRulesEngine
+    - {static} pawnMayBeCapturedEnPassantRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Pawn
+Pawn *-down- PawnIsValidMoveRulesEngine
+PawnIsValidMoveRulesEngine -up-|> RulesEngine
+PawnIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
+PawnIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
+HasEmptyParametersRule -up-* PawnIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* PawnIsValidMoveRulesEngine
+IsJumpingRule -up-* PawnIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* PawnIsValidMoveRulesEngine
+PawnIsValidBasicMoveRule -up-* PawnIsValidMoveRulesEngine
+PawnIsNotValidDirectionRule -up-* PawnIsValidMoveRulesEngine
+PawnIsValidBaselineMoveRule -up-* PawnIsValidMoveRulesEngine
+PawnIsValidCaptureMoveRule -up-* PawnIsValidMoveRulesEngine
+PawnIsValidEnPassantMoveRule -up-* PawnIsValidMoveRulesEngine
+IsNotValidRule -up-* PawnIsValidMoveRulesEngine
+
+HasEmptyParametersRule -down-|> Rule
+IsFriendlyFireRule -down-|> Rule
+IsJumpingRule -down-|> Rule
+IsMovingIntoCheckRule -down-|> Rule
+PawnIsValidBasicMoveRule -down-|> Rule
+PawnIsNotValidDirectionRule -down-|> Rule
+PawnIsValidBaselineMoveRule -down-|> Rule
+PawnIsValidCaptureMoveRule -down-|> Rule
+PawnIsValidEnPassantMoveRule -down-|> Rule
+IsNotValidRule -down-|> Rule
+@enduml
