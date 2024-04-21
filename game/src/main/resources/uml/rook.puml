@@ -47,20 +47,28 @@ interface Rule {
 PieceType <|-down- Rook
 Rook *-- RookIsValidMoveRulesEngine
 RookIsValidMoveRulesEngine -up-|> RulesEngine
-RookIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
 RookIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
 HasEmptyParametersRule -up-* RookIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* RookIsValidMoveRulesEngine
 IsJumpingRule -up-* RookIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* RookIsValidMoveRulesEngine
 RookIsValidBasicMoveRule -up-* RookIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* RookIsValidMoveRulesEngine
+
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 RookIsValidBasicMoveRule --|> Rule
 IsNotAValidMoveRule --|> Rule
+
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsJumpingRule --|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+RookIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

@@ -46,19 +46,27 @@ interface Rule {
 '---------'
 PieceType <|-down- Knight
 Knight *-- KnightIsValidMoveRulesEngine
+
 KnightIsValidMoveRulesEngine -up-|> RulesEngine
-KnightIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
 KnightIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
 HasEmptyParametersRule -up-* KnightIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* KnightIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
 KnightIsValidBasicMoveRule -up-* KnightIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* KnightIsValidMoveRulesEngine
+
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 KnightIsValidBasicMoveRule --|> Rule
 IsNotAValidMoveRule --|> Rule
+
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+KnightIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

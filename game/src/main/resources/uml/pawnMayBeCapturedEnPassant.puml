@@ -49,8 +49,7 @@ PieceType <|-down- Pawn
 
 Pawn *-down- PawnMayBeCapturedEnPassantRulesEngine
 PawnMayBeCapturedEnPassantRulesEngine -up-|> RulesEngine
-PawnMayBeCapturedEnPassantRulesEngine -up-|> PieceTypeSharedRules
-PawnMayBeCapturedEnPassantRulesEngine .left[#blue].> IsValidMoveParameter
+PawnMayBeCapturedEnPassantRulesEngine .[#blue].> IsValidMoveParameter
 
 PawnIsNotValidBaselineMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
 PawnHasOpponentPawnAsNeighbourRule -up-* PawnMayBeCapturedEnPassantRulesEngine
@@ -59,6 +58,10 @@ IsNotAValidMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
 PawnIsNotValidBaselineMoveRule -down-|> Rule
 PawnHasOpponentPawnAsNeighbourRule -down-|> Rule
 IsNotAValidMoveRule -down-|> Rule
+
+PawnIsNotValidBaselineMoveRule -up-|> PieceTypeSharedRules
+PawnHasOpponentPawnAsNeighbourRule -up-|> PieceTypeSharedRules
+IsNotAValidMoveRule -up-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

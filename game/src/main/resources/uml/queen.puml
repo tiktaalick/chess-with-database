@@ -47,20 +47,28 @@ interface Rule {
 PieceType <|-down- Queen
 Queen *-- QueenIsValidMoveRulesEngine
 QueenIsValidMoveRulesEngine -up-|> RulesEngine
-QueenIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
 QueenIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
 HasEmptyParametersRule -up-* QueenIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* QueenIsValidMoveRulesEngine
 IsJumpingRule -up-* QueenIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* QueenIsValidMoveRulesEngine
 QueenIsValidBasicMoveRule -up-* QueenIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* QueenIsValidMoveRulesEngine
+
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 QueenIsValidBasicMoveRule --|> Rule
 IsNotAValidMoveRule --|> Rule
+
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsJumpingRule --|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+QueenIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

@@ -46,21 +46,30 @@ interface Rule {
 '---------'
 PieceType <|-down- Bishop
 Bishop *-- BishopIsValidMoveRulesEngine
+
 BishopIsValidMoveRulesEngine -up-|> RulesEngine
-BishopIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
 BishopIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
 HasEmptyParametersRule -up-* BishopIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* BishopIsValidMoveRulesEngine
 IsJumpingRule -up-* BishopIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* BishopIsValidMoveRulesEngine
 BishopIsValidBasicMoveRule -up-* BishopIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* BishopIsValidMoveRulesEngine
+
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 BishopIsValidBasicMoveRule --|> Rule
 IsNotAValidMoveRule --|> Rule
+
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsJumpingRule -down-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+BishopIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

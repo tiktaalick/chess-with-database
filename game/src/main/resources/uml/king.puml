@@ -46,9 +46,10 @@ interface Rule {
 '---------'
 PieceType <|-down- King
 King *-- KingIsValidMoveRulesEngine
+
 KingIsValidMoveRulesEngine -up-|> RulesEngine
-KingIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
 KingIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
 HasEmptyParametersRule -up-* KingIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* KingIsValidMoveRulesEngine
 IsJumpingRule -up-* KingIsValidMoveRulesEngine
@@ -56,6 +57,7 @@ IsMovingIntoCheckRule -up-* KingIsValidMoveRulesEngine
 KingIsValidBasicMoveRule -up-* KingIsValidMoveRulesEngine
 KingIsValidCastlingRule -up-* KingIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* KingIsValidMoveRulesEngine
+
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
@@ -63,6 +65,14 @@ IsMovingIntoCheckRule --|> Rule
 KingIsValidBasicMoveRule --|> Rule
 KingIsValidCastlingRule --|> Rule
 IsNotAValidMoveRule --|> Rule
+
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsJumpingRule -down-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+KingIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+KingIsValidCastlingRule --|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

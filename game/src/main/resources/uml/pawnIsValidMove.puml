@@ -45,11 +45,10 @@ interface Rule {
 '---------'
 'Relations'
 '---------'
-PieceType <|-down- Pawn
-Pawn *-down- PawnIsValidMoveRulesEngine
+PieceType <|-- Pawn
+Pawn *-- PawnIsValidMoveRulesEngine
 PawnIsValidMoveRulesEngine -up-|> RulesEngine
-PawnIsValidMoveRulesEngine -up-|> PieceTypeSharedRules
-PawnIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+PawnIsValidMoveRulesEngine .up[#blue].> IsValidMoveParameter
 
 HasEmptyParametersRule -up-* PawnIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* PawnIsValidMoveRulesEngine
@@ -73,10 +72,20 @@ PawnIsValidCaptureMoveRule -down-|> Rule
 PawnIsValidEnPassantMoveRule -down-|> Rule
 IsNotAValidMoveRule -down-|> Rule
 
+HasEmptyParametersRule -down-|> PieceTypeSharedRules
+IsFriendlyFireRule -down-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
+PawnIsValidBasicMoveRule -down-|> PieceTypeSharedRules
+PawnIsNotValidDirectionRule -down-|> PieceTypeSharedRules
+PawnIsValidBaselineMoveRule -down-|> PieceTypeSharedRules
+PawnIsValidCaptureMoveRule -down-|> PieceTypeSharedRules
+PawnIsValidEnPassantMoveRule -down-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down-|> PieceTypeSharedRules
+
 '-----'
 'Notes'
 '-----'
-note right of PawnIsValidMoveRulesEngine {
+note top of PawnIsValidMoveRulesEngine {
     If a pawn does not perform a friendly
     fire on one of its own pieces, if it's
     not jumping, if it doesn't create a check
