@@ -56,17 +56,17 @@ IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
 KnightIsValidBasicMoveRule -up-* KnightIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* KnightIsValidMoveRulesEngine
 
-HasEmptyParametersRule --|> Rule
-IsFriendlyFireRule --|> Rule
-IsMovingIntoCheckRule --|> Rule
-KnightIsValidBasicMoveRule --|> Rule
-IsNotAValidMoveRule --|> Rule
+HasEmptyParametersRule -down[#purple]-|> Rule
+IsFriendlyFireRule -down[#purple]-|> Rule
+IsMovingIntoCheckRule -down[#purple]-|> Rule
+KnightIsValidBasicMoveRule -down[#purple]-|> Rule
+IsNotAValidMoveRule -down[#purple]-|> Rule
 
-HasEmptyParametersRule -down-|> PieceTypeSharedRules
-IsFriendlyFireRule -down-|> PieceTypeSharedRules
-IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
-KnightIsValidBasicMoveRule -down-|> PieceTypeSharedRules
-IsNotAValidMoveRule -down-|> PieceTypeSharedRules
+HasEmptyParametersRule -down[#green]-|> PieceTypeSharedRules
+IsFriendlyFireRule -down[#green]-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down[#green]-|> PieceTypeSharedRules
+KnightIsValidBasicMoveRule -down[#green]-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down[#green]-|> PieceTypeSharedRules
 
 '-----'
 'Notes'

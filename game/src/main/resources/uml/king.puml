@@ -58,21 +58,21 @@ KingIsValidBasicMoveRule -up-* KingIsValidMoveRulesEngine
 KingIsValidCastlingRule -up-* KingIsValidMoveRulesEngine
 IsNotAValidMoveRule -up-* KingIsValidMoveRulesEngine
 
-HasEmptyParametersRule --|> Rule
-IsFriendlyFireRule --|> Rule
-IsJumpingRule --|> Rule
-IsMovingIntoCheckRule --|> Rule
-KingIsValidBasicMoveRule --|> Rule
-KingIsValidCastlingRule --|> Rule
-IsNotAValidMoveRule --|> Rule
+HasEmptyParametersRule -down[#purple]-|> Rule
+IsFriendlyFireRule -down[#purple]-|> Rule
+IsJumpingRule -down[#purple]-|> Rule
+IsMovingIntoCheckRule -down[#purple]-|> Rule
+KingIsValidBasicMoveRule -down[#purple]-|> Rule
+KingIsValidCastlingRule -down[#purple]-|> Rule
+IsNotAValidMoveRule -down[#purple]-|> Rule
 
-HasEmptyParametersRule -down-|> PieceTypeSharedRules
-IsFriendlyFireRule -down-|> PieceTypeSharedRules
-IsJumpingRule -down-|> PieceTypeSharedRules
-IsMovingIntoCheckRule -down-|> PieceTypeSharedRules
-KingIsValidBasicMoveRule -down-|> PieceTypeSharedRules
-KingIsValidCastlingRule --|> PieceTypeSharedRules
-IsNotAValidMoveRule -down-|> PieceTypeSharedRules
+HasEmptyParametersRule -down[#green]-|> PieceTypeSharedRules
+IsFriendlyFireRule -down[#green]-|> PieceTypeSharedRules
+IsJumpingRule -down[#green]-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down[#green]-|> PieceTypeSharedRules
+KingIsValidBasicMoveRule -down[#green]-|> PieceTypeSharedRules
+KingIsValidCastlingRule -down[#green]-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down[#green]-|> PieceTypeSharedRules
 
 '-----'
 'Notes'
