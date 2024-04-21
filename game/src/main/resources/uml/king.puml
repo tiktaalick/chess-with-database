@@ -55,13 +55,26 @@ IsJumpingRule -up-* KingIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* KingIsValidMoveRulesEngine
 KingIsValidBasicMoveRule -up-* KingIsValidMoveRulesEngine
 KingIsValidCastlingRule -up-* KingIsValidMoveRulesEngine
-IsNotValidRule -up-* KingIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* KingIsValidMoveRulesEngine
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 KingIsValidBasicMoveRule --|> Rule
 KingIsValidCastlingRule --|> Rule
-IsNotValidRule --|> Rule
+IsNotAValidMoveRule --|> Rule
+
+'-----'
+'Notes'
+'-----'
+note right of KingIsValidMoveRulesEngine {
+    If a king does not perform a friendly
+    fire on one of its own pieces, if it's
+    not jumping, if it doesn't create a check
+    on itself, but it does perform a
+    valid basic move or it is performing a
+    valid castling move it is a valid move.
+    Otherwise it's not a valid move.
+}
 
 @enduml

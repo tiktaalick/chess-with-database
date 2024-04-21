@@ -6,7 +6,7 @@ import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidBasicMoveRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidCastlingRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidMoveRulesEngine;
@@ -29,6 +29,6 @@ class KingIsValidMoveRulesEngineTest {
         assertTrue(kingIsValidMoveRulesEngine.getRules().get(3) instanceof IsMovingIntoCheckRule);
         assertTrue(kingIsValidMoveRulesEngine.getRules().get(4) instanceof KingIsValidBasicMoveRule);
         assertTrue(kingIsValidMoveRulesEngine.getRules().get(5) instanceof KingIsValidCastlingRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(6) instanceof IsNotValidRule);
+        assertTrue(kingIsValidMoveRulesEngine.getRules().get(6) instanceof IsNotAValidMoveRule);
     }
 }

@@ -60,7 +60,7 @@ PawnIsNotValidDirectionRule -up-* PawnIsValidMoveRulesEngine
 PawnIsValidBaselineMoveRule -up-* PawnIsValidMoveRulesEngine
 PawnIsValidCaptureMoveRule -up-* PawnIsValidMoveRulesEngine
 PawnIsValidEnPassantMoveRule -up-* PawnIsValidMoveRulesEngine
-IsNotValidRule -up-* PawnIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* PawnIsValidMoveRulesEngine
 
 HasEmptyParametersRule -down-|> Rule
 IsFriendlyFireRule -down-|> Rule
@@ -71,5 +71,20 @@ PawnIsNotValidDirectionRule -down-|> Rule
 PawnIsValidBaselineMoveRule -down-|> Rule
 PawnIsValidCaptureMoveRule -down-|> Rule
 PawnIsValidEnPassantMoveRule -down-|> Rule
-IsNotValidRule -down-|> Rule
+IsNotAValidMoveRule -down-|> Rule
+
+'-----'
+'Notes'
+'-----'
+note right of PawnIsValidMoveRulesEngine {
+    If a pawn does not perform a friendly
+    fire on one of its own pieces, if it's
+    not jumping, if it doesn't create a check
+    on its own king, but it does perform a
+    valid basic move, a valid capture move or
+    a valid en passant move, all in the right
+    direction it is a valid move. Otherwise
+    it's not a valid move.
+}
+
 @enduml

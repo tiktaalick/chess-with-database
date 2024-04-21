@@ -4,7 +4,7 @@ import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.rulesengine.RulesEngine;
 
@@ -19,6 +19,6 @@ public final class BishopIsValidMoveRulesEngine extends RulesEngine<IsValidMoveP
         addRule(new IsJumpingRule());
         addRule(new IsMovingIntoCheckRule());
         addRule(new BishopIsValidBasicMoveRule());
-        addRule(new IsNotValidRule());
+        addRule(new IsNotAValidMoveRule());
     }
 }

@@ -6,7 +6,7 @@ import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mark.chess.piece.pawn.isvalidmove.PawnIsNotValidDirectionRule;
 import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidBaselineMoveRule;
 import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidBasicMoveRule;
@@ -35,6 +35,6 @@ class PawnIsValidMoveRulesEngineTest {
         assertTrue(pawnIsValidMoveRulesEngine.getRules().get(6) instanceof PawnIsValidBaselineMoveRule);
         assertTrue(pawnIsValidMoveRulesEngine.getRules().get(7) instanceof PawnIsValidCaptureMoveRule);
         assertTrue(pawnIsValidMoveRulesEngine.getRules().get(8) instanceof PawnIsValidEnPassantMoveRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(9) instanceof IsNotValidRule);
+        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(9) instanceof IsNotAValidMoveRule);
     }
 }

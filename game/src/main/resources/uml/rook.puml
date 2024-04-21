@@ -54,12 +54,24 @@ IsFriendlyFireRule -up-* RookIsValidMoveRulesEngine
 IsJumpingRule -up-* RookIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* RookIsValidMoveRulesEngine
 RookIsValidBasicMoveRule -up-* RookIsValidMoveRulesEngine
-IsNotValidRule -up-* RookIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* RookIsValidMoveRulesEngine
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsJumpingRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 RookIsValidBasicMoveRule --|> Rule
-IsNotValidRule --|> Rule
+IsNotAValidMoveRule --|> Rule
+
+'-----'
+'Notes'
+'-----'
+note right of RookIsValidMoveRulesEngine {
+    If a rook does not perform a friendly
+    fire on one of its own pieces, if it's
+    not jumping, if it doesn't create a check
+    on its own king, but it does perform a
+    valid basic move it is a valid move. Otherwise
+    it's not a valid move.
+}
 
 @enduml

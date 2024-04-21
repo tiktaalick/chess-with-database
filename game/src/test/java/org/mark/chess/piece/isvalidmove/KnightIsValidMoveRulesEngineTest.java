@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mark.chess.piece.knight.isvalidmove.KnightIsValidBasicMoveRule;
 import org.mark.chess.piece.knight.isvalidmove.KnightIsValidMoveRulesEngine;
 import org.mockito.InjectMocks;
@@ -25,6 +25,6 @@ class KnightIsValidMoveRulesEngineTest {
         assertTrue(knightIsValidMoveRulesEngine.getRules().get(1) instanceof IsFriendlyFireRule);
         assertTrue(knightIsValidMoveRulesEngine.getRules().get(2) instanceof IsMovingIntoCheckRule);
         assertTrue(knightIsValidMoveRulesEngine.getRules().get(3) instanceof KnightIsValidBasicMoveRule);
-        assertTrue(knightIsValidMoveRulesEngine.getRules().get(4) instanceof IsNotValidRule);
+        assertTrue(knightIsValidMoveRulesEngine.getRules().get(4) instanceof IsNotAValidMoveRule);
     }
 }

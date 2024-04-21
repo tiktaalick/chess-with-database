@@ -54,10 +54,22 @@ PawnMayBeCapturedEnPassantRulesEngine .left[#blue].> IsValidMoveParameter
 
 PawnIsNotValidBaselineMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
 PawnHasOpponentPawnAsNeighbourRule -up-* PawnMayBeCapturedEnPassantRulesEngine
-IsNotValidRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+IsNotAValidMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
 
 PawnIsNotValidBaselineMoveRule -down-|> Rule
 PawnHasOpponentPawnAsNeighbourRule -down-|> Rule
-IsNotValidRule -down-|> Rule
+IsNotAValidMoveRule -down-|> Rule
+
+'-----'
+'Notes'
+'-----'
+note right of PawnMayBeCapturedEnPassantRulesEngine {
+    If the opponent just has performed a two-step
+    pawn move from the baseline, the second rank
+    that is, and the player's pawn does have an
+    opponent pawn as a neighbour it is a valid en
+    passant move. Otherwise it's not a valid en
+    passant move.
+}
 
 @enduml

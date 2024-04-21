@@ -70,7 +70,7 @@ class Coordinates {
 class PieceType {
     - color
     - hasBeenKickedOffTheBoard
-    - isPawnBeingPromoted
+    - isBeingPromoted
     + getName()
     + getNextPawnPromotion()
     + getValue()
@@ -96,7 +96,6 @@ enum BackgroundColor {
     + CHECKMATE
     + STALEMATE
     - awtColor
-
 }
 
 '---------'
@@ -104,6 +103,7 @@ enum BackgroundColor {
 '---------'
 Chessboard *-up- BackgroundColorRulesEngine
 Chessboard *-right- ChessboardValueRulesEngine
+ChessboardValueRulesEngine -up-|> RulesEngine
 Chessboard *-left- Field
 Chessboard *-right- Move
 Chessboard "0..*"--o Chessboard
@@ -111,12 +111,12 @@ Field *-up- BackgroundColorRulesEngine
 Field *-left- Coordinates
 Field *-- PieceType
 Field --* Move
-BackgroundColorRulesEngine *-up- HardwoodRule
-BackgroundColorRulesEngine *-up- FieldValueRule
-BackgroundColorRulesEngine *-up- AttackingRule
-BackgroundColorRulesEngine *-up- StalemateRule
 BackgroundColorRulesEngine *-up- CheckmateRule
-BackgroundColorRulesEngine -left-|> RulesEngine
+BackgroundColorRulesEngine *-up- StalemateRule
+BackgroundColorRulesEngine *-up- AttackingRule
+BackgroundColorRulesEngine *-up- FieldValueRule
+BackgroundColorRulesEngine *-up- HardwoodRule
+BackgroundColorRulesEngine -up-|> RulesEngine
 HardwoodRule -up-|> Rule
 FieldValueRule -up-|> Rule
 AttackingRule -up-|> Rule
@@ -126,5 +126,26 @@ HardwoodRule .down[#blue].> BackgroundColor
 AttackingRule .down[#blue].> BackgroundColor
 StalemateRule .down[#blue].> BackgroundColor
 CheckmateRule .down[#blue].> BackgroundColor
+
+'-----'
+'Notes'
+'-----'
+note left of BackgroundColor {
+    In case of a checkmate the
+    background color of a field
+    becomes a checkmate color, in
+    case of a stalemate a stalemate
+    color, if it holds an attacking
+    piece an attacking color, if a
+    field value has been calculated
+    a field value color and otherwise
+    a nice light or dark hardwoodcolor.
+}
+
+note bottom of ChessboardValueRulesEngine {
+    Calculates the field value in order
+    to decide which move is the best move.
+}
+
 
 @enduml

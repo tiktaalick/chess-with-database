@@ -6,7 +6,7 @@ import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.general.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mark.chess.piece.rook.isvalidmove.RookIsValidBasicMoveRule;
 import org.mark.chess.piece.rook.isvalidmove.RookIsValidMoveRulesEngine;
 import org.mockito.InjectMocks;
@@ -27,6 +27,6 @@ class RookIsValidMoveRulesEngineTest {
         assertTrue(rookIsValidMoveRulesEngine.getRules().get(2) instanceof IsJumpingRule);
         assertTrue(rookIsValidMoveRulesEngine.getRules().get(3) instanceof IsMovingIntoCheckRule);
         assertTrue(rookIsValidMoveRulesEngine.getRules().get(4) instanceof RookIsValidBasicMoveRule);
-        assertTrue(rookIsValidMoveRulesEngine.getRules().get(5) instanceof IsNotValidRule);
+        assertTrue(rookIsValidMoveRulesEngine.getRules().get(5) instanceof IsNotAValidMoveRule);
     }
 }

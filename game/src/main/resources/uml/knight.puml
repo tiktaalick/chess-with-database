@@ -53,11 +53,23 @@ HasEmptyParametersRule -up-* KnightIsValidMoveRulesEngine
 IsFriendlyFireRule -up-* KnightIsValidMoveRulesEngine
 IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
 KnightIsValidBasicMoveRule -up-* KnightIsValidMoveRulesEngine
-IsNotValidRule -up-* KnightIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* KnightIsValidMoveRulesEngine
 HasEmptyParametersRule --|> Rule
 IsFriendlyFireRule --|> Rule
 IsMovingIntoCheckRule --|> Rule
 KnightIsValidBasicMoveRule --|> Rule
-IsNotValidRule --|> Rule
+IsNotAValidMoveRule --|> Rule
+
+'-----'
+'Notes'
+'-----'
+note right of KnightIsValidMoveRulesEngine {
+    If a knight does not perform a friendly
+    fire on one of its own pieces, if it
+    doesn't create a check on its own king,
+    but it does perform a valid basic move
+    it is a valid move. Otherwise it's not
+    a valid move.
+}
 
 @enduml
