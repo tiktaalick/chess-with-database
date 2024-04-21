@@ -1,0 +1,95 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+class BestMove {
+    + calculate()
+}
+
+class ChessboardValueRulesEngine {
+    - {static} bestMove
+    - chessboardValue
+}
+
+class TotalValueOfAllPiecesRule {
+    - {static} totalValueOfAllPieces
+}
+
+class Chessboard {
+    - {static} BackgroundColorRulesEngine
+    - {static} ChessboardValueRulesEngine
+    - fields
+    - kingField
+    - opponentKingField
+    - level
+    - fromParentToChildMove
+    - children
+    + create()
+    + createEmpty()
+    + createOneStepBeyond()
+    + enableValidMoves()
+    + getField()
+    + resetValidMoves()
+    + setKingFieldColors()
+}
+
+class ChessboardValue {
+   - pieceValue
+   - totalValue
+}
+
+class "Function<ChessboardValueParameter, Integer>" {
+    + apply()
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+Chessboard *-- ChessboardValueRulesEngine
+
+BestMove -[#red]-> BestMove
+ChessboardValueRulesEngine *-- BestMove
+ChessboardValueRulesEngine *-- ChessboardValue
+
+ChessboardValueRulesEngine -right-|> RulesEngine
+
+TotalValueOfAllPiecesRule --|> Rule
+TotalValueRule --|> Rule
+
+TotalValueOfAllPiecesRule -up-* ChessboardValueRulesEngine
+TotalValueRule -up-* ChessboardValueRulesEngine
+
+TotalValueOfAllPiecesRule --|> "Function<ChessboardValueParameter, Integer>"
+
+ChessboardValueRulesEngine .left[#blue].> ChessboardValueParameter
+
+'-----'
+'Notes'
+'-----'
+'note right of BestMove {
+'    If a bishop does not perform a friendly
+'    fire on one of its own pieces, if it's
+'    not jumping, if it doesn't create a check
+'    on its own king, but it does perform a
+'    valid basic move it is a valid move. Otherwise
+'    it's not a valid move.
+'}
+
+@enduml

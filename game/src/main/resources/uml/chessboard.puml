@@ -9,8 +9,8 @@ hide empty members
 'Chessboard'
 '----------'
 class Chessboard {
-    - BackgroundColorRulesEngine
-    - ChessboardValueRulesEngine
+    - {static} BackgroundColorRulesEngine
+    - {static} ChessboardValueRulesEngine
     - fields
     - kingField
     - opponentKingField
