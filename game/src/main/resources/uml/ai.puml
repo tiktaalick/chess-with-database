@@ -76,7 +76,8 @@ TotalValueRule --|> Rule
 TotalValueOfAllPiecesRule -up-* ChessboardValueRulesEngine
 TotalValueRule -up-* ChessboardValueRulesEngine
 
-TotalValueOfAllPiecesRule --|> "Function<ChessboardValueParameter, Integer>"
+TotalValueOfAllPiecesRule *-- TotalValueOfAllPieces
+TotalValueOfAllPieces --|> "Function<ChessboardValueParameter, Integer>"
 
 ChessboardValueRulesEngine .left[#blue].> ChessboardValueParameter
 
