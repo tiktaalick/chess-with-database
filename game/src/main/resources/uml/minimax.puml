@@ -1,0 +1,54 @@
+@startuml
+control Game
+participant Parent
+collections Child
+collections Grandchild
+
+'----'
+'Game'
+'----'
+create Parent
+Game -> Parent : creates the <color:blue>**""Parent""**</color> <color:green>**""Chessboard""**</color>
+Game [#white]--> Parent : <color:blue>**""Parent""**</color> receives no <color:green>**""Chessboard""**</color> as a parent
+Game [#white]--> Parent : <color:blue>**""Parent""**</color> receives <color:purple>**""numberOfMovesToLookAhead""**</color> equals to 2
+
+'------'
+'Parent'
+'------'
+note right of Parent: In this example it's white's turn
+Parent -> Parent : calculates a <color:purple>**""hashCode""**</color>
+Parent -> Parent : determines possible moves for <color:red>**""white""**</color>
+create Child
+Parent -> Child : creates a <color:blue>**""Child""**</color> <color:green>**""Chessboard""**</color> per possible move
+Parent [#white]--> Child : <color:blue>**""Child""**</color> receives <color:blue>**""Parent""**</color> as a parent
+Parent [#white]--> Child : <color:blue>**""Child""**</color> receives <color:purple>**""numberOfMovesToLookAhead""**</color> equals to 1
+
+'-----'
+'Child'
+'-----'
+note right of Child: Each <color:blue>**""Child""**</color> contains a possible move for <color:red>**""white""**</color>
+Child -> Child : calculates a <color:purple>**""hashCode""**</color>
+Child -> Child : determines possible moves for <color:red>**""black""**</color>
+create Grandchild
+Child -> Grandchild : creates a <color:blue>**""Grandchild""**</color> <color:green>**""Chessboard""**</color> per possible move
+Child [#white]--> Grandchild : <color:blue>**""Grandchild""**</color> receives <color:blue>**""Child""**</color> as a parent
+Child [#white]--> Grandchild : <color:blue>**""Grandchild""**</color> receives <color:purple>**""numberOfMovesToLookAhead""**</color> equals to 0
+
+'----------'
+'Grandchild'
+'----------'
+note right of Grandchild: Each <color:blue>**""Grandchild""**</color> contains a possible move for <color:red>**""black""**</color>
+Grandchild -> Grandchild : calculates a <color:purple>**""hashCode""**</color>
+Grandchild -> Grandchild : calculates its own <color:purple>**""boardValue""**</color>, from the point of player <color:red>**""black""**</color>
+note right of Grandchild: Grandchild1, Grandchild2, Grandchild3 and Grandchild4 have values 3, 4, 5 and 6 respectively
+note right of Grandchild: Grandchild1 and Grandchild2 are children of Child1, Grandchild3 and Grandchild4 are children of Child2.
+Grandchild -> Child : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""boardValue""**</color> is higher
+Child -> Child : updates its own <color:purple>**""boardValue""**</color> as well if received <color:purple>**""boardValue""**</color> is higher
+note right of Child: <color:purple>**""boardValue""**</color> of Child1 and Child2 becomes 4 and 6 respectively.
+note right of Child: Grandchild2 and Grandchild4 lead to the best move for Child1 and Child2 respectively.
+Child -> Parent : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""boardValue""**</color> is higher
+Parent -> Parent : updates its own <color:purple>**""boardValue""**</color> as well if received <color:purple>**""boardValue""**</color> is higher
+note right of Parent: <color:purple>**""boardValue""**</color> becomes 6.
+note right of Parent: Child2 leads to the best move.
+Parent -> Game
+@enduml
