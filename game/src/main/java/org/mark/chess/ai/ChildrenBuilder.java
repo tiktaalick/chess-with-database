@@ -12,7 +12,10 @@ import org.mark.chess.player.PlayerColor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.mark.chess.board.Chessboard.MAXIMUM_COLOR_VALUE;
 import static org.mark.chess.board.Chessboard.MINIMUM_COLOR_VALUE;
@@ -24,27 +27,32 @@ public class ChildrenBuilder {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
+    private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
+    private final        List<Chessboard>           children                      = new ArrayList<>();
 
-    @Setter
-    private Chessboard  parent;
     @Setter
     private PlayerColor activePlayerColor;
-
-    private List<Field>      allValidToFields = new ArrayList<>();
-    private List<Chessboard> children         = new ArrayList<>();
+    private Chessboard  parent;
+    private List<Field> allValidToFields = new ArrayList<>();
 
     public List<Chessboard> buildChildren() {
         this.parent
                 .getAllValidFromToCombinations()
                 .forEach((from, toList) -> toList.forEach(to -> this.children.add(this.parent.createOneStepBeyond(from, to))));
 
-        return this.children;
+        LOGGER.log(Level.INFO, () -> "Number of children for " + this.activePlayerColor + "=" + this.children.size());
+
+        return new ArrayList<>(this.children);
     }
 
-    public ChildrenBuilder calculateFieldValues() {
-        this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> calculateFieldValues(from));
+    public void calculateFieldValues() {
+        LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
-        return this;
+        this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
+            from.setValidFrom(true);
+            validToFields.forEach(to -> to.setValidTo(true));
+            calculateFieldValues(from);
+        });
     }
 
     /**
@@ -54,12 +62,26 @@ public class ChildrenBuilder {
      * @return this.
      */
     public ChildrenBuilder collectAllValidFromToCombinations(Move move) {
+        LOGGER.log(Level.INFO, () -> "Collecting all valid from/to combinations...");
+
         this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).setValidToFields(from));
 
         return this;
     }
 
+    public ChildrenBuilder init(Chessboard chessboard, PlayerColor activePlayerColor) {
+        this.parent = chessboard;
+        this.activePlayerColor = activePlayerColor;
+        this.parent.setChildren(new ArrayList<>());
+        this.allValidToFields = new ArrayList<>();
+        this.parent.setAllValidFromToCombinations(new HashMap<>());
+
+        return this;
+    }
+
     public ChildrenBuilder resetFromAttributes(Move move, Field from) {
+        LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
+
         from.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
 
         if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
@@ -71,12 +93,17 @@ public class ChildrenBuilder {
     public ChildrenBuilder setValidToFields(Field from) {
         List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
 
+        LOGGER.log(Level.INFO, () -> "Number of validToFields=" + validToFields.size());
+
         from.setValidTo(!validToFields.isEmpty()).setValidFrom(from.hasValidTo());
 
         this.allValidToFields.addAll(validToFields);
 
+        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.allValidToFields.size());
+
         if (from.isValidFrom()) {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
+            LOGGER.log(Level.INFO, () -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
         }
 
         return this;
@@ -104,6 +131,8 @@ public class ChildrenBuilder {
     }
 
     private void calculateFieldValues(Field from) {
+        LOGGER.log(Level.INFO, () -> "Calculating field values...");
+
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
 
         this.allValidToFields.forEach(to -> createAbsoluteFieldValues(from, to));
@@ -112,18 +141,29 @@ public class ChildrenBuilder {
     }
 
     private void createAbsoluteFieldValues(Field from, Field to) {
+        LOGGER.log(Level.INFO, () -> "Creating absolute field values...");
+
         if (from != null && from.getPieceType() != null) {
             var chessboardAfterMovement = this.parent.createOneStepBeyond(from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
                     .process(new ChessboardValueParameter(chessboardAfterMovement, this.activePlayerColor))
                     .getTotalValue());
             from.setValue(from.getValue() == null ? to.getValue() : minimaxValue(from, to));
+
+            LOGGER.log(Level.INFO, () -> "FromValue=" + from.getValue());
+            LOGGER.log(Level.INFO, () -> "ToValue=" + to.getValue());
         }
     }
 
     private void createRelativeFieldValues(@NotNull Field from) {
+        LOGGER.log(Level.INFO, () -> "Creating relative field values...");
+
         int minValue = getMinValue(this.allValidToFields);
         int maxValue = getMaxValue(this.allValidToFields);
+
+        LOGGER.log(Level.INFO, () -> "minValue=" + minValue);
+        LOGGER.log(Level.INFO, () -> "maxValue=" + maxValue);
+
         this.allValidToFields.forEach((Field gridField) -> {
             double relativeValue = maxValue - minValue <= 0 ? MAXIMUM_COLOR_VALUE : calculateRelativeValue(minValue, maxValue, gridField);
 
@@ -140,6 +180,8 @@ public class ChildrenBuilder {
     }
 
     private int minimaxValue(Field from, Field to) {
+        LOGGER.log(Level.INFO, () -> "activePlayerColor=" + this.activePlayerColor);
+
         return this.activePlayerColor == BLACK ? Math.max(from.getValue(), to.getValue()) : Math.min(from.getValue(), to.getValue());
     }
 }

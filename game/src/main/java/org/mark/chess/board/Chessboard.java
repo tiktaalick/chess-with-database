@@ -111,10 +111,6 @@ public final class Chessboard {
                 .getFields()
                 .stream()
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this, from, to, false)))
-                .map(to -> {
-                    from.setValidFrom(true);
-                    return to.setValidTo(true);
-                })
                 .collect(Collectors.toList()) : new ArrayList<>();
     }
 
@@ -200,13 +196,9 @@ public final class Chessboard {
      */
     public void setValidFromFields(Move move, PlayerColor activePlayerColor) {
         if (this.numberOfMovesToLookAhead > 0) {
-            this.children = CHILDREN_BUILDER
-                    .setParent(this)
-                    .setActivePlayerColor(activePlayerColor)
-                    .collectAllValidFromToCombinations(move)
-                    .buildChildren();
+            this.children = CHILDREN_BUILDER.init(this, activePlayerColor).collectAllValidFromToCombinations(move).buildChildren();
         } else {
-            CHILDREN_BUILDER.setParent(this).setActivePlayerColor(activePlayerColor).calculateFieldValues();
+            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues();
         }
     }
 
@@ -218,11 +210,10 @@ public final class Chessboard {
      */
     public void setValidToFields(Move move, PlayerColor activePlayerColor) {
         CHILDREN_BUILDER
-                .setParent(this)
-                .setActivePlayerColor(activePlayerColor)
+                .init(this, activePlayerColor)
                 .setValidToFields(move.getFrom())
                 .resetFromAttributes(move, move.getFrom())
-                .setValidToFields(move.getFrom());
+                .calculateFieldValues();
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,
