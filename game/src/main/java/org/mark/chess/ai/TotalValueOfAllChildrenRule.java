@@ -11,10 +11,10 @@ import static org.mark.chess.ai.ChessboardValueRulesEngine.BEST_MOVE;
 /**
  * A rule that calculates the value of a board position based upon the piece values.
  */
-public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter, ChessboardValue> {
+public class TotalValueOfAllChildrenRule implements Rule<ChessboardValueParameter, ChessboardValue> {
 
-    private static final Logger                LOGGER             = Logger.getLogger(TotalValueOfAllPiecesRule.class.getName());
-    private static final TotalValueOfAllPieces TOTAL_PIECES_VALUE = new TotalValueOfAllPieces();
+    private static final Logger                  LOGGER             = Logger.getLogger(TotalValueOfAllChildrenRule.class.getName());
+    private static final TotalValueOfAllChildren TOTAL_PIECES_VALUE = new TotalValueOfAllChildren();
 
     private final ChessboardValue chessboardValue;
 
@@ -23,7 +23,7 @@ public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter,
      *
      * @param chessboardValue The chessboard value.
      */
-    public TotalValueOfAllPiecesRule(ChessboardValue chessboardValue) {
+    public TotalValueOfAllChildrenRule(ChessboardValue chessboardValue) {
         this.chessboardValue = chessboardValue;
     }
 

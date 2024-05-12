@@ -39,16 +39,16 @@ Child [#white]--> Grandchild : <color:blue>**""Grandchild""**</color> receives <
 '----------'
 note right of Grandchild: Each <color:blue>**""Grandchild""**</color> contains a possible move for <color:red>**""black""**</color>
 Grandchild -> Grandchild : calculates a <color:purple>**""hashCode""**</color>
-Grandchild -> Grandchild : calculates its own <color:purple>**""boardValue""**</color>, from the point of player <color:red>**""black""**</color>
+Grandchild -> Grandchild : calculates its own <color:purple>**""fromToFieldValue""**</color>, from the point of player <color:red>**""black""**</color>
 note right of Grandchild: Grandchild1, Grandchild2, Grandchild3 and Grandchild4 have values 3, 4, 5 and 6 respectively
 note right of Grandchild: Grandchild1 and Grandchild2 are children of Child1, Grandchild3 and Grandchild4 are children of Child2.
-Grandchild -> Child : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""boardValue""**</color> is higher
-Child -> Child : updates its own <color:purple>**""boardValue""**</color> as well if received <color:purple>**""boardValue""**</color> is higher
-note right of Child: <color:purple>**""boardValue""**</color> of Child1 and Child2 becomes 4 and 6 respectively.
-note right of Child: Grandchild2 and Grandchild4 lead to the best move for Child1 and Child2 respectively.
-Child -> Parent : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""boardValue""**</color> is higher
-Parent -> Parent : updates its own <color:purple>**""boardValue""**</color> as well if received <color:purple>**""boardValue""**</color> is higher
-note right of Parent: <color:purple>**""boardValue""**</color> becomes 6.
-note right of Parent: Child2 leads to the best move.
+Grandchild -> Child : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""fromToFieldValue""**</color> is **higher**
+Child -> Child : updates its own <color:purple>**""fromToFieldValue""**</color> as well if received <color:purple>**""fromToFieldValue""**</color> is **higher**
+note right of Child: <color:purple>**""fromToFieldValue""**</color> of Child1 and Child2 becomes 4 and 6 respectively.
+note right of Child: Grandchild2 and Grandchild4 lead to the best <color:red>**""black""**</color> move for Child1 and Child2 respectively.
+Child -> Parent : sets the corresponding move as <color:purple>**""bestMove""**</color> if <color:purple>**""fromToFieldValue""**</color> is **lower**
+Parent -> Parent : updates its own <color:purple>**""fromToFieldValue""**</color> as well if received <color:purple>**""fromToFieldValue""**</color> is **lower**
+note right of Parent: <color:purple>**""fromToFieldValue""**</color> becomes 4.
+note right of Parent: Child1 leads to the best move for <color:red>**""white""**</color>.
 Parent -> Game
 @enduml

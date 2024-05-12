@@ -9,7 +9,7 @@ import org.mark.chess.rulesengine.RulesEngine;
  */
 @Getter
 @Setter
-public final class ChessboardValueRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
+public final class AiRulesEngine extends RulesEngine<ChessboardValueParameter, ChessboardValue> {
 
     public static final BestMove BEST_MOVE = new BestMove();
 
@@ -18,8 +18,8 @@ public final class ChessboardValueRulesEngine extends RulesEngine<ChessboardValu
     /**
      * Constructor that adds all the rules to the rules engine.
      */
-    public ChessboardValueRulesEngine() {
-        addRule(new TotalValueOfAllPiecesRule(chessboardValue));
+    public AiRulesEngine() {
+        addRule(new TotalValueOfAllChildrenRule(chessboardValue));
         addRule(new ChessboardValueResultRule(chessboardValue));
     }
 }

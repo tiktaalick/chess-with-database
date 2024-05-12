@@ -13,7 +13,6 @@ import org.mark.chess.player.PlayerColor;
 import org.springframework.util.CollectionUtils;
 
 import java.awt.Color;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -151,12 +150,12 @@ public class Field implements Comparable<Field> {
     /**
      * True if the player is not able to move.
      *
-     * @param game          The game.
-     * @param allValidMoves A list of all valid moves.
+     * @param game     The game.
+     * @param children A list of all valid moves.
      * @return True if the player is not able to move.
      */
-    public boolean isNotAbleToMove(@NotNull Game game, Collection<Field> allValidMoves) {
-        return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && CollectionUtils.isEmpty(allValidMoves);
+    public boolean isNotAbleToMove(@NotNull Game game, List<Chessboard> children) {
+        return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && CollectionUtils.isEmpty(children);
     }
 
     public boolean isValid() {

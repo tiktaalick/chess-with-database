@@ -72,6 +72,6 @@ class GameServiceTest {
         gameService.resetValidMoves(game);
 
         verify(game).getChessboard();
-        verify(chessboard).resetValidMoves(move, WHITE);
+        verify(chessboard).setValidFromFields(move, WHITE);
     }
 }

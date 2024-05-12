@@ -111,7 +111,7 @@ public class Game {
     }
 
     private @NotNull Game resetValidMoves() {
-        this.getChessboard().resetValidMoves(this.getMove(), PlayerColor.WHITE);
+        this.getChessboard().setValidFromFields(this.getMove(), PlayerColor.WHITE);
 
         return this;
     }

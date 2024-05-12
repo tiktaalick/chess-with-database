@@ -5,7 +5,7 @@ import org.mark.chess.rulesengine.Rule;
 /**
  * A rule that calculates the total value of the current chessboard position.
  */
-public class TotalValueRule implements Rule<ChessboardValueParameter, ChessboardValue> {
+public class ChessboardValueResultRule implements Rule<ChessboardValueParameter, ChessboardValue> {
 
     private final ChessboardValue chessboardValue;
 
@@ -14,7 +14,7 @@ public class TotalValueRule implements Rule<ChessboardValueParameter, Chessboard
      *
      * @param chessboardValue The chessboard value.
      */
-    public TotalValueRule(ChessboardValue chessboardValue) { this.chessboardValue = chessboardValue; }
+    public ChessboardValueResultRule(ChessboardValue chessboardValue) { this.chessboardValue = chessboardValue; }
 
     @Override
     public ChessboardValue getResult() {
@@ -23,7 +23,7 @@ public class TotalValueRule implements Rule<ChessboardValueParameter, Chessboard
 
     @Override
     public boolean isApplicable(ChessboardValueParameter ruleParameter) {
-        chessboardValue.setTotalValue(chessboardValue.getPieceValue());
+        chessboardValue.setTotalValue(chessboardValue.getTotalPieceValue());
 
         return true;
     }
