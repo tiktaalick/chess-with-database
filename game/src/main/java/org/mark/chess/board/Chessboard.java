@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.ai.ChildrenBuilder;
+import org.mark.chess.ai.TotalValueOfAllPiecesRule;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
@@ -20,9 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.lang.Math.min;
 import static org.mark.chess.piece.general.PieceType.KING;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -43,6 +47,7 @@ public final class Chessboard {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE     = new BackgroundColorRulesEngine();
     private static final ChildrenBuilder            CHILDREN_BUILDER                  = new ChildrenBuilder();
+    private static final Logger                     LOGGER                            = Logger.getLogger(TotalValueOfAllPiecesRule.class.getName());
     private static final int                        ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE = 2;
 
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
@@ -59,7 +64,6 @@ public final class Chessboard {
         this.fields = new ArrayList<>(fields);
         this.kingField = getKingField(WHITE);
         this.opponentKingField = getKingField(BLACK);
-        System.out.println(this + " " + this.hashCode());
     }
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
@@ -71,7 +75,6 @@ public final class Chessboard {
         this.numberOfMovesToLookAhead = this.numberOfMovesToLookAhead - 1;
         this.parent = chessboardBeforeTheMove;
         this.childrenActivePlayerColor = this.childrenActivePlayerColor.getOpposite();
-        System.out.println(this + " " + this.hashCode());
     }
 
     /**
@@ -137,19 +140,21 @@ public final class Chessboard {
 
     @Override
     public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-
         if (that == null || this.getClass() != that.getClass()) {
             return false;
         }
 
-        System.out.println("this.toString()=" + this);
-        System.out.println("that.toString()=" + that);
-        System.out.println("equals()=" + this.toString().equals(that.toString()));
+        var diff = "";
 
-        return Objects.equals(this.toString(), that.toString());
+        if (this == that || Objects.equals(this.toString(), that.toString())) {
+            return true;
+        } else {
+            diff = createDiffForLogging((Chessboard) that);
+        }
+
+        LOGGER.log(Level.INFO, diff);
+
+        return false;
     }
 
     @Override
@@ -237,6 +242,30 @@ public final class Chessboard {
                 .stream()
                 .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
                 .collect(Collectors.toList());
+    }
+
+    private static String createWordDiff(String prefix, Chessboard chessboard, String[] words, int index) {
+        String thisPosition = words[index].concat(" ").concat(words[index + 1]);
+
+        if (!chessboard.toString().contains(thisPosition)) {
+            return prefix + thisPosition;
+        }
+
+        return "";
+    }
+
+    private String createDiffForLogging(Chessboard that) {
+        String[] theseWords = this.toString().split(" ");
+        String[] thoseWords = that.toString().split(" ");
+
+        return IntStream
+                .range(0, min(theseWords.length, thoseWords.length))
+                .filter(index -> index % 2 == 0)
+                .mapToObj(index -> createWordDiff("this=", that, theseWords, index)
+                        .concat(" ")
+                        .concat(createWordDiff("that=", this, thoseWords, index)))
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.joining(" "));
     }
 
     private Field getKingField(PlayerColor color) {
