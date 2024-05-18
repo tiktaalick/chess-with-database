@@ -127,7 +127,7 @@ public class MoveBuilder {
 
     protected MoveBuilder setKingFieldColors(@NotNull Game game) {
         if (game.isInProgress()) {
-            // game.getChessboard().setValidFromFields(this.move, game.getActivePlayer().getColor());
+            game.getChessboard().setValidFromFields(this.move, game.getActivePlayer().getColor());
             game.getChessboard().setKingFieldColors(game);
         }
 
