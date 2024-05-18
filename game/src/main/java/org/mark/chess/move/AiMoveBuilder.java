@@ -35,17 +35,17 @@ public class AiMoveBuilder extends MoveBuilder {
      */
     public Move performAiMove(@NotNull Game game) {
         return game.getActivePlayer().getPlayerType() == HUMAN
-                ? this.build()
-                : this
-                        .createAiFrom(game)
-                        .enableValidMoves(game)
-                        .createAiTo(game)
-                        .setPieceTypeSpecificAttributes(game)
-                        .moveRookIfCastling(game)
-                        .changeTurn(game)
-                        .resetFrom()
+               ? this.build()
+               : this
+                       .createAiFrom(game)
+                       .enableValidMoves(game)
+                       .createAiTo(game)
+                       .setPieceTypeSpecificAttributes(game)
+                       .moveRookIfCastling(game)
+                       .changeTurn(game)
+                       .resetFrom()
                         .setKingFieldColors(game)
-                        .build();
+                       .build();
     }
 
     private AiMoveBuilder createAiFrom(Game game) {
@@ -54,8 +54,7 @@ public class AiMoveBuilder extends MoveBuilder {
                 .getFields()
                 .stream()
                 .filter(field -> field.getValue() != null)
-                .filter(field -> field.getPieceType() !=
-                        null)
+                .filter(field -> field.getPieceType() != null)
                 .filter(field -> field.getPieceType().getColor() == game.getActivePlayer().getColor())
                 .max(Comparator.comparing(Field::getValue))
                 .orElse(new Field(null))));

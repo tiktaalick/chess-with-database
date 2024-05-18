@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.ai.ChildrenBuilder;
-import org.mark.chess.ai.TotalValueOfAllPiecesRule;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
@@ -47,10 +46,11 @@ public final class Chessboard {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE     = new BackgroundColorRulesEngine();
     private static final ChildrenBuilder            CHILDREN_BUILDER                  = new ChildrenBuilder();
-    private static final Logger                     LOGGER                            = Logger.getLogger(TotalValueOfAllPiecesRule.class.getName());
+    private static final Logger                     LOGGER                            = Logger.getLogger(Chessboard.class.getName());
     private static final int                        ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE = 2;
 
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
+    private List<Field>             allValidToFields           = new ArrayList<>();
     private List<Chessboard>        children                   = new ArrayList<>();
     private PlayerColor             childrenActivePlayerColor  = BLACK;
     private List<Field>             fields;
@@ -203,7 +203,7 @@ public final class Chessboard {
         if (this.numberOfMovesToLookAhead > 0) {
             this.children = CHILDREN_BUILDER.init(this, activePlayerColor).collectAllValidFromToCombinations(move).buildChildren();
         } else {
-            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues();
+            CHILDREN_BUILDER.init(this, activePlayerColor).resetFromAttributes(move).calculateFieldValues();
         }
     }
 
@@ -214,11 +214,7 @@ public final class Chessboard {
      * @param activePlayerColor The color with which the active player plays.
      */
     public void setValidToFields(Move move, PlayerColor activePlayerColor) {
-        CHILDREN_BUILDER
-                .init(this, activePlayerColor)
-                .setValidToFields(move.getFrom())
-                .resetFromAttributes(move, move.getFrom())
-                .calculateFieldValues();
+        CHILDREN_BUILDER.init(this, activePlayerColor).setValidToFields(move.getFrom()).resetFromAttributes(move).calculateFieldValues();
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,

@@ -33,7 +33,6 @@ public class ChildrenBuilder {
     @Setter
     private PlayerColor activePlayerColor;
     private Chessboard  parent;
-    private List<Field> allValidToFields = new ArrayList<>();
 
     public List<Chessboard> buildChildren() {
         this.parent
@@ -45,7 +44,7 @@ public class ChildrenBuilder {
         return new ArrayList<>(this.children);
     }
 
-    public void calculateFieldValues() {
+    public ChildrenBuilder calculateFieldValues() {
         LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
         this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
@@ -53,6 +52,8 @@ public class ChildrenBuilder {
             validToFields.forEach(to -> to.setValidTo(true));
             calculateFieldValues(from);
         });
+
+        return this;
     }
 
     /**
@@ -70,11 +71,19 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder init(Chessboard chessboard, PlayerColor activePlayerColor) {
-        this.parent = chessboard;
         this.activePlayerColor = activePlayerColor;
+        this.parent = chessboard;
         this.parent.setChildren(new ArrayList<>());
-        this.allValidToFields = new ArrayList<>();
+        this.parent.setAllValidToFields(new ArrayList<>());
         this.parent.setAllValidFromToCombinations(new HashMap<>());
+
+        return this;
+    }
+
+    public ChildrenBuilder resetFromAttributes(Move move) {
+        LOGGER.log(Level.INFO, () -> "Resetting all from attributes...");
+
+        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from));
 
         return this;
     }
@@ -82,7 +91,7 @@ public class ChildrenBuilder {
     public ChildrenBuilder resetFromAttributes(Move move, Field from) {
         LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
 
-        from.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
+        from.setRelativeValue(null).setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
 
         if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
             ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
@@ -97,9 +106,9 @@ public class ChildrenBuilder {
 
         from.setValidTo(!validToFields.isEmpty()).setValidFrom(from.hasValidTo());
 
-        this.allValidToFields.addAll(validToFields);
+        this.parent.getAllValidToFields().addAll(validToFields);
 
-        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.allValidToFields.size());
+        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
 
         if (from.isValidFrom()) {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
@@ -134,8 +143,7 @@ public class ChildrenBuilder {
         LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
-
-        this.allValidToFields.forEach(to -> createAbsoluteFieldValues(from, to));
+        this.parent.getAllValidToFields().forEach(to -> createAbsoluteFieldValues(from, to));
 
         this.createRelativeFieldValues(from);
     }
@@ -158,13 +166,13 @@ public class ChildrenBuilder {
     private void createRelativeFieldValues(@NotNull Field from) {
         LOGGER.log(Level.INFO, () -> "Creating relative field values...");
 
-        int minValue = getMinValue(this.allValidToFields);
-        int maxValue = getMaxValue(this.allValidToFields);
+        int minValue = getMinValue(this.parent.getAllValidToFields());
+        int maxValue = getMaxValue(this.parent.getAllValidToFields());
 
         LOGGER.log(Level.INFO, () -> "minValue=" + minValue);
         LOGGER.log(Level.INFO, () -> "maxValue=" + maxValue);
 
-        this.allValidToFields.forEach((Field gridField) -> {
+        this.parent.getAllValidToFields().forEach((Field gridField) -> {
             double relativeValue = maxValue - minValue <= 0 ? MAXIMUM_COLOR_VALUE : calculateRelativeValue(minValue, maxValue, gridField);
 
             gridField.setRelativeValue((int) relativeValue);
@@ -172,11 +180,9 @@ public class ChildrenBuilder {
             from.setRelativeValue(from.getRelativeValue() == null
                                   ? gridField.getRelativeValue()
                                   : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
-
-            gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField));
         });
 
-        from.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(from));
+        this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
     }
 
     private int minimaxValue(Field from, Field to) {
