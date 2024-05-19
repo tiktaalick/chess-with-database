@@ -201,9 +201,13 @@ public final class Chessboard {
      */
     public void setValidFromFields(Move move, PlayerColor activePlayerColor) {
         if (this.numberOfMovesToLookAhead > 0) {
-            this.children = CHILDREN_BUILDER.init(this, activePlayerColor).collectAllValidFromToCombinations(move).buildChildren();
+            this.children = CHILDREN_BUILDER
+                    .init(this, activePlayerColor)
+                    .collectAllValidFromToCombinations(move)
+                    .setBackgroundColors()
+                    .buildChildren();
         } else {
-            CHILDREN_BUILDER.init(this, activePlayerColor).resetFromAttributes(move).calculateFieldValues();
+            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues().setBackgroundColors();
         }
     }
 
@@ -214,7 +218,12 @@ public final class Chessboard {
      * @param activePlayerColor The color with which the active player plays.
      */
     public void setValidToFields(Move move, PlayerColor activePlayerColor) {
-        CHILDREN_BUILDER.init(this, activePlayerColor).setValidToFields(move.getFrom()).resetFromAttributes(move).calculateFieldValues();
+        CHILDREN_BUILDER
+                .init(this, activePlayerColor)
+                .createAllValidFromToCombinations(move.getFrom())
+                .resetToAttributes()
+                .calculateFieldValues()
+                .setBackgroundColors();
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,

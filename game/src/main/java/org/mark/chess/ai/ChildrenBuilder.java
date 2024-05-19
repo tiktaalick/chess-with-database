@@ -65,7 +65,26 @@ public class ChildrenBuilder {
     public ChildrenBuilder collectAllValidFromToCombinations(Move move) {
         LOGGER.log(Level.INFO, () -> "Collecting all valid from/to combinations...");
 
-        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).setValidToFields(from));
+        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
+
+        return this;
+    }
+
+    public ChildrenBuilder createAllValidFromToCombinations(Field from) {
+        List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
+
+        LOGGER.log(Level.INFO, () -> "Number of validToFields=" + validToFields.size());
+
+        from.setValidTo(!validToFields.isEmpty()).setValidFrom(from.hasValidTo());
+
+        this.parent.getAllValidToFields().addAll(validToFields);
+
+        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
+
+        if (from.isValidFrom()) {
+            this.parent.getAllValidFromToCombinations().put(from, validToFields);
+            LOGGER.log(Level.INFO, () -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
+        }
 
         return this;
     }
@@ -73,9 +92,18 @@ public class ChildrenBuilder {
     public ChildrenBuilder init(Chessboard chessboard, PlayerColor activePlayerColor) {
         this.activePlayerColor = activePlayerColor;
         this.parent = chessboard;
-        this.parent.setChildren(new ArrayList<>());
         this.parent.setAllValidToFields(new ArrayList<>());
         this.parent.setAllValidFromToCombinations(new HashMap<>());
+
+        return this;
+    }
+
+    public ChildrenBuilder resetEnPassant(Move move, Field from) {
+        LOGGER.log(Level.INFO, () -> "Resetting en passant...");
+
+        if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
+            ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
+        }
 
         return this;
     }
@@ -93,27 +121,23 @@ public class ChildrenBuilder {
 
         from.setRelativeValue(null).setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
 
-        if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
-            ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
-        }
+        resetEnPassant(move, from);
+
         return this;
     }
 
-    public ChildrenBuilder setValidToFields(Field from) {
-        List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
+    public ChildrenBuilder resetToAttributes() {
+        LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
 
-        LOGGER.log(Level.INFO, () -> "Number of validToFields=" + validToFields.size());
+        this.parent.getFields().forEach(to -> to.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
 
-        from.setValidTo(!validToFields.isEmpty()).setValidFrom(from.hasValidTo());
+        return this;
+    }
 
-        this.parent.getAllValidToFields().addAll(validToFields);
+    public ChildrenBuilder setBackgroundColors() {
+        LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
-        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
-
-        if (from.isValidFrom()) {
-            this.parent.getAllValidFromToCombinations().put(from, validToFields);
-            LOGGER.log(Level.INFO, () -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
-        }
+        this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
 
         return this;
     }
@@ -181,8 +205,6 @@ public class ChildrenBuilder {
                                   ? gridField.getRelativeValue()
                                   : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
         });
-
-        this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
     }
 
     private int minimaxValue(Field from, Field to) {
