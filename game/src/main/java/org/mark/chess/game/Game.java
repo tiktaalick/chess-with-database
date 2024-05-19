@@ -88,9 +88,9 @@ public class Game {
     public Game handleButtonClick(int leftRightClick, int buttonId) {
         var fieldClick = this.getChessboard().getFields().get(buttonId);
 
-        if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && move.isFrom(this, fieldClick)) {
+        if (leftRightClick == LEFT_CLICK && fieldClick.isValidFrom() && move.isFrom(this, fieldClick)) {
             this.move = moveBuilder.performFromMove(this, move, fieldClick);
-        } else if (leftRightClick == LEFT_CLICK && fieldClick.hasValidTo() && !move.isFrom(this, fieldClick)) {
+        } else if (leftRightClick == LEFT_CLICK && fieldClick.isValidTo() && !move.isFrom(this, fieldClick)) {
             this.move = moveBuilder.performToMove(this, move, fieldClick);
         } else if (leftRightClick == RIGHT_CLICK) {
             this.move = moveBuilder.performResetMove(this, move);

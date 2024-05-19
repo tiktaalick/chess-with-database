@@ -44,7 +44,7 @@ public class Field implements Comparable<Field> {
     private boolean     isValidFrom;
 
     @Accessors(fluent = true)
-    private boolean hasValidTo;
+    private boolean isValidTo;
     private boolean isAttacking;
     private boolean isUnderAttack;
     private boolean isCheckMate;
@@ -139,10 +139,13 @@ public class Field implements Comparable<Field> {
 
         var gridAfterMovement = chessboard.createOneStepBeyond(this, to);
 
-        List<Field> attackers = gridAfterMovement.getFields().stream().filter(opponentField -> opponentField.getPieceType() != null).filter(
-                opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor()).filter(opponentField -> isValidMove(
-                gridAfterMovement,
-                opponentField)).collect(Collectors.toList());
+        List<Field> attackers = gridAfterMovement
+                .getFields()
+                .stream()
+                .filter(opponentField -> opponentField.getPieceType() != null)
+                .filter(opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor())
+                .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
+                .collect(Collectors.toList());
 
         return !attackers.isEmpty();
     }
@@ -223,12 +226,11 @@ public class Field implements Comparable<Field> {
     /**
      * Sets whether the field has valid fields to move to.
      *
-     * @param hasValidTo True if the field has valid fields to move to.
+     * @param isValidTo True if the field has valid fields to move to.
      * @return The field.
      */
-    public Field setValidTo(boolean hasValidTo) {
-        this.hasValidTo = hasValidTo;
-        this.setBackgroundColor(backgroundColorRulesEngine.process(this));
+    public Field setValidTo(boolean isValidTo) {
+        this.isValidTo = isValidTo;
 
         return this;
     }
@@ -241,10 +243,9 @@ public class Field implements Comparable<Field> {
     }
 
     private static boolean isValidMove(Chessboard chessboardAfterMovement, @NotNull Field opponentField) {
-        return opponentField.getPieceType().isValidMove(new IsValidMoveParameter(chessboardAfterMovement,
-                opponentField,
-                chessboardAfterMovement.getKingField(),
-                true));
+        return opponentField
+                .getPieceType()
+                .isValidMove(new IsValidMoveParameter(chessboardAfterMovement, opponentField, chessboardAfterMovement.getKingField(), true));
     }
 
     private static void setUnderAttackColor(@NotNull Field attackedKingField) {

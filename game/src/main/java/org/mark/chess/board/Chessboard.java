@@ -204,6 +204,7 @@ public final class Chessboard {
             this.children = CHILDREN_BUILDER
                     .init(this, activePlayerColor)
                     .collectAllValidFromToCombinations(move)
+                    .calculateFieldValues()
                     .setBackgroundColors()
                     .buildChildren();
         } else {
