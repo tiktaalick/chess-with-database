@@ -128,9 +128,9 @@ public class ChildrenBuilder {
     public ChildrenBuilder resetToAttributes() {
         LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
 
-        this.parent
-                .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> to.setValidTo(true).setAttacking(false).setUnderAttack(false)));
+        this.parent.getFields().forEach(field -> field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
+
+        this.parent.getAllValidFromToCombinations().forEach((from, toList) -> toList.forEach(to -> to.setValidTo(true)));
 
         return this;
     }
