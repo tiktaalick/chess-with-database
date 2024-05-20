@@ -47,9 +47,14 @@ public class ChildrenBuilder {
     public ChildrenBuilder calculateFieldValues() {
         LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
+        this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+
         this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
             from.setValidFrom(true);
-            calculateFieldValues(from);
+            validToFields.forEach(to -> {
+                this.createAbsoluteFieldValues(from, to);
+            });
+            this.createRelativeFieldValues(from, validToFields);
         });
 
         return this;
@@ -164,15 +169,6 @@ public class ChildrenBuilder {
         return validToFields == null ? 0 : validToFields.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
     }
 
-    private void calculateFieldValues(Field from) {
-        LOGGER.log(Level.INFO, () -> "Calculating field values...");
-
-        this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
-        this.parent.getAllValidToFields().forEach(to -> createAbsoluteFieldValues(from, to));
-
-        this.createRelativeFieldValues(from);
-    }
-
     private void createAbsoluteFieldValues(Field from, Field to) {
         LOGGER.log(Level.INFO, () -> "Creating absolute field values...");
 
@@ -188,7 +184,7 @@ public class ChildrenBuilder {
         }
     }
 
-    private void createRelativeFieldValues(@NotNull Field from) {
+    private void createRelativeFieldValues(@NotNull Field from, List<Field> validToFields) {
         LOGGER.log(Level.INFO, () -> "Creating relative field values...");
 
         int minValue = getMinValue(this.parent.getAllValidToFields());
@@ -197,14 +193,12 @@ public class ChildrenBuilder {
         LOGGER.log(Level.INFO, () -> "minValue=" + minValue);
         LOGGER.log(Level.INFO, () -> "maxValue=" + maxValue);
 
-        this.parent.getAllValidToFields().forEach((Field gridField) -> {
-            double relativeValue = maxValue - minValue <= 0 ? MINIMUM_COLOR_VALUE : calculateRelativeValue(minValue, maxValue, gridField);
+        validToFields.forEach((Field to) -> {
+            double relativeValue = maxValue - minValue <= 0 ? MINIMUM_COLOR_VALUE : calculateRelativeValue(minValue, maxValue, to);
 
-            gridField.setRelativeValue((int) relativeValue);
+            to.setRelativeValue((int) relativeValue);
 
-            from.setRelativeValue(from.getRelativeValue() == null
-                                  ? gridField.getRelativeValue()
-                                  : Math.max(from.getRelativeValue(), gridField.getRelativeValue()));
+            from.setRelativeValue(from.getRelativeValue() == null ? to.getRelativeValue() : Math.max(from.getRelativeValue(), to.getRelativeValue()));
         });
     }
 
