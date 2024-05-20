@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -157,7 +158,7 @@ public class Field implements Comparable<Field> {
      * @param children A list of all valid moves.
      * @return True if the player is not able to move.
      */
-    public boolean isNotAbleToMove(@NotNull Game game, List<Chessboard> children) {
+    public boolean isNotAbleToMove(@NotNull Game game, Set<Chessboard> children) {
         return game.getActivePlayer().getColor() == this.getPieceType().getColor() && game.isInProgress() && CollectionUtils.isEmpty(children);
     }
 

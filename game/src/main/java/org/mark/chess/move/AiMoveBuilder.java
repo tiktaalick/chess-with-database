@@ -44,7 +44,7 @@ public class AiMoveBuilder extends MoveBuilder {
                        .moveRookIfCastling(game)
                        .changeTurn(game)
                        .resetFrom()
-                        .setKingFieldColors(game)
+                       .setKingFieldColors(game)
                        .build();
     }
 
@@ -66,9 +66,9 @@ public class AiMoveBuilder extends MoveBuilder {
 
     private AiMoveBuilder createAiTo(Game game) {
         if (game.isInProgress()) {
-            var toField = game.getChessboard().getChildren().getLast().getFromParentToChildMove().getTo();
+//            var toField = game.getChessboard().getChildren().getLast().getFromParentToChildMove().getTo();
 
-            this.move = this.move.setTo(game.getChessboard(), toField);
+//.            this.move = this.move.setTo(game.getChessboard(), toField);
         }
 
         LOGGER.log(Level.INFO, "AiMoveBuilder.createAiTo(): {0}", this.move);

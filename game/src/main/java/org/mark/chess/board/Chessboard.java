@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -51,7 +53,7 @@ public final class Chessboard {
 
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
     private List<Field>             allValidToFields           = new ArrayList<>();
-    private List<Chessboard>        children                   = new ArrayList<>();
+    private Set<Chessboard>         children                   = new HashSet<>();
     private PlayerColor             childrenActivePlayerColor  = BLACK;
     private List<Field>             fields;
     private Move                    fromParentToChildMove;

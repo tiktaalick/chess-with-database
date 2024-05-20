@@ -13,8 +13,10 @@ import org.mark.chess.player.PlayerColor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,20 +34,21 @@ public class ChildrenBuilder {
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
     private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
-    private final        List<Chessboard>           children                      = new ArrayList<>();
 
     @Setter
     private PlayerColor activePlayerColor;
     private Chessboard  parent;
 
-    public List<Chessboard> buildChildren() {
+    public Set<Chessboard> buildChildren() {
+        Set<Chessboard> children = new HashSet<>();
+
         this.parent
                 .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> this.children.add(this.parent.createOneStepBeyond(from, to))));
+                .forEach((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
-        LOGGER.log(Level.INFO, () -> "Number of children for " + this.activePlayerColor + "=" + this.children.size());
+        LOGGER.log(Level.INFO, () -> "Number of children for " + this.activePlayerColor + "=" + children.size());
 
-        return new ArrayList<>(this.children);
+        return new HashSet<>(children);
     }
 
     public ChildrenBuilder calculateFieldValues() {
