@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.Math.max;
@@ -35,7 +34,7 @@ public class ChildrenBuilder {
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
     private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
-    
+
     @Setter
     private PlayerColor activePlayerColor;
     private Chessboard  parent;
@@ -45,14 +44,12 @@ public class ChildrenBuilder {
 
         forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
-        LOGGER.log(Level.INFO, () -> "Number of children for " + this.activePlayerColor + "=" + children.size());
+        LOGGER.info(() -> "Number of children for " + this.activePlayerColor + "=" + children.size());
 
         return new HashSet<>(children);
     }
 
     public ChildrenBuilder calculateFieldValues() {
-        LOGGER.info("Calculating field values...");
-
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
 
         forEachValidFromToCombination((from, validToFields) -> {
@@ -82,23 +79,21 @@ public class ChildrenBuilder {
     public ChildrenBuilder collectAllValidFromToCombinations(Move move) {
         this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
 
+        LOGGER.info(() -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
+        LOGGER.info(() -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
+
         return this;
     }
 
     public ChildrenBuilder createAllValidFromToCombinations(Field from) {
         List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
 
-        LOGGER.info("Number of validToFields=" + validToFields.size());
-
         from.setValidFrom(!validToFields.isEmpty());
 
         this.parent.getAllValidToFields().addAll(validToFields);
 
-        LOGGER.info("Number of allValidToFields=" + this.parent.getAllValidToFields().size());
-
         if (from.isValidFrom()) {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
-            LOGGER.info("Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
         }
 
         return this;
@@ -130,7 +125,7 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder setBackgroundColors() {
-        LOGGER.info("Calculating field values...");
+        LOGGER.info(() -> "Calculating field values...");
 
         this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
 
@@ -189,9 +184,6 @@ public class ChildrenBuilder {
                     .process(new ChessboardValueParameter(chessboardAfterMovement, this.activePlayerColor))
                     .getTotalValue());
             from.setValue(from.getValue() == null ? to.getValue() : minimaxValue(from, to));
-
-            LOGGER.info("FromValue=" + from.getValue());
-            LOGGER.info("ToValue=" + to.getValue());
         }
     }
 
