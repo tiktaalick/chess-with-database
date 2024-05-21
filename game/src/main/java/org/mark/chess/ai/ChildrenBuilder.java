@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +35,7 @@ public class ChildrenBuilder {
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
     private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
-
+    
     @Setter
     private PlayerColor activePlayerColor;
     private Chessboard  parent;
@@ -42,9 +43,7 @@ public class ChildrenBuilder {
     public Set<Chessboard> buildChildren() {
         Set<Chessboard> children = new HashSet<>();
 
-        this.parent
-                .getAllValidFromToCombinations()
-                .forEach((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
+        forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
         LOGGER.log(Level.INFO, () -> "Number of children for " + this.activePlayerColor + "=" + children.size());
 
@@ -52,30 +51,24 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder calculateFieldValues() {
-        LOGGER.log(Level.INFO, () -> "Calculating field values...");
-
-        new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
+        LOGGER.info("Calculating field values...");
 
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
 
-        this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
+        forEachValidFromToCombination((from, validToFields) -> {
             from.setValidFrom(true);
-            validToFields.forEach(to -> {
-                this.createAbsoluteFieldValues(from, to);
-            });
+            validToFields.forEach(to -> this.createAbsoluteFieldValues(from.setValidFrom(true), to));
         });
 
-        AtomicInteger minValue = new AtomicInteger(getMinValue(this.parent.getAllValidToFields()));
-        AtomicInteger maxValue = new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
+        var minValue = new AtomicInteger(getMinValue(this.parent.getAllValidToFields()));
+        var maxValue = new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
 
-        this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
+        forEachValidFromToCombination((from, validToFields) -> {
             from.setValidFrom(true);
-            validToFields.forEach(to -> this.createRelativeFieldValuesTo(from, to, minValue, maxValue));
+            validToFields.forEach(to -> createRelativeFieldValuesTo(from, to, minValue, maxValue));
         });
 
-        this.parent
-                .getAllValidFromToCombinations()
-                .forEach((from, validToFields) -> this.createRelativeFieldValuesFrom(from, validToFields, minValue, maxValue));
+        forEachValidFromToCombination((from, validToFields) -> createRelativeFieldValuesFrom(from, validToFields, minValue, maxValue));
 
         return this;
     }
@@ -87,8 +80,6 @@ public class ChildrenBuilder {
      * @return this.
      */
     public ChildrenBuilder collectAllValidFromToCombinations(Move move) {
-        LOGGER.log(Level.INFO, () -> "Collecting all valid from/to combinations...");
-
         this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
 
         return this;
@@ -97,17 +88,17 @@ public class ChildrenBuilder {
     public ChildrenBuilder createAllValidFromToCombinations(Field from) {
         List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
 
-        LOGGER.log(Level.INFO, () -> "Number of validToFields=" + validToFields.size());
+        LOGGER.info("Number of validToFields=" + validToFields.size());
 
         from.setValidFrom(!validToFields.isEmpty());
 
         this.parent.getAllValidToFields().addAll(validToFields);
 
-        LOGGER.log(Level.INFO, () -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
+        LOGGER.info("Number of allValidToFields=" + this.parent.getAllValidToFields().size());
 
         if (from.isValidFrom()) {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
-            LOGGER.log(Level.INFO, () -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
+            LOGGER.info("Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
         }
 
         return this;
@@ -122,27 +113,7 @@ public class ChildrenBuilder {
         return this;
     }
 
-    public ChildrenBuilder resetEnPassant(Move move, Field from) {
-        LOGGER.log(Level.INFO, () -> "Resetting en passant...");
-
-        if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
-            ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
-        }
-
-        return this;
-    }
-
-    public ChildrenBuilder resetFromAttributes(Move move) {
-        LOGGER.log(Level.INFO, () -> "Resetting all from attributes...");
-
-        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from));
-
-        return this;
-    }
-
     public ChildrenBuilder resetFromAttributes(Move move, Field from) {
-        LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
-
         from.setRelativeValue(null).setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
 
         resetEnPassant(move, from);
@@ -151,17 +122,15 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder resetToAttributes() {
-        LOGGER.log(Level.INFO, () -> "Resetting from attributes...");
-
         this.parent.getFields().forEach(field -> field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
 
-        this.parent.getAllValidFromToCombinations().forEach((from, toList) -> toList.forEach(to -> to.setValidTo(true)));
+        forEachValidFromToCombination((from, toList) -> toList.forEach(to -> to.setValidTo(true)));
 
         return this;
     }
 
     public ChildrenBuilder setBackgroundColors() {
-        LOGGER.log(Level.INFO, () -> "Calculating field values...");
+        LOGGER.info("Calculating field values...");
 
         this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
 
@@ -171,6 +140,20 @@ public class ChildrenBuilder {
     private static double calculateRelativeValue(int minValue, int maxValue, int fieldValue) {
         return (((double) getCurrentFieldValueComparedToMinimumValue(fieldValue, minValue)) /
                 getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE;
+    }
+
+    private static void createRelativeFieldValuesFrom(@NotNull Field from,
+            List<Field> validToFields,
+            AtomicInteger minValue,
+            AtomicInteger maxValue) {
+
+        validToFields.forEach((Field to) -> from.setRelativeValue(max(Optional.ofNullable(from.getRelativeValue()).orElse(0), to.getValue())));
+
+        from.setRelativeValue((int) relativeValue(minValue, maxValue, from.getRelativeValue()));
+    }
+
+    private static void createRelativeFieldValuesTo(@NotNull Field from, Field to, AtomicInteger minValue, AtomicInteger maxValue) {
+        to.setRelativeValue((int) relativeValue(minValue, maxValue, to.getValue()));
     }
 
     private static int getCurrentFieldValueComparedToMinimumValue(int fieldValue, int minValue) {
@@ -190,14 +173,16 @@ public class ChildrenBuilder {
     }
 
     private static double relativeValue(AtomicInteger minValue, AtomicInteger maxValue, int fieldValue) {
-        return Optional.ofNullable(fieldValue).orElse(0) == 0
-               ? MINIMUM_COLOR_VALUE
-               : calculateRelativeValue(minValue.get(), maxValue.get(), fieldValue);
+        return Optional.of(fieldValue).orElse(0) == 0 ? MINIMUM_COLOR_VALUE : calculateRelativeValue(minValue.get(), maxValue.get(), fieldValue);
+    }
+
+    private static void resetEnPassant(Move move, Field from) {
+        if (!move.isDuringAMove(from) && from.getPieceType() != null && from.getPieceType().getName().equals(PAWN)) {
+            ((Pawn) from.getPieceType()).setMayBeCapturedEnPassant(false);
+        }
     }
 
     private void createAbsoluteFieldValues(Field from, Field to) {
-        LOGGER.log(Level.INFO, () -> "Creating absolute field values...");
-
         if (from != null && from.getPieceType() != null) {
             var chessboardAfterMovement = this.parent.createOneStepBeyond(from, to);
             to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
@@ -205,38 +190,16 @@ public class ChildrenBuilder {
                     .getTotalValue());
             from.setValue(from.getValue() == null ? to.getValue() : minimaxValue(from, to));
 
-            LOGGER.log(Level.INFO, () -> "FromValue=" + from.getValue());
-            LOGGER.log(Level.INFO, () -> "ToValue=" + to.getValue());
+            LOGGER.info("FromValue=" + from.getValue());
+            LOGGER.info("ToValue=" + to.getValue());
         }
     }
 
-    private void createRelativeFieldValuesFrom(@NotNull Field from, List<Field> validToFields, AtomicInteger minValue, AtomicInteger maxValue) {
-        LOGGER.log(Level.INFO, () -> "Creating relative field values (from)...");
-
-        validToFields.forEach((Field to) -> from.setRelativeValue(max(Optional.ofNullable(from.getRelativeValue()).orElse(0), to.getValue())));
-
-        from.setRelativeValue((int) relativeValue(minValue, maxValue, from.getRelativeValue()));
-
-        LOGGER.log(Level.INFO, () -> "from.getRelativeValue()=" + from.getRelativeValue());
-        LOGGER.log(Level.INFO, () -> "minRelativeValue=" + minValue.get());
-        LOGGER.log(Level.INFO, () -> "maxRelativeValue=" + maxValue.get());
-    }
-
-    private void createRelativeFieldValuesTo(@NotNull Field from, Field to, AtomicInteger minValue, AtomicInteger maxValue) {
-        LOGGER.log(Level.INFO, () -> "Creating relative field values (to)...");
-        LOGGER.log(Level.INFO, () -> "minValue=" + minValue);
-        LOGGER.log(Level.INFO, () -> "maxValue=" + maxValue);
-
-        to.setRelativeValue((int) relativeValue(minValue, maxValue, to.getValue()));
-
-        LOGGER.log(Level.INFO, () -> "from " + from.getCode() + " -> to " + to.getCode());
-        LOGGER.log(Level.INFO, () -> "to.getValue()=" + to.getValue());
-        LOGGER.log(Level.INFO, () -> "to.getRelativeValue()=" + to.getRelativeValue());
+    private void forEachValidFromToCombination(BiConsumer<Field, List<Field>> validFromToCombinationConsumer) {
+        this.parent.getAllValidFromToCombinations().forEach(validFromToCombinationConsumer);
     }
 
     private int minimaxValue(Field from, Field to) {
-        LOGGER.log(Level.INFO, () -> "activePlayerColor=" + this.activePlayerColor);
-
         return this.activePlayerColor == BLACK ? max(from.getValue(), to.getValue()) : min(from.getValue(), to.getValue());
     }
 }

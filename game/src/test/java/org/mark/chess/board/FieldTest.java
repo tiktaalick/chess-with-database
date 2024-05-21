@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -65,7 +65,7 @@ class FieldTest {
 
         field.setId(FIELD_ID_C5).setPieceType(new Pawn(BLACK));
 
-        assertTrue(field.isNotAbleToMove(game, new ArrayList<>()));
+        assertTrue(field.isNotAbleToMove(game, new HashSet<>()));
     }
 
 //    @Test
