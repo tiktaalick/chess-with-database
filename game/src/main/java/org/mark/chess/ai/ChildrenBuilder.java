@@ -54,8 +54,6 @@ public class ChildrenBuilder {
     public ChildrenBuilder calculateFieldValues() {
         LOGGER.log(Level.INFO, () -> "Calculating field values...");
 
-        AtomicInteger minValue = new AtomicInteger(0);
-        AtomicInteger maxValue = new AtomicInteger(0);
         new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
 
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
@@ -64,10 +62,15 @@ public class ChildrenBuilder {
             from.setValidFrom(true);
             validToFields.forEach(to -> {
                 this.createAbsoluteFieldValues(from, to);
-                minValue.set(min(minValue.get(), getMinValue(validToFields)));
-                maxValue.set(max(maxValue.get(), getMaxValue(validToFields)));
-                this.createRelativeFieldValuesTo(from, to, minValue, maxValue);
             });
+        });
+
+        AtomicInteger minValue = new AtomicInteger(getMinValue(this.parent.getAllValidToFields()));
+        AtomicInteger maxValue = new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
+
+        this.parent.getAllValidFromToCombinations().forEach((from, validToFields) -> {
+            from.setValidFrom(true);
+            validToFields.forEach(to -> this.createRelativeFieldValuesTo(from, to, minValue, maxValue));
         });
 
         this.parent
