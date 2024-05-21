@@ -2,7 +2,6 @@ package org.mark.chess.ai;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
@@ -15,9 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -33,7 +30,8 @@ public class ChildrenBuilder {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
-    private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
+
+    private static final Logger LOGGER = Logger.getLogger(ChildrenBuilder.class.getName());
 
     @Setter
     private PlayerColor activePlayerColor;
@@ -52,20 +50,29 @@ public class ChildrenBuilder {
     public ChildrenBuilder calculateFieldValues() {
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
 
+        forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
+            this.createAbsoluteFieldValues(from.setValidFrom(true), to);
+            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getValue());
+        }));
+
+        int minValue = getMinValue(this.parent.getAllValidToFields());
+        int maxValue = getMaxValue(this.parent.getAllValidToFields());
+
+        LOGGER.info(() -> "minValue=" + minValue);
+        LOGGER.info(() -> "maxValue=" + maxValue);
+
         forEachValidFromToCombination((from, validToFields) -> {
             from.setValidFrom(true);
-            validToFields.forEach(to -> this.createAbsoluteFieldValues(from.setValidFrom(true), to));
+            validToFields.forEach(to -> {
+                to.setRelativeValue(validToFields.size() == 1 ? MAXIMUM_COLOR_VALUE : createRelativeFieldValueTo(to, minValue, maxValue));
+                LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
+            });
         });
-
-        var minValue = new AtomicInteger(getMinValue(this.parent.getAllValidToFields()));
-        var maxValue = new AtomicInteger(getMaxValue(this.parent.getAllValidToFields()));
 
         forEachValidFromToCombination((from, validToFields) -> {
-            from.setValidFrom(true);
-            validToFields.forEach(to -> createRelativeFieldValuesTo(from, to, minValue, maxValue));
+            from.setRelativeValue(createRelativeFieldValueFrom(validToFields, minValue, maxValue));
+            LOGGER.info(() -> from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
         });
-
-        forEachValidFromToCombination((from, validToFields) -> createRelativeFieldValuesFrom(from, validToFields, minValue, maxValue));
 
         return this;
     }
@@ -125,50 +132,30 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder setBackgroundColors() {
-        LOGGER.info(() -> "Calculating field values...");
-
         this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
 
         return this;
     }
 
     private static double calculateRelativeValue(int minValue, int maxValue, int fieldValue) {
-        return (((double) getCurrentFieldValueComparedToMinimumValue(fieldValue, minValue)) /
-                getMaximumFieldValueComparedToMinimumValue(minValue, maxValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE;
+        return (int) ((double) (fieldValue - minValue) / max(1, (maxValue - minValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) +
+                MINIMUM_COLOR_VALUE);
     }
 
-    private static void createRelativeFieldValuesFrom(@NotNull Field from,
-            List<Field> validToFields,
-            AtomicInteger minValue,
-            AtomicInteger maxValue) {
-
-        validToFields.forEach((Field to) -> from.setRelativeValue(max(Optional.ofNullable(from.getRelativeValue()).orElse(0), to.getValue())));
-
-        from.setRelativeValue((int) relativeValue(minValue, maxValue, from.getRelativeValue()));
+    private static int createRelativeFieldValueFrom(List<Field> validToFields, int minValue, int maxValue) {
+        return (int) calculateRelativeValue(minValue, maxValue, validToFields.stream().mapToInt(Field::getValue).max().orElse(0));
     }
 
-    private static void createRelativeFieldValuesTo(@NotNull Field from, Field to, AtomicInteger minValue, AtomicInteger maxValue) {
-        to.setRelativeValue((int) relativeValue(minValue, maxValue, to.getValue()));
-    }
-
-    private static int getCurrentFieldValueComparedToMinimumValue(int fieldValue, int minValue) {
-        return fieldValue - minValue;
+    private static int createRelativeFieldValueTo(Field to, int minValue, int maxValue) {
+        return (int) calculateRelativeValue(minValue, maxValue, to.getValue());
     }
 
     private static int getMaxValue(Collection<Field> validToFields) {
         return validToFields == null ? 0 : validToFields.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).max().orElse(0);
     }
 
-    private static int getMaximumFieldValueComparedToMinimumValue(int minValue, int maxValue) {
-        return (maxValue - minValue);
-    }
-
     private static int getMinValue(Collection<Field> validToFields) {
         return validToFields == null ? 0 : validToFields.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
-    }
-
-    private static double relativeValue(AtomicInteger minValue, AtomicInteger maxValue, int fieldValue) {
-        return Optional.of(fieldValue).orElse(0) == 0 ? MINIMUM_COLOR_VALUE : calculateRelativeValue(minValue.get(), maxValue.get(), fieldValue);
     }
 
     private static void resetEnPassant(Move move, Field from) {
