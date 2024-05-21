@@ -226,6 +226,7 @@ public final class Chessboard {
                 .createAllValidFromToCombinations(move.getFrom())
                 .resetToAttributes()
                 .calculateFieldValues()
+                .colorFromFieldsWithOneToFieldGreen()
                 .setBackgroundColors();
     }
 

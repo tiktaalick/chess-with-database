@@ -92,6 +92,16 @@ public class ChildrenBuilder {
         return this;
     }
 
+    public ChildrenBuilder colorFromFieldsWithOneToFieldGreen() {
+        forEachValidFromToCombination((from, validToFields) -> {
+            if (validToFields.size() == 1) {
+                from.setRelativeValue(MAXIMUM_COLOR_VALUE);
+            }
+        });
+ 
+        return this;
+    }
+
     public ChildrenBuilder createAllValidFromToCombinations(Field from) {
         List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
 
