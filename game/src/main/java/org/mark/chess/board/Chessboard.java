@@ -106,11 +106,7 @@ public final class Chessboard {
      * @param move The move that the player might be performing.
      */
     public static void setValidToFields(Move move) {
-        CHILDREN_BUILDER
-                .resetToAttributes(move.getFrom().getCode())
-                .calculateFieldValues(move.getFrom().getCode())
-                .colorFromFieldsWithOneToFieldGreen()
-                .setBackgroundColors();
+        CHILDREN_BUILDER.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode()).setBackgroundColors();
     }
 
     /**

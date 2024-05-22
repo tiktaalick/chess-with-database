@@ -62,14 +62,10 @@ public class ChildrenBuilder {
         LOGGER.info(() -> "minValue=" + minValue);
         LOGGER.info(() -> "maxValue=" + maxValue);
 
-        forEachValidFromToCombination((from, validToFields) -> {
-            if (withinSelection(from, fromFilter)) {
-                validToFields.forEach(to -> {
-                    to.setRelativeValue(validToFields.size() == 1 ? MAXIMUM_COLOR_VALUE : createRelativeFieldValueTo(to, minValue, maxValue));
-                    LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
-                });
-            }
-        });
+        forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
+            to.setRelativeValue(createRelativeFieldValueTo(to, minValue, maxValue));
+            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
+        }));
 
         forEachValidFromToCombination((from, validToFields) -> {
             if (withinSelection(from, fromFilter)) {
@@ -96,16 +92,6 @@ public class ChildrenBuilder {
         return this;
     }
 
-    public ChildrenBuilder colorFromFieldsWithOneToFieldGreen() {
-        forEachValidFromToCombination((from, validToFields) -> {
-            if (validToFields.size() == 1) {
-                from.setRelativeValue(MAXIMUM_COLOR_VALUE);
-            }
-        });
-
-        return this;
-    }
-
     public ChildrenBuilder init(Chessboard chessboard, PlayerColor activePlayerColor) {
         this.activePlayerColor = activePlayerColor;
         this.parent = chessboard;
@@ -126,11 +112,10 @@ public class ChildrenBuilder {
     public ChildrenBuilder resetToAttributes(String fromFilter) {
         this.parent.getFields().forEach(field -> field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
 
-        forEachValidFromToCombination((from, toList) -> {
-            if (withinSelection(from, fromFilter)) {
-                toList.forEach(to -> to.setValidTo(true));
-            }
-        });
+        forEachValidFromToCombination((from, toList) -> toList
+                .stream()
+                .filter(to -> withinSelection(from, fromFilter))
+                .forEach(to -> to.setValidTo(true)));
 
         return this;
     }
