@@ -9,7 +9,6 @@ import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
 import org.mark.chess.move.Move;
 import org.mark.chess.piece.general.InitialPieceFactory;
-import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.player.PlayerColor;
 
 import java.util.ArrayList;
@@ -106,7 +105,7 @@ public final class Chessboard {
      * @param move The move that the player might be performing.
      */
     public static void setValidToFields(Move move) {
-        CHILDREN_BUILDER.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode()).setBackgroundColors();
+        CHILDREN_BUILDER.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode());
     }
 
     /**
@@ -118,14 +117,6 @@ public final class Chessboard {
      */
     public @NotNull Chessboard createOneStepBeyond(Field from, Field to) {
         return new Chessboard(this, from, to);
-    }
-
-    public List<Field> createValidToFields(@NotNull Field from, PlayerColor activePlayerColor) {
-        return from.isActivePlayerField(activePlayerColor) ? this
-                .getFields()
-                .stream()
-                .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this, from, to, false)))
-                .collect(Collectors.toList()) : new ArrayList<>();
     }
 
     /**
@@ -212,14 +203,9 @@ public final class Chessboard {
      */
     public void setValidFromFields(Move move, PlayerColor activePlayerColor) {
         if (this.numberOfMovesToLookAhead > 0) {
-            this.children = CHILDREN_BUILDER
-                    .init(this, activePlayerColor)
-                    .collectAllValidFromToCombinations(move)
-                    .calculateFieldValues(null)
-                    .setBackgroundColors()
-                    .buildChildren();
+            this.children = CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
         } else {
-            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues(null).setBackgroundColors();
+            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
         }
     }
 

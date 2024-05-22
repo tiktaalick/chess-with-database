@@ -1,11 +1,12 @@
 package org.mark.chess.ai;
 
-import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.move.Move;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.pawn.Pawn;
 import org.mark.chess.player.PlayerColor;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -34,7 +36,6 @@ public class ChildrenBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(ChildrenBuilder.class.getName());
 
-    @Setter
     private PlayerColor activePlayerColor;
     private Chessboard  parent;
 
@@ -49,12 +50,9 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder calculateFieldValues(String fromFilter) {
-        this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
+        this.parent.getFields().forEach(field -> field.setAbsoluteValue(null).setRelativeValue(null));
 
-        forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
-            this.createAbsoluteFieldValues(from.setValidFrom(withinSelection(from, fromFilter)), to);
-            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getValue());
-        }));
+        createAbsoluteToFieldValues(fromFilter);
 
         int minValue = getMinValue(this.parent.getAllValidToFields());
         int maxValue = getMaxValue(this.parent.getAllValidToFields());
@@ -62,41 +60,22 @@ public class ChildrenBuilder {
         LOGGER.info(() -> "minValue=" + minValue);
         LOGGER.info(() -> "maxValue=" + maxValue);
 
-        forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
-            to.setRelativeValue(createRelativeFieldValueTo(to, minValue, maxValue));
-            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
-        }));
+        createRelativeToFieldValues(fromFilter, minValue, maxValue);
 
-        forEachValidFromToCombination((from, validToFields) -> {
-            if (withinSelection(from, fromFilter)) {
-                from.setRelativeValue(createRelativeFieldValueFrom(validToFields, minValue, maxValue));
-                LOGGER.info(() -> from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
-            }
-        });
+        createRelativeFromFieldValues(fromFilter, minValue, maxValue);
+
+        setBackgroundColors();
 
         return this;
     }
 
-    /**
-     * Collects all valid from/to combinations.
-     *
-     * @param move The current move.
-     * @return this.
-     */
-    public ChildrenBuilder collectAllValidFromToCombinations(Move move) {
-        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
-
-        LOGGER.info(() -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
-        LOGGER.info(() -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
-
-        return this;
-    }
-
-    public ChildrenBuilder init(Chessboard chessboard, PlayerColor activePlayerColor) {
+    public ChildrenBuilder init(Chessboard chessboard, Move move, PlayerColor activePlayerColor) {
         this.activePlayerColor = activePlayerColor;
         this.parent = chessboard;
         this.parent.setAllValidToFields(new ArrayList<>());
         this.parent.setAllValidFromToCombinations(new HashMap<>());
+
+        collectAllValidFromToCombinations(move);
 
         return this;
     }
@@ -120,13 +99,7 @@ public class ChildrenBuilder {
         return this;
     }
 
-    public ChildrenBuilder setBackgroundColors() {
-        this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
-
-        return this;
-    }
-
-    private static double calculateRelativeValue(int minValue, int maxValue, int fieldValue) {
+    private static double calculateRelativeFieldValue(int minValue, int maxValue, int fieldValue) {
         int shiftedMaxValue = max(1, maxValue - minValue);
         int shiftedFieldValue = fieldValue - minValue;
         double fieldValueComparedToAbsoluteMaxValue = ((double) shiftedFieldValue / shiftedMaxValue);
@@ -138,20 +111,12 @@ public class ChildrenBuilder {
         return (int) (fieldValueComparedToAbsoluteMaxValue * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE);
     }
 
-    private static int createRelativeFieldValueFrom(List<Field> validToFields, int minValue, int maxValue) {
-        return (int) calculateRelativeValue(minValue, maxValue, validToFields.stream().mapToInt(Field::getValue).max().orElse(0));
-    }
-
-    private static int createRelativeFieldValueTo(Field to, int minValue, int maxValue) {
-        return (int) calculateRelativeValue(minValue, maxValue, to.getValue());
-    }
-
     private static int getMaxValue(Collection<Field> validToFields) {
-        return validToFields == null ? 0 : validToFields.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).max().orElse(0);
+        return validToFields.stream().filter(field -> field.getAbsoluteValue() != null).mapToInt(Field::getAbsoluteValue).max().orElse(0);
     }
 
     private static int getMinValue(Collection<Field> validToFields) {
-        return validToFields == null ? 0 : validToFields.stream().filter(field -> field.getValue() != null).mapToInt(Field::getValue).min().orElse(0);
+        return validToFields.stream().filter(field -> field.getAbsoluteValue() != null).mapToInt(Field::getAbsoluteValue).min().orElse(0);
     }
 
     private static void resetEnPassant(Move move, Field from) {
@@ -164,18 +129,35 @@ public class ChildrenBuilder {
         return Optional.ofNullable(fromFilter).orElse(from.getCode()).equals(from.getCode());
     }
 
-    private void createAbsoluteFieldValues(Field from, Field to) {
+    private void collectAllValidFromToCombinations(Move move) {
+        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
+
+        LOGGER.info(() -> "Number of allValidToFields=" + this.parent.getAllValidToFields().size());
+        LOGGER.info(() -> "Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
+    }
+
+    private int createAbsoluteToFieldValue(Field from, Field to) {
         if (from != null && from.getPieceType() != null) {
             var chessboardAfterMovement = this.parent.createOneStepBeyond(from, to);
-            to.setValue(CHESSBOARD_VALUE_RULES_ENGINE
+
+            return CHESSBOARD_VALUE_RULES_ENGINE
                     .process(new ChessboardValueParameter(chessboardAfterMovement, this.activePlayerColor))
-                    .getTotalValue());
-            from.setValue(from.getValue() == null ? to.getValue() : minimaxValue(from, to));
+                    .getTotalValue();
         }
+
+        return 0;
+    }
+
+    private void createAbsoluteToFieldValues(String fromFilter) {
+        forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
+            to.setAbsoluteValue(this.createAbsoluteToFieldValue(from.setValidFrom(withinSelection(from, fromFilter)), to));
+
+            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getAbsoluteValue());
+        }));
     }
 
     private void createAllValidFromToCombinations(Field from) {
-        List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
+        List<Field> validToFields = createValidToFields(from, this.activePlayerColor);
 
         from.setValidFrom(!validToFields.isEmpty());
 
@@ -186,11 +168,45 @@ public class ChildrenBuilder {
         }
     }
 
+    private void createRelativeFromFieldValues(String fromFilter, int minValue, int maxValue) {
+        forEachValidFromToCombination((from, validToFields) -> {
+            if (withinSelection(from, fromFilter)) {
+                from.setRelativeValue((int) calculateRelativeFieldValue(minValue,
+                        maxValue,
+                        validToFields.stream().mapToInt(Field::getAbsoluteValue).max().orElse(0)));
+
+                LOGGER.info(() -> from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
+            }
+        });
+    }
+
+    private void createRelativeToFieldValues(String fromFilter, int minValue, int maxValue) {
+        forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
+            to.setRelativeValue((int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
+
+            LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
+        }));
+    }
+
+    private List<Field> createValidToFields(@NotNull Field from, PlayerColor activePlayerColor) {
+        return from.isActivePlayerField(activePlayerColor) ? this.parent
+                .getFields()
+                .stream()
+                .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this.parent, from, to, false)))
+                .collect(Collectors.toList()) : new ArrayList<>();
+    }
+
     private void forEachValidFromToCombination(BiConsumer<Field, List<Field>> validFromToCombinationConsumer) {
         this.parent.getAllValidFromToCombinations().forEach(validFromToCombinationConsumer);
     }
 
     private int minimaxValue(Field from, Field to) {
-        return this.activePlayerColor == BLACK ? max(from.getValue(), to.getValue()) : min(from.getValue(), to.getValue());
+        return this.activePlayerColor == BLACK
+               ? max(from.getAbsoluteValue(), to.getAbsoluteValue())
+               : min(from.getAbsoluteValue(), to.getAbsoluteValue());
+    }
+
+    private void setBackgroundColors() {
+        this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
     }
 }

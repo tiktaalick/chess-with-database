@@ -40,7 +40,7 @@ public class Field implements Comparable<Field> {
     private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
     private PieceType   pieceType;
     private Color       backgroundColor;
-    private Integer     value         = VALUE_NOT_CALCULATED;
+    private Integer     absoluteValue = VALUE_NOT_CALCULATED;
     private Integer     relativeValue = VALUE_NOT_CALCULATED;
     private boolean     isValidFrom;
 
