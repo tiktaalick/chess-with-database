@@ -101,6 +101,19 @@ public final class Chessboard {
     }
 
     /**
+     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
+     *
+     * @param move The move that the player might be performing.
+     */
+    public static void setValidToFields(Move move) {
+        CHILDREN_BUILDER
+                .resetToAttributes(move.getFrom().getCode())
+                .calculateFieldValues(move.getFrom().getCode())
+                .colorFromFieldsWithOneToFieldGreen()
+                .setBackgroundColors();
+    }
+
+    /**
      * Creates a chessboard with chess pieces in their future positions, based on their current positions and the current move.
      *
      * @param from The field from which a piece is moving.
@@ -206,28 +219,12 @@ public final class Chessboard {
             this.children = CHILDREN_BUILDER
                     .init(this, activePlayerColor)
                     .collectAllValidFromToCombinations(move)
-                    .calculateFieldValues()
+                    .calculateFieldValues(null)
                     .setBackgroundColors()
                     .buildChildren();
         } else {
-            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues().setBackgroundColors();
+            CHILDREN_BUILDER.init(this, activePlayerColor).calculateFieldValues(null).setBackgroundColors();
         }
-    }
-
-    /**
-     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
-     *
-     * @param move              The move that the player might be performing.
-     * @param activePlayerColor The color with which the active player plays.
-     */
-    public void setValidToFields(Move move, PlayerColor activePlayerColor) {
-        CHILDREN_BUILDER
-                .init(this, activePlayerColor)
-                .createAllValidFromToCombinations(move.getFrom())
-                .resetToAttributes()
-                .calculateFieldValues()
-                .colorFromFieldsWithOneToFieldGreen()
-                .setBackgroundColors();
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,

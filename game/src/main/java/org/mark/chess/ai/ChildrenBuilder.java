@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
@@ -47,11 +48,11 @@ public class ChildrenBuilder {
         return new HashSet<>(children);
     }
 
-    public ChildrenBuilder calculateFieldValues() {
+    public ChildrenBuilder calculateFieldValues(String fromFilter) {
         this.parent.getFields().forEach(field -> field.setValue(null).setRelativeValue(null));
 
         forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
-            this.createAbsoluteFieldValues(from.setValidFrom(true), to);
+            this.createAbsoluteFieldValues(from.setValidFrom(withinSelection(from, fromFilter)), to);
             LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getValue());
         }));
 
@@ -62,16 +63,19 @@ public class ChildrenBuilder {
         LOGGER.info(() -> "maxValue=" + maxValue);
 
         forEachValidFromToCombination((from, validToFields) -> {
-            from.setValidFrom(true);
-            validToFields.forEach(to -> {
-                to.setRelativeValue(validToFields.size() == 1 ? MAXIMUM_COLOR_VALUE : createRelativeFieldValueTo(to, minValue, maxValue));
-                LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
-            });
+            if (withinSelection(from, fromFilter)) {
+                validToFields.forEach(to -> {
+                    to.setRelativeValue(validToFields.size() == 1 ? MAXIMUM_COLOR_VALUE : createRelativeFieldValueTo(to, minValue, maxValue));
+                    LOGGER.info(() -> from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
+                });
+            }
         });
 
         forEachValidFromToCombination((from, validToFields) -> {
-            from.setRelativeValue(createRelativeFieldValueFrom(validToFields, minValue, maxValue));
-            LOGGER.info(() -> from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
+            if (withinSelection(from, fromFilter)) {
+                from.setRelativeValue(createRelativeFieldValueFrom(validToFields, minValue, maxValue));
+                LOGGER.info(() -> from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
+            }
         });
 
         return this;
@@ -98,20 +102,6 @@ public class ChildrenBuilder {
                 from.setRelativeValue(MAXIMUM_COLOR_VALUE);
             }
         });
- 
-        return this;
-    }
-
-    public ChildrenBuilder createAllValidFromToCombinations(Field from) {
-        List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
-
-        from.setValidFrom(!validToFields.isEmpty());
-
-        this.parent.getAllValidToFields().addAll(validToFields);
-
-        if (from.isValidFrom()) {
-            this.parent.getAllValidFromToCombinations().put(from, validToFields);
-        }
 
         return this;
     }
@@ -133,10 +123,14 @@ public class ChildrenBuilder {
         return this;
     }
 
-    public ChildrenBuilder resetToAttributes() {
+    public ChildrenBuilder resetToAttributes(String fromFilter) {
         this.parent.getFields().forEach(field -> field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
 
-        forEachValidFromToCombination((from, toList) -> toList.forEach(to -> to.setValidTo(true)));
+        forEachValidFromToCombination((from, toList) -> {
+            if (withinSelection(from, fromFilter)) {
+                toList.forEach(to -> to.setValidTo(true));
+            }
+        });
 
         return this;
     }
@@ -148,8 +142,15 @@ public class ChildrenBuilder {
     }
 
     private static double calculateRelativeValue(int minValue, int maxValue, int fieldValue) {
-        return (int) ((double) (fieldValue - minValue) / max(1, (maxValue - minValue)) * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) +
-                MINIMUM_COLOR_VALUE);
+        int shiftedMaxValue = max(1, maxValue - minValue);
+        int shiftedFieldValue = fieldValue - minValue;
+        double fieldValueComparedToAbsoluteMaxValue = ((double) shiftedFieldValue / shiftedMaxValue);
+
+        LOGGER.info(() -> "shiftedMaxValue=" + shiftedMaxValue);
+        LOGGER.info(() -> "shiftedFieldValue=" + shiftedFieldValue);
+        LOGGER.info(() -> "fieldValueComparedToAbsoluteMaxValue=" + fieldValueComparedToAbsoluteMaxValue);
+
+        return (int) (fieldValueComparedToAbsoluteMaxValue * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE);
     }
 
     private static int createRelativeFieldValueFrom(List<Field> validToFields, int minValue, int maxValue) {
@@ -174,6 +175,10 @@ public class ChildrenBuilder {
         }
     }
 
+    private static boolean withinSelection(Field from, String fromFilter) {
+        return Optional.ofNullable(fromFilter).orElse(from.getCode()).equals(from.getCode());
+    }
+
     private void createAbsoluteFieldValues(Field from, Field to) {
         if (from != null && from.getPieceType() != null) {
             var chessboardAfterMovement = this.parent.createOneStepBeyond(from, to);
@@ -181,6 +186,18 @@ public class ChildrenBuilder {
                     .process(new ChessboardValueParameter(chessboardAfterMovement, this.activePlayerColor))
                     .getTotalValue());
             from.setValue(from.getValue() == null ? to.getValue() : minimaxValue(from, to));
+        }
+    }
+
+    private void createAllValidFromToCombinations(Field from) {
+        List<Field> validToFields = this.parent.createValidToFields(from, this.activePlayerColor);
+
+        from.setValidFrom(!validToFields.isEmpty());
+
+        this.parent.getAllValidToFields().addAll(validToFields);
+
+        if (from.isValidFrom()) {
+            this.parent.getAllValidFromToCombinations().put(from, validToFields);
         }
     }
 
