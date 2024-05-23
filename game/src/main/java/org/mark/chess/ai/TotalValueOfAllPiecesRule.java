@@ -39,7 +39,7 @@ public class TotalValueOfAllPiecesRule implements Rule<ChessboardValueParameter,
      * @return Returns false. Only the {@link ChessboardValueResultRule} will eventually return with a result.
      */
     @Override
-    public boolean isApplicable(ChessboardValueParameter chessboardValueParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(ChessboardValueParameter chessboardValueParameter) {
         chessboardValue.setTotalPieceValue(BEST_MOVE.calculate(TOTAL_PIECES_VALUE, chessboardValueParameter));
 
         return false;

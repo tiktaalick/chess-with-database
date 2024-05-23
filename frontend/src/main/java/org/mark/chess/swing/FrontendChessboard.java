@@ -19,8 +19,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Class for the front-end chessboard.
@@ -30,15 +33,16 @@ import java.util.Objects;
 @Accessors(chain = true)
 public final class FrontendChessboard extends JFrame implements ActionListener, MouseListener {
 
-    private static final int HEIGHT       = 870;
-    private static final int SPLIT_IN_TWO = 2;
-    private static final int WIDTH        = 828;
+    private static final GameService GAME_SERVICE = new GameService();
+    private static final int         HEIGHT       = 870;
+    private static final Logger      LOGGER       = Logger.getLogger(FrontendChessboard.class.getName());
+    private static final int         SPLIT_IN_TWO = 2;
+    private static final int         WIDTH        = 828;
 
-    private transient Game        game;
-    private transient GameService gameService;
-
-    private List<FrontendField> frontendFields;
-    private Dimension           dimension;
+    private           Map<String, Long>   durationMap = new HashMap<>();
+    private transient Game                game;
+    private           List<FrontendField> frontendFields;
+    private           Dimension           dimension;
 
     /**
      * Creates a new chessboard for the front-end.
@@ -46,11 +50,21 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
      * @param humanPlayerColor The piece-type color with which the human plays.
      */
     public FrontendChessboard(PlayerColor humanPlayerColor) {
-        this.gameService = new GameService();
-        this.game = gameService.createGame(humanPlayerColor);
+        long beforeCreateGame = System.nanoTime();
+        this.game = GAME_SERVICE.createGame(humanPlayerColor);
+        long beforeCreateFields = System.nanoTime();
         this.createFields();
+        long beforeInitialize = System.nanoTime();
         this.initialize();
+        long beforeUpdateFields = System.nanoTime();
         this.updateFields();
+        long afterUpdateFields = System.nanoTime();
+
+        GAME_SERVICE.storeDuration(durationMap, "gameService.createGame()", beforeCreateGame, beforeCreateFields);
+        GAME_SERVICE.storeDuration(durationMap, "createFields()", beforeCreateFields, beforeInitialize);
+        GAME_SERVICE.storeDuration(durationMap, "initialize()", beforeInitialize, beforeUpdateFields);
+        GAME_SERVICE.storeDuration(durationMap, "updateFields()", beforeUpdateFields, afterUpdateFields);
+        GAME_SERVICE.logDuration(durationMap);
     }
 
     @Override
@@ -70,11 +84,16 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
      */
     @Override
     public void mousePressed(@NotNull MouseEvent event) {
-        this.game = gameService.handleButtonClick(game,
+        long beforeCall = System.nanoTime();
+        this.game = GAME_SERVICE.handleButtonClick(game,
                 event.getButton(),
                 FrontendField.createButtonId(this.game.getHumanPlayerColor(), ((FrontendField) event.getSource()).getId()));
-
+        long afterCall = System.nanoTime();
         this.updateFields();
+        long afterUpdateFields = System.nanoTime();
+
+        GAME_SERVICE.storeDuration(durationMap, "gameService.handleButtonClick()", beforeCall, afterCall);
+        GAME_SERVICE.storeDuration(durationMap, "updateFields()", afterCall, afterUpdateFields);
     }
 
     @Override
@@ -112,16 +131,35 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         this.setResizable(false);
         this.dimension = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(this.dimension.width / SPLIT_IN_TWO - WIDTH / SPLIT_IN_TWO, this.dimension.height / SPLIT_IN_TWO - HEIGHT / SPLIT_IN_TWO);
-        this.getGameService().resetValidMoves(this.getGame());
+        long beforeCall = System.nanoTime();
+        GAME_SERVICE.resetValidMoves(this.getGame());
+        long afterCall = System.nanoTime();
+
+        GAME_SERVICE.storeDuration(durationMap, "getGameService().resetValidMoves()", beforeCall, afterCall);
     }
 
     private void updateFields() {
+        LOGGER.info(() -> "Main chessboard=" + this.game.getChessboard().hashCode());
+        LOGGER.info(() -> "Main activePlayerColor=" + this.game.getActivePlayer().getColor().getName());
+        LOGGER.info(() -> "Main childrenActivePlayerColor=" + this.game.getChessboard().getChildrenActivePlayerColor().getName());
+        LOGGER.info(() -> "Main fromParentToChildMove=" + this.game.getChessboard().getFromParentToChildMove());
+        LOGGER.info(() -> "Main kingField=" + this.game.getChessboard().getKingField());
+        LOGGER.info(() -> "Main opponentKingField=" + this.game.getChessboard().getOpponentKingField());
+
         this.getGame().getChessboard().getFields().forEach((Field field) -> {
+            if (field.isValidFrom()) {
+                LOGGER.info("Main field " + field.getCode() + " is a validFrom.");
+            }
+
+            if (field.isValidTo()) {
+                LOGGER.info("Main field " + field.getCode() + " is a validTo.");
+            }
+
             int buttonId = FrontendField.createButtonId(this.getGame().getHumanPlayerColor(), field.getId());
 
             FrontendField frontendField = Objects.isNull(field.getPieceType())
-                    ? this.getFrontendFields().get(buttonId).reset(field).setId(buttonId)
-                    : this.getFrontendFields().get(buttonId).updateGraphics(field).setId(buttonId);
+                                          ? this.getFrontendFields().get(buttonId).reset(field).setId(buttonId)
+                                          : this.getFrontendFields().get(buttonId).updateGraphics(field).setId(buttonId);
             frontendField.setBackground(field.getBackgroundColor());
         });
     }

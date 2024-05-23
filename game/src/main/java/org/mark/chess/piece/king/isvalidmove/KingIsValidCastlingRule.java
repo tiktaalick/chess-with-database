@@ -42,21 +42,17 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) || isValidCastling(getGrid(),
-                getFrom(),
-                getTo(),
-                KING_CASTLING_TO_THE_RIGHT,
-                isOpponent(),
-                false);
+        return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||
+                isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
     }
 
     private static Field getRookField(@NotNull Chessboard chessboard, @NotNull Field from, int direction) {
         return chessboard.getField(new Coordinates((direction == KING_CASTLING_TO_THE_LEFT
-                ? ROOK_CASTLING_FROM_THE_LEFT
-                : ROOK_CASTLING_FROM_THE_RIGHT), from.getPieceType().getColor().getBaseline()));
+                                                    ? ROOK_CASTLING_FROM_THE_LEFT
+                                                    : ROOK_CASTLING_FROM_THE_RIGHT), from.getPieceType().getColor().getBaseline()));
     }
 
     private static boolean isKingValid(Field from, boolean isNowCastling) {
@@ -64,8 +60,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     private static boolean isRookValid(Field rookField) {
-        return Optional.ofNullable(rookField).map(Field::getPieceType).map(PieceType::getName).orElse(QUEEN).equals(ROOK) && !((Rook) Optional.of(
-                rookField).map(Field::getPieceType).orElse(new Rook(PlayerColor.BLACK))).isHasMovedAtLeastOnce();
+        return Optional.ofNullable(rookField).map(Field::getPieceType).map(PieceType::getName).orElse(QUEEN).equals(ROOK) &&
+                !((Rook) Optional.of(rookField).map(Field::getPieceType).orElse(new Rook(PlayerColor.BLACK))).isHasMovedAtLeastOnce();
     }
 
     private static boolean isValidCastlingPieces(Chessboard chessboard, Field from, int direction, boolean isNowCastling) {

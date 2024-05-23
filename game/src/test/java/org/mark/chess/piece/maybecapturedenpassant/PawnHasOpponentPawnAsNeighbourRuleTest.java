@@ -33,7 +33,10 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnHasOpponentPawnAsNeighbourRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard,
+                from,
+                to,
+                false)));
     }
 
     @Test
@@ -47,7 +50,10 @@ class PawnHasOpponentPawnAsNeighbourRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(pawnHasOpponentPawnAsNeighbourRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnHasOpponentPawnAsNeighbourRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard,
+                from,
+                to,
+                false)));
         assertTrue(pawnHasOpponentPawnAsNeighbourRule.getResult());
     }
 }

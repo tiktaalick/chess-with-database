@@ -22,7 +22,7 @@ public class ChessboardValueResultRule implements Rule<ChessboardValueParameter,
     }
 
     @Override
-    public boolean isApplicable(ChessboardValueParameter ruleParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(ChessboardValueParameter ruleParameter) {
         chessboardValue.setTotalValue(chessboardValue.getTotalPieceValue());
 
         return true;

@@ -14,6 +14,7 @@ import org.mark.chess.player.PlayerColor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -25,11 +26,11 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public class Game {
 
-    private static final int LEFT_CLICK        = 1;
-    private static final int MAXIMUM_SQUARE_ID = 63;
-    private static final int RIGHT_CLICK       = 3;
-
-    private static final MoveBuilder moveBuilder = new MoveBuilder();
+    private static final int         LEFT_CLICK        = 1;
+    private static final Logger      LOGGER            = Logger.getLogger(Game.class.getName());
+    private static final int         MAXIMUM_SQUARE_ID = 63;
+    private static final int         RIGHT_CLICK       = 3;
+    private static final MoveBuilder moveBuilder       = new MoveBuilder();
 
     private Chessboard   chessboard;
     private Move         move    = new Move(new Field(null));
@@ -58,6 +59,7 @@ public class Game {
      * @return A new game.
      */
     public static @NotNull Game create(PlayerColor humanPlayerColor) {
+        LOGGER.info(() -> "Creates new game.");
         return new Game(humanPlayerColor, Chessboard.create());
     }
 

@@ -19,7 +19,7 @@ public class FieldValueRule implements Rule<Field, Color> {
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(@NotNull Field field) {
         this.field = field;
         return field.isValidFrom() || field.isValidTo();
     }

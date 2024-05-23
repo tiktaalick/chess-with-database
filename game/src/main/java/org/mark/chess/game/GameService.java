@@ -4,11 +4,19 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.player.PlayerColor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
+
 /**
  * A service class for the front-end.
  */
 @Service
 public class GameService {
+
+    private static final long   FROM_NANO_TO_MILLI = 1000_000;
+    private static final Logger LOGGER             = Logger.getLogger(GameService.class.getName());
 
     /**
      * Creates a new game.
@@ -36,6 +44,18 @@ public class GameService {
         }
     }
 
+    public void logDuration(Map<String, Long> durationMap) {
+        durationMap
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(entry -> LOGGER.info(() -> entry.getKey() + " took: " + (entry.getValue() / FROM_NANO_TO_MILLI + " milliseconds")));
+    }
+
+    public void resetDuration(Map<String, Long> durationMap) {
+        durationMap = new HashMap<>();
+    }
+
     /**
      * Resets the valid to-moves for a specific chess piece on the chessboard to all the valid from-fields for the active player.
      *
@@ -43,5 +63,9 @@ public class GameService {
      */
     public void resetValidMoves(@NotNull Game game) {
         game.getChessboard().setValidFromFields(game.getMove(), game.getActivePlayer().getColor());
+    }
+
+    public void storeDuration(Map<String, Long> durationMap, String methodName, long nanoBefore, long nanoAfter) {
+        durationMap.put(methodName, Optional.ofNullable(durationMap.get(methodName)).orElse(0L) + (nanoAfter - nanoBefore));
     }
 }

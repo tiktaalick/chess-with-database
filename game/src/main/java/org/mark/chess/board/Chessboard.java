@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.ai.ChildrenBuilder;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.Game;
+import org.mark.chess.game.GameService;
 import org.mark.chess.move.Move;
 import org.mark.chess.piece.general.InitialPieceFactory;
 import org.mark.chess.player.PlayerColor;
@@ -47,13 +48,16 @@ public final class Chessboard {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE     = new BackgroundColorRulesEngine();
     private static final ChildrenBuilder            CHILDREN_BUILDER                  = new ChildrenBuilder();
+    private static final GameService                GAME_SERVICE                      = new GameService();
     private static final Logger                     LOGGER                            = Logger.getLogger(Chessboard.class.getName());
     private static final int                        ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE = 2;
+
+    public static Map<String, Long> durationMap = new HashMap<>();
 
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
     private List<Field>             allValidToFields           = new ArrayList<>();
     private Set<Chessboard>         children                   = new HashSet<>();
-    private PlayerColor             childrenActivePlayerColor  = BLACK;
+    private PlayerColor             childrenActivePlayerColor  = WHITE;
     private List<Field>             fields;
     private Move                    fromParentToChildMove;
     private Field                   kingField;
@@ -65,17 +69,19 @@ public final class Chessboard {
         this.fields = new ArrayList<>(fields);
         this.kingField = getKingField(WHITE);
         this.opponentKingField = getKingField(BLACK);
+
+        LOGGER.info(() -> "New chessboard created: " + this.hashCode());
     }
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
         this.fields = createFieldsWithoutThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to);
         this.fields.addAll(createFieldsOnlyContainingThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to));
+        this.childrenActivePlayerColor = chessboardBeforeTheMove.getChildrenActivePlayerColor().getOpposite();
+        this.numberOfMovesToLookAhead = chessboardBeforeTheMove.getNumberOfMovesToLookAhead() - 1;
         this.kingField = getKingField(from.getPieceType().getColor());
         this.opponentKingField = getKingField(from.getPieceType().getColor().getOpposite());
         this.fromParentToChildMove = new Move(from).setTo(to);
-        this.numberOfMovesToLookAhead = this.numberOfMovesToLookAhead - 1;
         this.parent = chessboardBeforeTheMove;
-        this.childrenActivePlayerColor = this.childrenActivePlayerColor.getOpposite();
     }
 
     /**
@@ -87,7 +93,7 @@ public final class Chessboard {
         return new Chessboard(IntStream
                 .rangeClosed(0, MAXIMUM_SQUARE_ID)
                 .mapToObj(id -> new Field(null).setId(id).setPieceType(InitialPieceFactory.createInitialPiece(id)))
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     /**
@@ -96,7 +102,7 @@ public final class Chessboard {
      * @return A chessboard without chess pieces.
      */
     public static @NotNull Chessboard createEmpty() {
-        return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).collect(Collectors.toList()));
+        return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).toList());
     }
 
     /**
@@ -203,10 +209,17 @@ public final class Chessboard {
      */
     public void setValidFromFields(Move move, PlayerColor activePlayerColor) {
         if (this.numberOfMovesToLookAhead > 0) {
+            LOGGER.info(() -> "Chessboard " +
+                    this.hashCode() +
+                    " for which children will be built. " +
+                    (this.parent == null ? "No parent." : ("Parent is " + this.parent.hashCode())));
             this.children = CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
+            this.children.forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
         } else {
-            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
+            LOGGER.info(() -> "Chessboard " + this.hashCode() + " for which no children will be built. Parent is " + this.parent.hashCode());
+//            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
         }
+        GAME_SERVICE.logDuration(Chessboard.durationMap);
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,
@@ -219,7 +232,7 @@ public final class Chessboard {
                 .map(field -> Objects.equals(field.getCode(), from.getCode())
                               ? new Field(null).setCoordinates(from.getCoordinates())
                               : new Field(from.getPieceType()).setCoordinates(to.getCoordinates()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static @NotNull List<Field> createFieldsWithoutThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,
@@ -229,7 +242,7 @@ public final class Chessboard {
                 .getFields()
                 .stream()
                 .filter(field -> !Arrays.asList(from.getCode(), to.getCode()).contains(field.getCode()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static String createWordDiff(String prefix, Chessboard chessboard, String[] words, int index) {

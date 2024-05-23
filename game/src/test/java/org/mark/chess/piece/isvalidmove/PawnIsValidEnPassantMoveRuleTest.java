@@ -32,7 +32,7 @@ class PawnIsValidEnPassantMoveRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(pawnIsValidEnPassantMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsValidEnPassantMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -46,7 +46,7 @@ class PawnIsValidEnPassantMoveRuleTest {
         chessboard.getFields().set(to.getId(), to);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(pawnIsValidEnPassantMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidEnPassantMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(pawnIsValidEnPassantMoveRule.getResult());
     }
 }

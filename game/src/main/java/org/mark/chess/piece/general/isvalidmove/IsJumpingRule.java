@@ -14,7 +14,7 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isJumping(getGrid(), getFrom(), getTo());
@@ -44,8 +44,12 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
     }
 
     private static boolean isFieldOccupied(@NotNull Chessboard chessboard, Coordinates currentCoordinates) {
-        return chessboard.getFields().stream().filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
-                field.getCoordinates().getY() == currentCoordinates.getY()).anyMatch(field -> field.getPieceType() != null);
+        return chessboard
+                .getFields()
+                .stream()
+                .filter(field -> field.getCoordinates().getX() == currentCoordinates.getX() &&
+                        field.getCoordinates().getY() == currentCoordinates.getY())
+                .anyMatch(field -> field.getPieceType() != null);
     }
 
     private static boolean movingTowardsDestination(@NotNull Coordinates currentCoordinates, @NotNull Coordinates to, Coordinates step) {

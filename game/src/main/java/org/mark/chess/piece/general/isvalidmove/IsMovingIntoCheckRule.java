@@ -10,7 +10,7 @@ public class IsMovingIntoCheckRule extends PieceTypeSharedRules implements Rule<
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return getFrom().isMovingIntoCheck(getGrid(), getTo(), isOpponent());

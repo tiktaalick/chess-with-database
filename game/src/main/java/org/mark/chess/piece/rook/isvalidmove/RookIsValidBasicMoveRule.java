@@ -12,7 +12,7 @@ public class RookIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return (isHorizontalMove()) || (isVerticalMove());

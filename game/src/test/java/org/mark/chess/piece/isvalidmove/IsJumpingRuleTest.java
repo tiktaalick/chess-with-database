@@ -34,7 +34,7 @@ class IsJumpingRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(isJumpingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(isJumpingRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
         assertFalse(isJumpingRule.getResult());
     }
 
@@ -48,6 +48,6 @@ class IsJumpingRuleTest {
         chessboard.getFields().set(from.getId(), from);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(isJumpingRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isJumpingRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

@@ -6,14 +6,27 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
+import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.general.PieceType;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules;
 import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidMoveRulesEngine;
 import org.mark.chess.piece.pawn.maybecapturedenpassant.PawnMayBeCapturedEnPassantRulesEngine;
 import org.mark.chess.piece.queen.Queen;
 import org.mark.chess.player.PlayerColor;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static org.mark.chess.board.Chessboard.NUMBER_OF_COLUMNS_AND_ROWS;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.diagonalMoves;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.horizontalAndVerticalMoves;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.skipFrom;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.withinChessboardBoundaries;
 
 /**
  * Contains pawn related methods.
@@ -32,6 +45,20 @@ public class Pawn extends PieceType {
 
     public Pawn(PlayerColor color) {
         super(color);
+    }
+
+    @Override
+    public List<Coordinates> createCandidateCoordinates(Field from) {
+        return IntStream
+                .rangeClosed(1, NUMBER_OF_COLUMNS_AND_ROWS)
+                .mapToObj(number -> Stream.concat(diagonalMoves(from, number), horizontalAndVerticalMoves(from, number)).toList())
+                .flatMap(Collection::stream)
+                .filter(PieceTypeSharedRules.minStepsVertically(from))
+                .filter(PieceTypeSharedRules.maxStepsVertically(from, 2))
+                .filter(PieceTypeSharedRules.maxStepsHorizontally(from, 1))
+                .filter(withinChessboardBoundaries())
+                .filter(skipFrom(from))
+                .toList();
     }
 
     @Override

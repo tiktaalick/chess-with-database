@@ -10,7 +10,7 @@ public class IsNotAValidMoveRule extends PieceTypeSharedRules implements Rule<Is
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         return true;
     }
 }

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.mark.chess.piece.general.PieceType.KING;
 
@@ -118,7 +117,7 @@ public class Field implements Comparable<Field> {
     public boolean isInCheckNow(Chessboard chessboard) {
         chessboard.getFields().forEach(field -> field.setUnderAttack(false));
 
-        List<Field> attackers = chessboard.getFields().stream().filter(isAttacking(chessboard)).collect(Collectors.toList());
+        List<Field> attackers = chessboard.getFields().stream().filter(isAttacking(chessboard)).toList();
 
         attackers.forEach((Field field) -> field.setAttackingColors(chessboard));
 
@@ -146,7 +145,7 @@ public class Field implements Comparable<Field> {
                 .filter(opponentField -> opponentField.getPieceType() != null)
                 .filter(opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor())
                 .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
-                .collect(Collectors.toList());
+                .toList();
 
         return !attackers.isEmpty();
     }

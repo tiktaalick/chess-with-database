@@ -16,7 +16,7 @@ public class AttackingRule implements Rule<Field, Color> {
     }
 
     @Override
-    public boolean isApplicable(@NotNull Field field) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(@NotNull Field field) {
         return (field.isAttacking() || field.isUnderAttack()) && !field.isValidFrom();
     }
 }

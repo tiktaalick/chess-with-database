@@ -32,7 +32,7 @@ class RookIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(rookIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(rookIsValidBasicMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
@@ -45,7 +45,7 @@ class RookIsValidBasicMoveRuleTest {
         Chessboard chessboard = Chessboard.createEmpty();
         chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(rookIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(rookIsValidBasicMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
         assertTrue(rookIsValidBasicMoveRule.getResult());
     }
 }

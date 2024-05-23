@@ -2,10 +2,13 @@ package org.mark.chess.piece.general;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.player.PlayerColor;
+
+import java.util.List;
 
 /**
  * Superclass for all the chess pieces.
@@ -33,6 +36,8 @@ public abstract class PieceType {
     protected PieceType(PlayerColor color) {
         this.color = color;
     }
+
+    public abstract List<Coordinates> createCandidateCoordinates(Field from);
 
     public abstract String getName();
 

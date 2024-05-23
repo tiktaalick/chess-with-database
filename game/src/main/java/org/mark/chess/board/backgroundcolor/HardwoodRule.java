@@ -14,12 +14,12 @@ public class HardwoodRule implements Rule<Field, Color> {
     @Override
     public Color getResult() {
         return (field.getCoordinates().getX() + field.getCoordinates().getY()) % EVEN == 0
-                ? BackgroundColor.DARK.getAwtColor()
-                : BackgroundColor.LIGHT.getAwtColor();
+               ? BackgroundColor.DARK.getAwtColor()
+               : BackgroundColor.LIGHT.getAwtColor();
     }
 
     @Override
-    public boolean isApplicable(Field field) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(Field field) {
         this.field = field;
         return true;
     }

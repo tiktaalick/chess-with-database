@@ -35,7 +35,7 @@ class IsMovingIntoCheckRuleTest {
         chessboard.getFields().set(kingField.getId(), kingField);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(isMovingIntoCheckRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(isMovingIntoCheckRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
         assertFalse(isMovingIntoCheckRule.getResult());
     }
 
@@ -51,6 +51,6 @@ class IsMovingIntoCheckRuleTest {
         chessboard.getFields().set(kingField.getId(), kingField);
         chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(isMovingIntoCheckRule.isApplicable(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(isMovingIntoCheckRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

@@ -12,10 +12,11 @@ public class PawnIsValidCaptureMoveRule extends PieceTypeSharedRules implements 
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isCaptureMove(getFrom(), getTo()) && getAbsoluteHorizontalMove(getFrom(), getTo()) == ONE_STEP && getAbsoluteVerticalMove(getFrom(),
-                getTo()) == ONE_STEP;
+        return isCaptureMove(getFrom(), getTo()) &&
+                getAbsoluteHorizontalMove(getFrom(), getTo()) == ONE_STEP &&
+                getAbsoluteVerticalMove(getFrom(), getTo()) == ONE_STEP;
     }
 }

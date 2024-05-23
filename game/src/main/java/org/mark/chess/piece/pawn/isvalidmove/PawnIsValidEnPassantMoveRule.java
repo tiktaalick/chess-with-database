@@ -15,7 +15,7 @@ public class PawnIsValidEnPassantMoveRule extends PieceTypeSharedRules implement
     }
 
     @Override
-    public boolean isApplicable(IsValidMoveParameter isValidMoveParameter) {
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
         return isValidEnPassantMove(getGrid(), getFrom(), getTo());

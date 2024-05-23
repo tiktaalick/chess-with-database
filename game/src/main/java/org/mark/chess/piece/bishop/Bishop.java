@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.mark.chess.board.Coordinates;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidMoveRulesEngine;
@@ -11,6 +12,15 @@ import org.mark.chess.piece.general.PieceType;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.knight.Knight;
 import org.mark.chess.player.PlayerColor;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.mark.chess.board.Chessboard.NUMBER_OF_COLUMNS_AND_ROWS;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.diagonalMoves;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.skipFrom;
+import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.withinChessboardBoundaries;
 
 @Getter
 @Setter
@@ -23,6 +33,17 @@ public class Bishop extends PieceType {
 
     public Bishop(PlayerColor color) {
         super(color);
+    }
+
+    @Override
+    public List<Coordinates> createCandidateCoordinates(Field from) {
+        return IntStream
+                .rangeClosed(1, NUMBER_OF_COLUMNS_AND_ROWS)
+                .mapToObj(number -> diagonalMoves(from, number).toList())
+                .flatMap(Collection::stream)
+                .filter(withinChessboardBoundaries())
+                .filter(skipFrom(from))
+                .toList();
     }
 
     @Override

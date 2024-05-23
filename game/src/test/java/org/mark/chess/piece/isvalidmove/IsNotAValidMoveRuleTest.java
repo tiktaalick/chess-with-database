@@ -17,7 +17,7 @@ class IsNotAValidMoveRuleTest {
 
     @Test
     void testRule_Always_ReturnTrue() {
-        assertTrue(isNotAValidMoveRule.isApplicable(null));
+        assertTrue(isNotAValidMoveRule.stopProcessingfurtherRulesAndGetResultNow(null));
         assertFalse(isNotAValidMoveRule.getResult());
     }
 }
