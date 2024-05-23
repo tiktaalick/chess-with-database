@@ -78,16 +78,12 @@ public class ChildrenBuilder {
     }
 
     public ChildrenBuilder init(Chessboard chessboard, Move move, PlayerColor activePlayerColor) {
-        long start = System.nanoTime();
-
         this.activePlayerColor = activePlayerColor;
         this.parent = chessboard;
         this.parent.setAllValidToFields(new ArrayList<>());
         this.parent.setAllValidFromToCombinations(new HashMap<>());
 
         collectAllValidFromToCombinations(move);
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "init()", start, System.nanoTime());
 
         return this;
     }
@@ -157,7 +153,11 @@ public class ChildrenBuilder {
     private void collectAllValidFromToCombinations(Move move) {
         long start = System.nanoTime();
 
-        this.parent.getFields().forEach((Field from) -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
+        this.parent
+                .getFields()
+                .stream()
+                .filter(from -> from.isActivePlayerField(activePlayerColor))
+                .forEach(from -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
 
         LOGGER.info(() -> this.parent.hashCode() + " Number of allValidToFields=" + this.parent.getAllValidToFields().size());
         LOGGER.info(() -> this.parent.hashCode() + " Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
@@ -227,7 +227,7 @@ public class ChildrenBuilder {
         long start = System.nanoTime();
 
         forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
-            to.setRelativeValue((int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
+            to.setRelativeValue(to.getAbsoluteValue() == 0 ? 0 : (int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
 
             LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
         }));
@@ -241,6 +241,7 @@ public class ChildrenBuilder {
         List<Field> validToFields = from.isActivePlayerField(activePlayerColor) ? this.parent
                 .getFields()
                 .stream()
+                .filter(to -> !to.isActivePlayerField(activePlayerColor))
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this.parent, from, to, false)))
                 .toList() : new ArrayList<>();
 
@@ -260,10 +261,6 @@ public class ChildrenBuilder {
     }
 
     private void setBackgroundColors() {
-        long start = System.nanoTime();
-
         this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "setBackgroundColors()", start, System.nanoTime());
     }
 }

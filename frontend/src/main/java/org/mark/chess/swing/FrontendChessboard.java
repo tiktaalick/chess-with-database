@@ -23,7 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.mark.chess.application.Application.setLogLevel;
 
 /**
  * Class for the front-end chessboard.
@@ -64,6 +67,9 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         GAME_SERVICE.storeDuration(durationMap, "createFields()", beforeCreateFields, beforeInitialize);
         GAME_SERVICE.storeDuration(durationMap, "initialize()", beforeInitialize, beforeUpdateFields);
         GAME_SERVICE.storeDuration(durationMap, "updateFields()", beforeUpdateFields, afterUpdateFields);
+
+        setLogLevel(Level.INFO);
+
         GAME_SERVICE.logDuration(durationMap);
     }
 
@@ -146,7 +152,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         LOGGER.info(() -> "Main kingField=" + this.game.getChessboard().getKingField());
         LOGGER.info(() -> "Main opponentKingField=" + this.game.getChessboard().getOpponentKingField());
 
-        this.getGame().getChessboard().getFields().forEach((Field field) -> {
+        this.getGame().getChessboard().getFields().forEach(field -> {
             if (field.isValidFrom()) {
                 LOGGER.info("Main field " + field.getCode() + " is a validFrom.");
             }

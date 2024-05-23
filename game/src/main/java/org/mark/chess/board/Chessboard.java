@@ -214,7 +214,7 @@ public final class Chessboard {
                     " for which children will be built. " +
                     (this.parent == null ? "No parent." : ("Parent is " + this.parent.hashCode())));
             this.children = CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
-            this.children.forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
+//            this.children.forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
         } else {
             LOGGER.info(() -> "Chessboard " + this.hashCode() + " for which no children will be built. Parent is " + this.parent.hashCode());
 //            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);

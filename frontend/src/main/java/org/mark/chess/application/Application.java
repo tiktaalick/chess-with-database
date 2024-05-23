@@ -29,7 +29,7 @@ public class Application {
         new FrontendChessboard(WHITE);
     }
 
-    private static void setLogLevel(Level targetLevel) {
+    public static void setLogLevel(Level targetLevel) {
         Logger root = Logger.getLogger("");
         root.setLevel(targetLevel);
         for (Handler handler : root.getHandlers()) {

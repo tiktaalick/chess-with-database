@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.player.PlayerColor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -15,7 +14,7 @@ import java.util.logging.Logger;
 @Service
 public class GameService {
 
-    private static final long   FROM_NANO_TO_MILLI = 1000_000;
+    private static final long   FROM_NANO_TO_MILLI = 1_000_000;
     private static final Logger LOGGER             = Logger.getLogger(GameService.class.getName());
 
     /**
@@ -50,10 +49,6 @@ public class GameService {
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .forEach(entry -> LOGGER.info(() -> entry.getKey() + " took: " + (entry.getValue() / FROM_NANO_TO_MILLI + " milliseconds")));
-    }
-
-    public void resetDuration(Map<String, Long> durationMap) {
-        durationMap = new HashMap<>();
     }
 
     /**

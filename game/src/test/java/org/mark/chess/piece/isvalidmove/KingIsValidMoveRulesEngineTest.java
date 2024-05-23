@@ -7,13 +7,14 @@ import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
 import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
+import org.mark.chess.piece.general.isvalidmove.IsPreliminaryRoundRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidBasicMoveRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidCastlingRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidMoveRulesEngine;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ExtendWith(MockitoExtension.class)
 class KingIsValidMoveRulesEngineTest {
@@ -23,12 +24,13 @@ class KingIsValidMoveRulesEngineTest {
 
     @Test
     void testRules() {
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(0) instanceof HasEmptyParametersRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(1) instanceof IsFriendlyFireRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(2) instanceof IsJumpingRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(3) instanceof IsMovingIntoCheckRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(4) instanceof KingIsValidBasicMoveRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(5) instanceof KingIsValidCastlingRule);
-        assertTrue(kingIsValidMoveRulesEngine.getRules().get(6) instanceof IsNotAValidMoveRule);
+        assertInstanceOf(HasEmptyParametersRule.class, kingIsValidMoveRulesEngine.getRules().get(0));
+        assertInstanceOf(IsPreliminaryRoundRule.class, kingIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(IsFriendlyFireRule.class, kingIsValidMoveRulesEngine.getRules().get(2));
+        assertInstanceOf(IsJumpingRule.class, kingIsValidMoveRulesEngine.getRules().get(3));
+        assertInstanceOf(IsMovingIntoCheckRule.class, kingIsValidMoveRulesEngine.getRules().get(4));
+        assertInstanceOf(KingIsValidBasicMoveRule.class, kingIsValidMoveRulesEngine.getRules().get(5));
+        assertInstanceOf(KingIsValidCastlingRule.class, kingIsValidMoveRulesEngine.getRules().get(6));
+        assertInstanceOf(IsNotAValidMoveRule.class, kingIsValidMoveRulesEngine.getRules().get(7));
     }
 }
