@@ -72,7 +72,7 @@ public class PieceTypeSharedRules {
     }
 
     public Level getLogLevel() {
-        return Level.INFO;
+        return Level.OFF;
     }
 
     protected static boolean isCaptureMove(Field from, @NotNull Field to) {

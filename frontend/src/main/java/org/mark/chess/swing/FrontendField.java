@@ -4,17 +4,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.application.IconFactory;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
-import org.mark.chess.piece.general.PieceType;
 import org.mark.chess.player.PlayerColor;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import java.awt.Image;
-import java.io.IOException;
-import java.util.Objects;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
 
@@ -26,15 +21,11 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @Accessors(chain = true)
 public final class FrontendField extends JButton {
 
-    public static final  int    FIELD_WIDTH_AND_HEIGHT = 75;
-    private static final String EXTENSION              = ".png";
+    public static final  int                        FIELD_WIDTH_AND_HEIGHT        = 75;
+    private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
+    private static final int                        MAXIMUM_FIELD_ID              = 63;
 
-    private static final int                        MAXIMUM_FIELD_ID           = 63;
-    private static final String                     UNDERSCORE                 = "_";
-    private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
-
-    private int    id;
-    private String iconPath;
+    private int id;
 
     /**
      * Constructor for the front-end field.
@@ -50,7 +41,7 @@ public final class FrontendField extends JButton {
                 FIELD_WIDTH_AND_HEIGHT);
         this.addActionListener(frontendChessboard);
         this.addMouseListener(frontendChessboard);
-        this.setBackground(backgroundColorRulesEngine.process(field));
+        this.setBackground(BACKGROUND_COLOR_RULES_ENGINE.process(field));
         this.updateGraphics(field);
     }
 
@@ -91,26 +82,9 @@ public final class FrontendField extends JButton {
             return this;
         }
 
-        try {
-            this.setText(null);
-            this.setIcon(new ImageIcon(getResource(createIconPath(field.getPieceType(), field.getPieceType().getColor()))
-                    .getImage()
-                    .getScaledInstance(FIELD_WIDTH_AND_HEIGHT, FIELD_WIDTH_AND_HEIGHT, Image.SCALE_SMOOTH)));
-        }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        this.setText(null);
+        this.setIcon(IconFactory.getIcon(field));
 
         return this;
-    }
-
-    private static @NotNull ImageIcon getResource(String iconPath) throws IOException {
-        return new ImageIcon(ImageIO.read(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(iconPath))));
-    }
-
-    private String createIconPath(@NotNull PieceType pieceType, @NotNull PlayerColor color) {
-        this.iconPath = color.getName() + UNDERSCORE + pieceType.getName() + EXTENSION;
-
-        return this.iconPath;
     }
 }

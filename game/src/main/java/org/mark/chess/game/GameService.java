@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 @Service
 public class GameService {
 
-    public static final  Level             DEFAULT_LOGLEVEL   = Level.INFO;
+    public static final  Level             DEFAULT_LOGLEVEL   = Level.OFF;
     private static final long              FROM_NANO_TO_MILLI = 1_000_000;
     private static final Logger            LOGGER             = Logger.getLogger(GameService.class.getName());
     protected static     Map<String, Long> durationMap        = new HashMap<>();

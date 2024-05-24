@@ -187,9 +187,11 @@ public class ChildrenBuilder {
     private void createRelativeFromFieldValues(String fromFilter, int minValue, int maxValue) {
         forEachValidFromToCombination((from, validToFields) -> {
             if (withinSelection(from, fromFilter)) {
-                from.setRelativeValue((int) calculateRelativeFieldValue(minValue,
-                        maxValue,
-                        validToFields.stream().mapToInt(Field::getAbsoluteValue).max().orElse(0)));
+                from.setRelativeValue(maxValue - minValue == 0
+                                      ? 0
+                                      : (int) calculateRelativeFieldValue(minValue,
+                                              maxValue,
+                                              validToFields.stream().mapToInt(Field::getAbsoluteValue).max().orElse(0)));
 
                 log(from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
             }
