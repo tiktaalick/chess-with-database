@@ -1,11 +1,8 @@
 package org.mark.chess.application;
 
+import org.mark.chess.game.GameService;
 import org.mark.chess.swing.FrontendChessboard;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
 
@@ -25,15 +22,7 @@ public class Application {
      * @param args Ignored parameter.
      */
     public static void main(String[] args) {
-        setLogLevel(Level.INFO);
+        GameService.setDefaultLoglevel();
         new FrontendChessboard(WHITE);
-    }
-
-    public static void setLogLevel(Level targetLevel) {
-        Logger root = Logger.getLogger("");
-        root.setLevel(targetLevel);
-        for (Handler handler : root.getHandlers()) {
-            handler.setLevel(targetLevel);
-        }
     }
 }

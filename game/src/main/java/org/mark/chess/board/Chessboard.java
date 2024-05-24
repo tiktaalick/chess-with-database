@@ -52,8 +52,6 @@ public final class Chessboard {
     private static final Logger                     LOGGER                            = Logger.getLogger(Chessboard.class.getName());
     private static final int                        ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE = 2;
 
-    public static Map<String, Long> durationMap = new HashMap<>();
-
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
     private List<Field>             allValidToFields           = new ArrayList<>();
     private Set<Chessboard>         children                   = new HashSet<>();
@@ -74,8 +72,7 @@ public final class Chessboard {
     }
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
-        this.fields = createFieldsWithoutThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to);
-        this.fields.addAll(createFieldsOnlyContainingThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to));
+        this.fields = createFields(chessboardBeforeTheMove, from, to);
         this.childrenActivePlayerColor = chessboardBeforeTheMove.getChildrenActivePlayerColor().getOpposite();
         this.numberOfMovesToLookAhead = chessboardBeforeTheMove.getNumberOfMovesToLookAhead() - 1;
         this.kingField = getKingField(from.getPieceType().getColor());
@@ -219,7 +216,12 @@ public final class Chessboard {
             LOGGER.info(() -> "Chessboard " + this.hashCode() + " for which no children will be built. Parent is " + this.parent.hashCode());
 //            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
         }
-        GAME_SERVICE.logDuration(Chessboard.durationMap);
+    }
+
+    private static List<Field> createFields(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
+        List<Field> fields = createFieldsWithoutThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to);
+        fields.addAll(createFieldsOnlyContainingThePiecesThatHaveMoved(chessboardBeforeTheMove, from, to));
+        return fields.stream().map(Field::createClone).toList();
     }
 
     private static @NotNull List<Field> createFieldsOnlyContainingThePiecesThatHaveMoved(@NotNull Chessboard chessboardBeforeTheMove,

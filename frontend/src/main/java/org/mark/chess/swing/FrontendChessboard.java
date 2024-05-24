@@ -19,14 +19,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.mark.chess.application.Application.setLogLevel;
 
 /**
  * Class for the front-end chessboard.
@@ -42,7 +37,6 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
     private static final int         SPLIT_IN_TWO = 2;
     private static final int         WIDTH        = 828;
 
-    private           Map<String, Long>   durationMap = new HashMap<>();
     private transient Game                game;
     private           List<FrontendField> frontendFields;
     private           Dimension           dimension;
@@ -53,24 +47,21 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
      * @param humanPlayerColor The piece-type color with which the human plays.
      */
     public FrontendChessboard(PlayerColor humanPlayerColor) {
-        long beforeCreateGame = System.nanoTime();
+        long start = System.nanoTime();
         this.game = GAME_SERVICE.createGame(humanPlayerColor);
         long beforeCreateFields = System.nanoTime();
         this.createFields();
-        long beforeInitialize = System.nanoTime();
+        long afterCreateFields = System.nanoTime();
         this.initialize();
         long beforeUpdateFields = System.nanoTime();
         this.updateFields();
         long afterUpdateFields = System.nanoTime();
 
-        GAME_SERVICE.storeDuration(durationMap, "gameService.createGame()", beforeCreateGame, beforeCreateFields);
-        GAME_SERVICE.storeDuration(durationMap, "createFields()", beforeCreateFields, beforeInitialize);
-        GAME_SERVICE.storeDuration(durationMap, "initialize()", beforeInitialize, beforeUpdateFields);
-        GAME_SERVICE.storeDuration(durationMap, "updateFields()", beforeUpdateFields, afterUpdateFields);
+        GAME_SERVICE.storeDuration("frontendChessboard.createFields()", beforeCreateFields, afterCreateFields);
+        GAME_SERVICE.storeDuration("frontendChessboard.updateFields()", beforeUpdateFields, afterUpdateFields);
+        GAME_SERVICE.storeDuration("Application start", start, afterUpdateFields);
 
-        setLogLevel(Level.INFO);
-
-        GAME_SERVICE.logDuration(durationMap);
+        GameService.logDurationAndReset();
     }
 
     @Override
@@ -98,8 +89,8 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         this.updateFields();
         long afterUpdateFields = System.nanoTime();
 
-        GAME_SERVICE.storeDuration(durationMap, "gameService.handleButtonClick()", beforeCall, afterCall);
-        GAME_SERVICE.storeDuration(durationMap, "updateFields()", afterCall, afterUpdateFields);
+        GAME_SERVICE.storeDuration("gameService.handleButtonClick()", beforeCall, afterCall);
+        GAME_SERVICE.storeDuration("updateFields()", afterCall, afterUpdateFields);
     }
 
     @Override
@@ -141,7 +132,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         GAME_SERVICE.resetValidMoves(this.getGame());
         long afterCall = System.nanoTime();
 
-        GAME_SERVICE.storeDuration(durationMap, "getGameService().resetValidMoves()", beforeCall, afterCall);
+        GAME_SERVICE.storeDuration("getGameService().resetValidMoves()", beforeCall, afterCall);
     }
 
     private void updateFields() {
@@ -153,14 +144,6 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         LOGGER.info(() -> "Main opponentKingField=" + this.game.getChessboard().getOpponentKingField());
 
         this.getGame().getChessboard().getFields().forEach(field -> {
-            if (field.isValidFrom()) {
-                LOGGER.info("Main field " + field.getCode() + " is a validFrom.");
-            }
-
-            if (field.isValidTo()) {
-                LOGGER.info("Main field " + field.getCode() + " is a validTo.");
-            }
-
             int buttonId = FrontendField.createButtonId(this.getGame().getHumanPlayerColor(), field.getId());
 
             FrontendField frontendField = Objects.isNull(field.getPieceType())

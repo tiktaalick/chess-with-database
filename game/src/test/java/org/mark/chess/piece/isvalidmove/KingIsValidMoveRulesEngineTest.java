@@ -3,11 +3,11 @@ package org.mark.chess.piece.isvalidmove;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.general.isvalidmove.HasPassedThePreliminaryRoundsRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
 import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
-import org.mark.chess.piece.general.isvalidmove.IsPreliminaryRoundRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidBasicMoveRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidCastlingRule;
 import org.mark.chess.piece.king.isvalidmove.KingIsValidMoveRulesEngine;
@@ -25,7 +25,7 @@ class KingIsValidMoveRulesEngineTest {
     @Test
     void testRules() {
         assertInstanceOf(HasEmptyParametersRule.class, kingIsValidMoveRulesEngine.getRules().get(0));
-        assertInstanceOf(IsPreliminaryRoundRule.class, kingIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(HasPassedThePreliminaryRoundsRule.class, kingIsValidMoveRulesEngine.getRules().get(1));
         assertInstanceOf(IsFriendlyFireRule.class, kingIsValidMoveRulesEngine.getRules().get(2));
         assertInstanceOf(IsJumpingRule.class, kingIsValidMoveRulesEngine.getRules().get(3));
         assertInstanceOf(IsMovingIntoCheckRule.class, kingIsValidMoveRulesEngine.getRules().get(4));

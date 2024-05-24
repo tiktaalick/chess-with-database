@@ -3,7 +3,7 @@ package org.mark.chess.piece.general.isvalidmove;
 import org.mark.chess.board.Coordinates;
 import org.mark.chess.rulesengine.Rule;
 
-public class IsPreliminaryRoundRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
+public class HasPassedThePreliminaryRoundsRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
     @Override
     public Boolean getResult() {
@@ -16,7 +16,7 @@ public class IsPreliminaryRoundRule extends PieceTypeSharedRules implements Rule
 
         return !getFrom()
                 .getPieceType()
-                .createCandidateCoordinates(getFrom())
+                .createCandidateToFieldCoordinates(getFrom())
                 .stream()
                 .map(Coordinates::createId)
                 .toList()

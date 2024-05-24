@@ -37,7 +37,7 @@ public abstract class PieceType {
         this.color = color;
     }
 
-    public abstract List<Coordinates> createCandidateCoordinates(Field from);
+    public abstract List<Coordinates> createCandidateToFieldCoordinates(Field from);
 
     public abstract String getName();
 

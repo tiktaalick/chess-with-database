@@ -40,22 +40,16 @@ public class ChildrenBuilder {
     private Chessboard  parent;
 
     public Set<Chessboard> buildChildren() {
-        long start = System.nanoTime();
-
         Set<Chessboard> children = new HashSet<>();
 
         forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
         LOGGER.info(() -> this.parent.hashCode() + " Number of children for " + this.activePlayerColor + "=" + children.size());
 
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "buildChildren()", start, System.nanoTime());
-
         return new HashSet<>(children);
     }
 
     public ChildrenBuilder calculateFieldValues(String fromFilter) {
-        long start = System.nanoTime();
-
         this.parent.getFields().forEach(field -> field.setAbsoluteValue(null).setRelativeValue(null));
 
         createAbsoluteToFieldValues(fromFilter);
@@ -71,8 +65,6 @@ public class ChildrenBuilder {
         createRelativeFromFieldValues(fromFilter, minValue, maxValue);
 
         setBackgroundColors();
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "calculateFieldValues()", start, System.nanoTime());
 
         return this;
     }
@@ -91,8 +83,6 @@ public class ChildrenBuilder {
     public ChildrenBuilder resetFromAttributes(Move move, Field from) {
         from.setRelativeValue(null).setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
 
-        LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " has been set to no validFrom and no validTo.");
-
         resetEnPassant(move, from);
 
         return this;
@@ -101,24 +91,19 @@ public class ChildrenBuilder {
     public ChildrenBuilder resetToAttributes(String fromFilter) {
         long start = System.nanoTime();
 
-        this.parent.getFields().forEach(field -> {
-            field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false);
-            LOGGER.info(() -> this.parent.hashCode() + " " + field.getCode() + " has been set to no validFrom and no validTo.");
-        });
+        this.parent.getFields().forEach(field -> field.setAttacking(false).setUnderAttack(false).setValidFrom(false).setValidTo(false));
 
         forEachValidFromToCombination((from, toList) -> toList
                 .stream()
                 .filter(to -> withinSelection(from, fromFilter))
                 .forEach(to -> to.setValidTo(true)));
 
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "resetToAttributes()", start, System.nanoTime());
+        GAME_SERVICE.storeDuration("childrenBuilder.resetToAttributes()", start, System.nanoTime());
 
         return this;
     }
 
     private static double calculateRelativeFieldValue(int minValue, int maxValue, int fieldValue) {
-        long start = System.nanoTime();
-
         int shiftedMaxValue = max(1, maxValue - minValue);
         int shiftedFieldValue = fieldValue - minValue;
         double fieldValueComparedToAbsoluteMaxValue = ((double) shiftedFieldValue / shiftedMaxValue);
@@ -126,8 +111,6 @@ public class ChildrenBuilder {
         LOGGER.info(() -> "shiftedMaxValue=" + shiftedMaxValue);
         LOGGER.info(() -> "shiftedFieldValue=" + shiftedFieldValue);
         LOGGER.info(() -> "fieldValueComparedToAbsoluteMaxValue=" + fieldValueComparedToAbsoluteMaxValue);
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "calculateRelativeFieldValue()", start, System.nanoTime());
 
         return (int) (fieldValueComparedToAbsoluteMaxValue * (MAXIMUM_COLOR_VALUE - MINIMUM_COLOR_VALUE) + MINIMUM_COLOR_VALUE);
     }
@@ -153,16 +136,12 @@ public class ChildrenBuilder {
     private void collectAllValidFromToCombinations(Move move) {
         long start = System.nanoTime();
 
-        this.parent
-                .getFields()
-                .stream()
-                .filter(from -> from.isActivePlayerField(activePlayerColor))
-                .forEach(from -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
+        this.parent.getFields().forEach(from -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
 
         LOGGER.info(() -> this.parent.hashCode() + " Number of allValidToFields=" + this.parent.getAllValidToFields().size());
         LOGGER.info(() -> this.parent.hashCode() + " Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
 
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "collectAllValidFromToCombinations()", start, System.nanoTime());
+        GAME_SERVICE.storeDuration("childrenBuilder.collectAllValidFromToCombinations()", start, System.nanoTime());
     }
 
     private int createAbsoluteToFieldValue(Field from, Field to) {
@@ -178,25 +157,23 @@ public class ChildrenBuilder {
     }
 
     private void createAbsoluteToFieldValues(String fromFilter) {
-        long start = System.nanoTime();
-
         forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
             to.setAbsoluteValue(this.createAbsoluteToFieldValue(from.setValidFrom(withinSelection(from, fromFilter)), to));
 
-            LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " has been set to validFrom=" + withinSelection(from, fromFilter));
             LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getAbsoluteValue());
         }));
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "createAbsoluteToFieldValues()", start, System.nanoTime());
     }
 
     private void createAllValidFromToCombinations(Field from) {
         long start = System.nanoTime();
 
+        if (!from.isActivePlayerField(activePlayerColor)) {
+            return;
+        }
+
         List<Field> validToFields = createValidToFields(from, this.activePlayerColor);
 
         from.setValidFrom(!validToFields.isEmpty());
-        LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " has been set to validFrom=" + !validToFields.isEmpty());
 
         this.parent.getAllValidToFields().addAll(validToFields);
 
@@ -204,12 +181,10 @@ public class ChildrenBuilder {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
         }
 
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "createAllValidFromToCombinations()", start, System.nanoTime());
+        GAME_SERVICE.storeDuration("childrenBuilder.createAllValidFromToCombinations()", start, System.nanoTime());
     }
 
     private void createRelativeFromFieldValues(String fromFilter, int minValue, int maxValue) {
-        long start = System.nanoTime();
-
         forEachValidFromToCombination((from, validToFields) -> {
             if (withinSelection(from, fromFilter)) {
                 from.setRelativeValue((int) calculateRelativeFieldValue(minValue,
@@ -219,20 +194,14 @@ public class ChildrenBuilder {
                 LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
             }
         });
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "createRelativeFromFieldValues()", start, System.nanoTime());
     }
 
     private void createRelativeToFieldValues(String fromFilter, int minValue, int maxValue) {
-        long start = System.nanoTime();
-
         forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
             to.setRelativeValue(to.getAbsoluteValue() == 0 ? 0 : (int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
 
             LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
         }));
-
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "createRelativeToFieldValues()", start, System.nanoTime());
     }
 
     private List<Field> createValidToFields(@NotNull Field from, PlayerColor activePlayerColor) {
@@ -245,7 +214,7 @@ public class ChildrenBuilder {
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this.parent, from, to, false)))
                 .toList() : new ArrayList<>();
 
-        GAME_SERVICE.storeDuration(Chessboard.durationMap, "createValidToFields()", start, System.nanoTime());
+        GAME_SERVICE.storeDuration("childrenBuilder.createValidToFields()", start, System.nanoTime());
 
         return validToFields;
     }

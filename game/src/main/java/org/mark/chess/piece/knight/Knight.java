@@ -35,7 +35,7 @@ public class Knight extends PieceType {
     }
 
     @Override
-    public List<Coordinates> createCandidateCoordinates(Field from) {
+    public List<Coordinates> createCandidateToFieldCoordinates(Field from) {
         return IntStream
                 .rangeClosed(1, NUMBER_OF_COLUMNS_AND_ROWS)
                 .filter(number -> abs(from.getCoordinates().getX() - number) >= 1 && abs(from.getCoordinates().getX() - number) <= 2)

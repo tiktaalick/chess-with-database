@@ -48,7 +48,7 @@ public class Pawn extends PieceType {
     }
 
     @Override
-    public List<Coordinates> createCandidateCoordinates(Field from) {
+    public List<Coordinates> createCandidateToFieldCoordinates(Field from) {
         return IntStream
                 .rangeClosed(1, NUMBER_OF_COLUMNS_AND_ROWS)
                 .mapToObj(number -> Stream.concat(diagonalMoves(from, number), horizontalAndVerticalMoves(from, number)).toList())

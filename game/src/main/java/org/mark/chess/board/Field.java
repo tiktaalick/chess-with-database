@@ -235,6 +235,20 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
+    static Field createClone(Field field) {
+        return new Field(field.getPieceType())
+                .setId(field.getId())
+                .setBackgroundColor(field.getBackgroundColor())
+                .setAbsoluteValue(field.getAbsoluteValue())
+                .setRelativeValue(field.getRelativeValue())
+                .setValidFrom(field.isValidFrom())
+                .setValidTo(field.isValidTo())
+                .setAttacking(field.isAttacking())
+                .setUnderAttack(field.isUnderAttack())
+                .setCheckMate(field.isCheckMate())
+                .setStaleMate(field.isStaleMate());
+    }
+
     @NotNull
     private static Predicate<Field> isUnderAttack(Field attacking) {
         return field -> null != field.getPieceType() &&
