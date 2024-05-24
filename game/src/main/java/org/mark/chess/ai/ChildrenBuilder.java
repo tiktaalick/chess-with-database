@@ -44,7 +44,7 @@ public class ChildrenBuilder {
 
         forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
-        LOGGER.info(() -> this.parent.hashCode() + " Number of children for " + this.activePlayerColor + "=" + children.size());
+        log("Number of children for " + this.activePlayerColor + "=" + children.size());
 
         return new HashSet<>(children);
     }
@@ -57,8 +57,8 @@ public class ChildrenBuilder {
         int minValue = getMinValue(this.parent.getAllValidToFields());
         int maxValue = getMaxValue(this.parent.getAllValidToFields());
 
-        LOGGER.info(() -> this.parent.hashCode() + " maxValue=" + maxValue);
-        LOGGER.info(() -> this.parent.hashCode() + " minValue=" + minValue);
+        log("maxValue=" + maxValue);
+        log("minValue=" + minValue);
 
         createRelativeToFieldValues(fromFilter, minValue, maxValue);
 
@@ -138,8 +138,8 @@ public class ChildrenBuilder {
 
         this.parent.getFields().forEach(from -> this.resetFromAttributes(move, from).createAllValidFromToCombinations(from));
 
-        LOGGER.info(() -> this.parent.hashCode() + " Number of allValidToFields=" + this.parent.getAllValidToFields().size());
-        LOGGER.info(() -> this.parent.hashCode() + " Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
+        log("Number of allValidToFields=" + this.parent.getAllValidToFields().size());
+        log("Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
 
         GAME_SERVICE.storeDuration("childrenBuilder.collectAllValidFromToCombinations()", start, System.nanoTime());
     }
@@ -160,7 +160,7 @@ public class ChildrenBuilder {
         forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
             to.setAbsoluteValue(this.createAbsoluteToFieldValue(from.setValidFrom(withinSelection(from, fromFilter)), to));
 
-            LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getAbsoluteValue());
+            log(from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getAbsoluteValue());
         }));
     }
 
@@ -191,7 +191,7 @@ public class ChildrenBuilder {
                         maxValue,
                         validToFields.stream().mapToInt(Field::getAbsoluteValue).max().orElse(0)));
 
-                LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
+                log(from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
             }
         });
     }
@@ -200,7 +200,7 @@ public class ChildrenBuilder {
         forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
             to.setRelativeValue(to.getAbsoluteValue() == 0 ? 0 : (int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
 
-            LOGGER.info(() -> this.parent.hashCode() + " " + from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
+            log(from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
         }));
     }
 
@@ -221,6 +221,10 @@ public class ChildrenBuilder {
 
     private void forEachValidFromToCombination(BiConsumer<Field, List<Field>> validFromToCombinationConsumer) {
         this.parent.getAllValidFromToCombinations().forEach(validFromToCombinationConsumer);
+    }
+
+    private void log(String message) {
+        LOGGER.info(() -> this.parent.hashCode() + " " + message);
     }
 
     private int minimaxValue(Field from, Field to) {

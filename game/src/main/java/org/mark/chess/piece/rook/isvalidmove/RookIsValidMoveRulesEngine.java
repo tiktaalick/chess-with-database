@@ -1,7 +1,7 @@
 package org.mark.chess.piece.rook.isvalidmove;
 
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.general.isvalidmove.HasPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
@@ -16,7 +16,7 @@ public final class RookIsValidMoveRulesEngine extends RulesEngine<IsValidMovePar
      */
     public RookIsValidMoveRulesEngine() {
         addRule(new HasEmptyParametersRule());
-        addRule(new HasPassedThePreliminaryRoundsRule());
+        addRule(new HasNotPassedThePreliminaryRoundsRule());
         addRule(new IsFriendlyFireRule());
         addRule(new IsJumpingRule());
         addRule(new IsMovingIntoCheckRule());

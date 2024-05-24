@@ -1,7 +1,7 @@
 package org.mark.chess.piece.knight.isvalidmove;
 
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.general.isvalidmove.HasPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
 import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
@@ -15,7 +15,7 @@ public final class KnightIsValidMoveRulesEngine extends RulesEngine<IsValidMoveP
      */
     public KnightIsValidMoveRulesEngine() {
         addRule(new HasEmptyParametersRule());
-        addRule(new HasPassedThePreliminaryRoundsRule());
+        addRule(new HasNotPassedThePreliminaryRoundsRule());
         addRule(new IsFriendlyFireRule());
         addRule(new IsMovingIntoCheckRule());
         addRule(new KnightIsValidBasicMoveRule());

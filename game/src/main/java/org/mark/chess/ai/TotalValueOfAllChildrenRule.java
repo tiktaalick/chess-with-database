@@ -4,7 +4,7 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.player.PlayerColor;
 import org.mark.chess.rulesengine.Rule;
 
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import static org.mark.chess.ai.ChessboardValueRulesEngine.BEST_MOVE;
 
@@ -13,7 +13,6 @@ import static org.mark.chess.ai.ChessboardValueRulesEngine.BEST_MOVE;
  */
 public class TotalValueOfAllChildrenRule implements Rule<ChessboardValueParameter, ChessboardValue> {
 
-    private static final Logger                  LOGGER             = Logger.getLogger(TotalValueOfAllChildrenRule.class.getName());
     private static final TotalValueOfAllChildren TOTAL_PIECES_VALUE = new TotalValueOfAllChildren();
 
     private final ChessboardValue chessboardValue;
@@ -25,6 +24,16 @@ public class TotalValueOfAllChildrenRule implements Rule<ChessboardValueParamete
      */
     public TotalValueOfAllChildrenRule(ChessboardValue chessboardValue) {
         this.chessboardValue = chessboardValue;
+    }
+
+    @Override
+    public String getContext() {
+        return "total value";
+    }
+
+    @Override
+    public Level getLogLevel() {
+        return Level.OFF;
     }
 
     @Override

@@ -90,7 +90,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         long afterUpdateFields = System.nanoTime();
 
         GAME_SERVICE.storeDuration("gameService.handleButtonClick()", beforeCall, afterCall);
-        GAME_SERVICE.storeDuration("updateFields()", afterCall, afterUpdateFields);
+        GAME_SERVICE.storeDuration("frontendChessboard.updateFields()", afterCall, afterUpdateFields);
     }
 
     @Override

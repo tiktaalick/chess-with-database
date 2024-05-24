@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 import static org.mark.chess.piece.general.PieceType.KING;
 
@@ -30,6 +31,7 @@ public class Field implements Comparable<Field> {
 
     private static final String                     CODE_UNKNOWN               = "xx";
     private static final int                        ID_UNKNOWN                 = -1;
+    private static final Logger                     LOGGER                     = Logger.getLogger(Field.class.getName());
     private static final Integer                    VALUE_NOT_CALCULATED       = null;
     private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
 
@@ -137,14 +139,17 @@ public class Field implements Comparable<Field> {
             return false;
         }
 
-        var gridAfterMovement = chessboard.createOneStepBeyond(this, to);
+        var oneStepBeyond = chessboard.createOneStepBeyond(this, to);
 
-        List<Field> attackers = gridAfterMovement
+        LOGGER.info(this.code + " -> " + to.getCode());
+        chessboard.equals(oneStepBeyond);
+
+        List<Field> attackers = oneStepBeyond
                 .getFields()
                 .stream()
                 .filter(opponentField -> opponentField.getPieceType() != null)
                 .filter(opponentField -> opponentField.getPieceType().getColor() != this.getPieceType().getColor())
-                .filter(opponentField -> isValidMove(gridAfterMovement, opponentField))
+                .filter(opponentField -> isValidMove(oneStepBeyond, opponentField))
                 .toList();
 
         return !attackers.isEmpty();
@@ -237,7 +242,7 @@ public class Field implements Comparable<Field> {
 
     static Field createClone(Field field) {
         return new Field(field.getPieceType())
-                .setId(field.getId())
+                .setCode(field.getCode())
                 .setBackgroundColor(field.getBackgroundColor())
                 .setAbsoluteValue(field.getAbsoluteValue())
                 .setRelativeValue(field.getRelativeValue())

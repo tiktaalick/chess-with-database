@@ -13,6 +13,6 @@ public class IsMovingIntoCheckRule extends PieceTypeSharedRules implements Rule<
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return getFrom().isMovingIntoCheck(getGrid(), getTo(), isOpponent());
+        return getFrom().isMovingIntoCheck(getChessboard(), getTo(), isOpponent());
     }
 }

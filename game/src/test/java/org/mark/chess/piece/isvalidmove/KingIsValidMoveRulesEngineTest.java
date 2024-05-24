@@ -3,7 +3,7 @@ package org.mark.chess.piece.isvalidmove;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.general.isvalidmove.HasPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
@@ -25,7 +25,7 @@ class KingIsValidMoveRulesEngineTest {
     @Test
     void testRules() {
         assertInstanceOf(HasEmptyParametersRule.class, kingIsValidMoveRulesEngine.getRules().get(0));
-        assertInstanceOf(HasPassedThePreliminaryRoundsRule.class, kingIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(HasNotPassedThePreliminaryRoundsRule.class, kingIsValidMoveRulesEngine.getRules().get(1));
         assertInstanceOf(IsFriendlyFireRule.class, kingIsValidMoveRulesEngine.getRules().get(2));
         assertInstanceOf(IsJumpingRule.class, kingIsValidMoveRulesEngine.getRules().get(3));
         assertInstanceOf(IsMovingIntoCheckRule.class, kingIsValidMoveRulesEngine.getRules().get(4));

@@ -10,6 +10,7 @@ import org.mark.chess.player.PlayerColor;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
@@ -61,6 +62,19 @@ public class PieceTypeSharedRules {
         return coordinates -> coordinates.getY() >= 1 && coordinates.getY() <= NUMBER_OF_COLUMNS_AND_ROWS;
     }
 
+    public String getContext() {
+        return "move from " +
+                getFrom() +
+                " to " +
+                getTo() +
+                " on chessboard " +
+                Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getChessboard).orElse(null);
+    }
+
+    public Level getLogLevel() {
+        return Level.INFO;
+    }
+
     protected static boolean isCaptureMove(Field from, @NotNull Field to) {
         return to.getPieceType() != null && to.getPieceType().getColor() != from.getPieceType().getColor();
     }
@@ -85,12 +99,12 @@ public class PieceTypeSharedRules {
         return from == null || to == null ? ZERO_STEPS : Math.abs(to.getCoordinates().getY() - from.getCoordinates().getY());
     }
 
-    protected Field getFrom() {
-        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getFrom).orElse(null);
+    protected Chessboard getChessboard() {
+        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getChessboard).orElse(null);
     }
 
-    protected Chessboard getGrid() {
-        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getChessboard).orElse(null);
+    protected Field getFrom() {
+        return Optional.ofNullable(isValidMoveParameter).map(IsValidMoveParameter::getFrom).orElse(null);
     }
 
     protected Field getTo() {

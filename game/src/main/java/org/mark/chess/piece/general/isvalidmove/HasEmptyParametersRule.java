@@ -13,6 +13,6 @@ public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidMoveParameter == null || getGrid() == null || getFrom() == null || getTo() == null;
+        return isValidMoveParameter == null || getChessboard() == null || getFrom() == null || getTo() == null;
     }
 }

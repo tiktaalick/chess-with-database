@@ -17,7 +17,7 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isJumping(getGrid(), getFrom(), getTo());
+        return isJumping(getChessboard(), getFrom(), getTo());
     }
 
     boolean isJumping(Chessboard chessboard, @NotNull Field from, @NotNull Field to) {

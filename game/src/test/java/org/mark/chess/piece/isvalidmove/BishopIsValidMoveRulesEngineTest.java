@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidBasicMoveRule;
 import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidMoveRulesEngine;
 import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.general.isvalidmove.HasPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
 import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
 import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
 import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
@@ -24,7 +24,7 @@ class BishopIsValidMoveRulesEngineTest {
     @Test
     void testRules() {
         assertInstanceOf(HasEmptyParametersRule.class, bishopIsValidMoveRulesEngine.getRules().get(0));
-        assertInstanceOf(HasPassedThePreliminaryRoundsRule.class, bishopIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(HasNotPassedThePreliminaryRoundsRule.class, bishopIsValidMoveRulesEngine.getRules().get(1));
         assertInstanceOf(IsFriendlyFireRule.class, bishopIsValidMoveRulesEngine.getRules().get(2));
         assertInstanceOf(IsJumpingRule.class, bishopIsValidMoveRulesEngine.getRules().get(3));
         assertInstanceOf(IsMovingIntoCheckRule.class, bishopIsValidMoveRulesEngine.getRules().get(4));

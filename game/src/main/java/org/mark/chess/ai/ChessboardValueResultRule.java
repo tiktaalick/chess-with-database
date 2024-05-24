@@ -2,6 +2,8 @@ package org.mark.chess.ai;
 
 import org.mark.chess.rulesengine.Rule;
 
+import java.util.logging.Level;
+
 /**
  * A rule that calculates the total value of the current chessboard position.
  */
@@ -15,6 +17,16 @@ public class ChessboardValueResultRule implements Rule<ChessboardValueParameter,
      * @param chessboardValue The chessboard value.
      */
     public ChessboardValueResultRule(ChessboardValue chessboardValue) { this.chessboardValue = chessboardValue; }
+
+    @Override
+    public String getContext() {
+        return "result";
+    }
+
+    @Override
+    public Level getLogLevel() {
+        return Level.OFF;
+    }
 
     @Override
     public ChessboardValue getResult() {

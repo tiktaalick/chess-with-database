@@ -45,8 +45,8 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         setParameter(isValidMoveParameter);
 
-        return isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||
-                isValidCastling(getGrid(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
+        return isValidCastling(getChessboard(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||
+                isValidCastling(getChessboard(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
     }
 
     private static Field getRookField(@NotNull Chessboard chessboard, @NotNull Field from, int direction) {

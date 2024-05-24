@@ -38,6 +38,7 @@ public class RulesEngine<T, U> {
                 .filter(rule -> rule.stopProcessingfurtherRulesAndGetResultNow(ruleParameter))
                 .findFirst()
                 .orElseThrow(RuleNotFoundException::new)
+                .logResult()
                 .getResult();
     }
 }
