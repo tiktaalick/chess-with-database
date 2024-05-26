@@ -21,13 +21,13 @@ public class HasNotPassedThePreliminaryRoundsRule extends PieceTypeSharedRules i
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return !this.isValidMoveParameter
+        return !isValidMoveParameter
                 .getFrom()
                 .getPieceType()
-                .createCandidateToFieldCoordinates(this.isValidMoveParameter.getFrom())
+                .createCandidateToFieldCoordinates(isValidMoveParameter.getFrom())
                 .stream()
                 .map(Coordinates::createId)
                 .toList()
-                .contains(Coordinates.createId(this.isValidMoveParameter.getTo().getCoordinates()));
+                .contains(Coordinates.createId(isValidMoveParameter.getTo().getCoordinates()));
     }
 }

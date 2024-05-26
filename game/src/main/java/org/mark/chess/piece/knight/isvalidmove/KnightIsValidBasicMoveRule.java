@@ -22,9 +22,7 @@ public class KnightIsValidBasicMoveRule extends PieceTypeSharedRules implements 
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return (this.isValidMoveParameter.getAbsoluteHorizontalMove() == ONE_STEP &&
-                this.isValidMoveParameter.getAbsoluteVerticalMove() == TWO_STEPS) ||
-                (this.isValidMoveParameter.getAbsoluteHorizontalMove() == TWO_STEPS &&
-                        this.isValidMoveParameter.getAbsoluteVerticalMove() == ONE_STEP);
+        return (isValidMoveParameter.getAbsoluteHorizontalMove() == ONE_STEP && isValidMoveParameter.getAbsoluteVerticalMove() == TWO_STEPS) ||
+                (isValidMoveParameter.getAbsoluteHorizontalMove() == TWO_STEPS && isValidMoveParameter.getAbsoluteVerticalMove() == ONE_STEP);
     }
 }

@@ -20,8 +20,8 @@ public class IsFriendlyFireRule extends PieceTypeSharedRules implements Rule<IsV
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return this.isValidMoveParameter.getFrom().getPieceType() != null &&
-                this.isValidMoveParameter.getTo().getPieceType() != null &&
-                this.isValidMoveParameter.getFrom().getPieceType().getColor() == this.isValidMoveParameter.getTo().getPieceType().getColor();
+        return isValidMoveParameter.getFrom().getPieceType() != null &&
+                isValidMoveParameter.getTo().getPieceType() != null &&
+                isValidMoveParameter.getFrom().getPieceType().getColor() == isValidMoveParameter.getTo().getPieceType().getColor();
     }
 }

@@ -28,7 +28,7 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return !isValidDirection(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo());
+        return !isValidDirection(isValidMoveParameter.getFrom(), isValidMoveParameter.getTo());
     }
 
     private static boolean isValidDirection(@NotNull Field from, @NotNull Field to) {

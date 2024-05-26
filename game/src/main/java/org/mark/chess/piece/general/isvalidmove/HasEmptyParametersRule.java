@@ -21,8 +21,8 @@ public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule
         this.isValidMoveParameter = isValidMoveParameter;
 
         return isValidMoveParameter == null ||
-                this.isValidMoveParameter.getChessboard() == null ||
-                this.isValidMoveParameter.getFrom() == null ||
-                this.isValidMoveParameter.getTo() == null;
+                isValidMoveParameter.getChessboard() == null ||
+                isValidMoveParameter.getFrom() == null ||
+                isValidMoveParameter.getTo() == null;
     }
 }

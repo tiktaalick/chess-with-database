@@ -24,9 +24,8 @@ public class KingIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return Arrays.asList(ZERO_STEPS, ONE_STEP).contains(this.isValidMoveParameter.getAbsoluteHorizontalMove()) &&
-                Arrays.asList(ZERO_STEPS, ONE_STEP).contains(this.isValidMoveParameter.getAbsoluteVerticalMove()) &&
-                !(this.isValidMoveParameter.getAbsoluteHorizontalMove() == ZERO_STEPS &&
-                        this.isValidMoveParameter.getAbsoluteVerticalMove() == ZERO_STEPS);
+        return Arrays.asList(ZERO_STEPS, ONE_STEP).contains(isValidMoveParameter.getAbsoluteHorizontalMove()) &&
+                Arrays.asList(ZERO_STEPS, ONE_STEP).contains(isValidMoveParameter.getAbsoluteVerticalMove()) &&
+                !(isValidMoveParameter.getAbsoluteHorizontalMove() == ZERO_STEPS && isValidMoveParameter.getAbsoluteVerticalMove() == ZERO_STEPS);
     }
 }

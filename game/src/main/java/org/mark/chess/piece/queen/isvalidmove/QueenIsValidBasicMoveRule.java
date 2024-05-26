@@ -22,8 +22,6 @@ public class QueenIsValidBasicMoveRule extends PieceTypeSharedRules implements R
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return this.isValidMoveParameter.isHorizontalMove() ||
-                this.isValidMoveParameter.isVerticalMove() ||
-                this.isValidMoveParameter.isDiagonalMove();
+        return isValidMoveParameter.isHorizontalMove() || isValidMoveParameter.isVerticalMove() || isValidMoveParameter.isDiagonalMove();
     }
 }

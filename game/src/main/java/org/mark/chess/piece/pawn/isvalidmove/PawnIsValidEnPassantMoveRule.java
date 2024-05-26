@@ -25,9 +25,7 @@ public class PawnIsValidEnPassantMoveRule extends PieceTypeSharedRules implement
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return isValidEnPassantMove(this.isValidMoveParameter.getChessboard(),
-                this.isValidMoveParameter.getFrom(),
-                this.isValidMoveParameter.getTo());
+        return isValidEnPassantMove(isValidMoveParameter.getChessboard(), isValidMoveParameter.getFrom(), isValidMoveParameter.getTo());
     }
 
     private boolean isValidEnPassantMove(Chessboard chessboard, Field from, Field to) {

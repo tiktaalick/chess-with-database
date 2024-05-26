@@ -22,8 +22,8 @@ public class PawnHasOpponentPawnAsNeighbourRule extends PieceTypeSharedRules imp
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return !neighbourFieldsWithOpponentPawns(this.isValidMoveParameter.getChessboard(),
-                this.isValidMoveParameter.getTo(),
-                this.isValidMoveParameter.getFrom().getPieceType().getColor()).isEmpty();
+        return !neighbourFieldsWithOpponentPawns(isValidMoveParameter.getChessboard(),
+                isValidMoveParameter.getTo(),
+                isValidMoveParameter.getFrom().getPieceType().getColor()).isEmpty();
     }
 }

@@ -22,6 +22,6 @@ public class BishopIsValidBasicMoveRule extends PieceTypeSharedRules implements 
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return this.isValidMoveParameter.isDiagonalMove();
+        return isValidMoveParameter.isDiagonalMove();
     }
 }

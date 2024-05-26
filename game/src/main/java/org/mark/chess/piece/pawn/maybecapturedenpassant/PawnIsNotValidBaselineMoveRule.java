@@ -22,6 +22,6 @@ public class PawnIsNotValidBaselineMoveRule extends PieceTypeSharedRules impleme
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return !this.isValidMoveParameter.pawnIsValidBaselineMove();
+        return !isValidMoveParameter.pawnIsValidBaselineMove();
     }
 }

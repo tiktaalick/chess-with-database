@@ -22,6 +22,6 @@ public class RookIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return this.isValidMoveParameter.isHorizontalMove() || this.isValidMoveParameter.isVerticalMove();
+        return isValidMoveParameter.isHorizontalMove() || isValidMoveParameter.isVerticalMove();
     }
 }

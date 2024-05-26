@@ -22,8 +22,8 @@ public class PawnIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return !isCaptureMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) &&
-                getAbsoluteHorizontalMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) == ZERO_STEPS &&
-                getAbsoluteVerticalMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) == ONE_STEP;
+        return !isCaptureMove(isValidMoveParameter.getFrom(), isValidMoveParameter.getTo()) &&
+                getAbsoluteHorizontalMove(isValidMoveParameter.getFrom(), isValidMoveParameter.getTo()) == ZERO_STEPS &&
+                getAbsoluteVerticalMove(isValidMoveParameter.getFrom(), isValidMoveParameter.getTo()) == ONE_STEP;
     }
 }

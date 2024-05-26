@@ -51,17 +51,17 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
         this.isValidMoveParameter = isValidMoveParameter;
 
-        return isValidCastling(this.isValidMoveParameter.getChessboard(),
-                this.isValidMoveParameter.getFrom(),
-                this.isValidMoveParameter.getTo(),
+        return isValidCastling(isValidMoveParameter.getChessboard(),
+                isValidMoveParameter.getFrom(),
+                isValidMoveParameter.getTo(),
                 KING_CASTLING_TO_THE_LEFT,
-                this.isValidMoveParameter.isOpponent(),
+                isValidMoveParameter.isOpponent(),
                 false) ||
-                isValidCastling(this.isValidMoveParameter.getChessboard(),
-                        this.isValidMoveParameter.getFrom(),
-                        this.isValidMoveParameter.getTo(),
+                isValidCastling(isValidMoveParameter.getChessboard(),
+                        isValidMoveParameter.getFrom(),
+                        isValidMoveParameter.getTo(),
                         KING_CASTLING_TO_THE_RIGHT,
-                        this.isValidMoveParameter.isOpponent(),
+                        isValidMoveParameter.isOpponent(),
                         false);
     }
 
