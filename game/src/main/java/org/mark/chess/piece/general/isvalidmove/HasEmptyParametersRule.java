@@ -4,6 +4,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return false;
@@ -11,8 +18,11 @@ public class HasEmptyParametersRule extends PieceTypeSharedRules implements Rule
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return isValidMoveParameter == null || getChessboard() == null || getFrom() == null || getTo() == null;
+        return isValidMoveParameter == null ||
+                this.isValidMoveParameter.getChessboard() == null ||
+                this.isValidMoveParameter.getFrom() == null ||
+                this.isValidMoveParameter.getTo() == null;
     }
 }

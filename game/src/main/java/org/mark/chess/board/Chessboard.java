@@ -47,11 +47,11 @@ public final class Chessboard {
     public static final int NUMBER_OF_COLUMNS_AND_ROWS = 8;
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE     = new BackgroundColorRulesEngine();
-    private static final ChildrenBuilder            CHILDREN_BUILDER                  = new ChildrenBuilder();
     private static final GameService                GAME_SERVICE                      = new GameService();
     private static final Logger                     LOGGER                            = Logger.getLogger(Chessboard.class.getName());
     private static final int                        ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE = 2;
 
+    private ChildrenBuilder         childrenBuilder            = new ChildrenBuilder();
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
     private List<Field>             allValidToFields           = new ArrayList<>();
     private Set<Chessboard>         children                   = new HashSet<>();
@@ -100,15 +100,6 @@ public final class Chessboard {
      */
     public static @NotNull Chessboard createEmpty() {
         return new Chessboard(IntStream.rangeClosed(0, MAXIMUM_SQUARE_ID).mapToObj(id -> new Field(null).setId(id)).toList());
-    }
-
-    /**
-     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
-     *
-     * @param move The move that the player might be performing.
-     */
-    public static void setValidToFields(Move move) {
-        CHILDREN_BUILDER.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode());
     }
 
     /**
@@ -206,16 +197,34 @@ public final class Chessboard {
      */
     public void setValidFromFields(Move move, PlayerColor activePlayerColor) {
         if (this.numberOfMovesToLookAhead > 0) {
-            LOGGER.info(() -> "Chessboard " +
+            LOGGER.info(() -> "numberOfMovesToLookAhead=" +
+                    numberOfMovesToLookAhead +
+                    "; Chessboard " +
                     this.hashCode() +
                     " for which children will be built. " +
                     (this.parent == null ? "No parent." : ("Parent is " + this.parent.hashCode())));
-            this.children = CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
-//            this.children.forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
+            this.children = childrenBuilder.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
+            this.children
+                    .parallelStream()
+                    .forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
         } else {
-            LOGGER.info(() -> "Chessboard " + this.hashCode() + " for which no children will be built. Parent is " + this.parent.hashCode());
+            LOGGER.info(() -> "numberOfMovesToLookAhead=" +
+                    numberOfMovesToLookAhead +
+                    "; Chessboard " +
+                    this.hashCode() +
+                    " for which no children will be built. Parent is " +
+                    this.parent.hashCode());
 //            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
         }
+    }
+
+    /**
+     * Marks the valid from-move and all the valid to-moves as valid and gives them nice, bright colors.
+     *
+     * @param move The move that the player might be performing.
+     */
+    public void setValidToFields(Move move) {
+        childrenBuilder.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode());
     }
 
     private static List<Field> createFields(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {

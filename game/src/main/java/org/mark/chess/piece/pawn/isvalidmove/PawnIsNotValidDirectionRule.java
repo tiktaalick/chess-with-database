@@ -10,8 +10,14 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 
 public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
-    private static final int GOING_DOWN = -1;
-    private static final int GOING_UP   = 1;
+    private static final int                  GOING_DOWN = -1;
+    private static final int                  GOING_UP   = 1;
+    private              IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
 
     @Override
     public Boolean getResult() {
@@ -20,9 +26,9 @@ public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return !isValidDirection(getFrom(), getTo());
+        return !isValidDirection(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo());
     }
 
     private static boolean isValidDirection(@NotNull Field from, @NotNull Field to) {

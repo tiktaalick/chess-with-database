@@ -6,6 +6,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class PawnIsNotValidBaselineMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return false;
@@ -13,8 +20,8 @@ public class PawnIsNotValidBaselineMoveRule extends PieceTypeSharedRules impleme
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return !pawnIsValidBaselineMove();
+        return !this.isValidMoveParameter.pawnIsValidBaselineMove();
     }
 }

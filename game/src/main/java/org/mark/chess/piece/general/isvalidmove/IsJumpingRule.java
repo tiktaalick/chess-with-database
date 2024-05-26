@@ -8,6 +8,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return false;
@@ -15,9 +22,9 @@ public class IsJumpingRule extends PieceTypeSharedRules implements Rule<IsValidM
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return isJumping(getChessboard(), getFrom(), getTo());
+        return isJumping(this.isValidMoveParameter.getChessboard(), this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo());
     }
 
     boolean isJumping(Chessboard chessboard, @NotNull Field from, @NotNull Field to) {

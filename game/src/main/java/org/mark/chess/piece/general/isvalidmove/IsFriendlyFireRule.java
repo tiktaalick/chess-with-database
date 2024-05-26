@@ -4,6 +4,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class IsFriendlyFireRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return false;
@@ -11,8 +18,10 @@ public class IsFriendlyFireRule extends PieceTypeSharedRules implements Rule<IsV
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return getTo().getPieceType() != null && getTo().getPieceType().getColor() == getFrom().getPieceType().getColor();
+        return this.isValidMoveParameter.getFrom().getPieceType() != null &&
+                this.isValidMoveParameter.getTo().getPieceType() != null &&
+                this.isValidMoveParameter.getFrom().getPieceType().getColor() == this.isValidMoveParameter.getTo().getPieceType().getColor();
     }
 }

@@ -20,13 +20,14 @@ import static org.mark.chess.piece.general.PieceType.ROOK;
 
 public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
-    public static final  int KING_CASTLING_TO_THE_LEFT    = 3;
-    public static final  int KING_CASTLING_TO_THE_RIGHT   = 7;
-    public static final  int ROOK_CASTLING_FROM_THE_LEFT  = 1;
-    public static final  int ROOK_CASTLING_FROM_THE_RIGHT = 8;
-    public static final  int ROOK_CASTLING_TO_THE_LEFT    = 6;
-    public static final  int ROOK_CASTLING_TO_THE_RIGHT   = 4;
-    private static final int KING_STARTING_POSITION       = 5;
+    public static final  int                  KING_CASTLING_TO_THE_LEFT    = 3;
+    public static final  int                  KING_CASTLING_TO_THE_RIGHT   = 7;
+    public static final  int                  ROOK_CASTLING_FROM_THE_LEFT  = 1;
+    public static final  int                  ROOK_CASTLING_FROM_THE_RIGHT = 8;
+    public static final  int                  ROOK_CASTLING_TO_THE_LEFT    = 6;
+    public static final  int                  ROOK_CASTLING_TO_THE_RIGHT   = 4;
+    private static final int                  KING_STARTING_POSITION       = 5;
+    private              IsValidMoveParameter isValidMoveParameter;
 
     public static boolean isValidCastling(Chessboard chessboard, Field from, Field to, int direction, boolean isOpponent, boolean isNowCastling) {
 
@@ -37,16 +38,31 @@ public class KingIsValidCastlingRule extends PieceTypeSharedRules implements Rul
     }
 
     @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
+    @Override
     public Boolean getResult() {
         return true;
     }
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return isValidCastling(getChessboard(), getFrom(), getTo(), KING_CASTLING_TO_THE_LEFT, isOpponent(), false) ||
-                isValidCastling(getChessboard(), getFrom(), getTo(), KING_CASTLING_TO_THE_RIGHT, isOpponent(), false);
+        return isValidCastling(this.isValidMoveParameter.getChessboard(),
+                this.isValidMoveParameter.getFrom(),
+                this.isValidMoveParameter.getTo(),
+                KING_CASTLING_TO_THE_LEFT,
+                this.isValidMoveParameter.isOpponent(),
+                false) ||
+                isValidCastling(this.isValidMoveParameter.getChessboard(),
+                        this.isValidMoveParameter.getFrom(),
+                        this.isValidMoveParameter.getTo(),
+                        KING_CASTLING_TO_THE_RIGHT,
+                        this.isValidMoveParameter.isOpponent(),
+                        false);
     }
 
     private static Field getRookField(@NotNull Chessboard chessboard, @NotNull Field from, int direction) {

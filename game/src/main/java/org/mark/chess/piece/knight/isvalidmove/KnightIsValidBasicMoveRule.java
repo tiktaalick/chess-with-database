@@ -6,6 +6,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class KnightIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return true;
@@ -13,9 +20,11 @@ public class KnightIsValidBasicMoveRule extends PieceTypeSharedRules implements 
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return (getAbsoluteHorizontalMove() == ONE_STEP && getAbsoluteVerticalMove() == TWO_STEPS) ||
-                (getAbsoluteHorizontalMove() == TWO_STEPS && getAbsoluteVerticalMove() == ONE_STEP);
+        return (this.isValidMoveParameter.getAbsoluteHorizontalMove() == ONE_STEP &&
+                this.isValidMoveParameter.getAbsoluteVerticalMove() == TWO_STEPS) ||
+                (this.isValidMoveParameter.getAbsoluteHorizontalMove() == TWO_STEPS &&
+                        this.isValidMoveParameter.getAbsoluteVerticalMove() == ONE_STEP);
     }
 }

@@ -6,6 +6,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class PawnHasOpponentPawnAsNeighbourRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return true;
@@ -13,8 +20,10 @@ public class PawnHasOpponentPawnAsNeighbourRule extends PieceTypeSharedRules imp
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return !neighbourFieldsWithOpponentPawns(getChessboard(), getTo(), getFrom().getPieceType().getColor()).isEmpty();
+        return !neighbourFieldsWithOpponentPawns(this.isValidMoveParameter.getChessboard(),
+                this.isValidMoveParameter.getTo(),
+                this.isValidMoveParameter.getFrom().getPieceType().getColor()).isEmpty();
     }
 }

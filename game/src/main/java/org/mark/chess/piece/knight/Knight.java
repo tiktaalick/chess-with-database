@@ -27,6 +27,7 @@ import static org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules.with
 @Accessors(chain = true)
 public class Knight extends PieceType {
 
+    private static final int                          HORSE_JUMP_DISTANCE          = 3;
     private static final int                          PIECE_VALUE                  = 3;
     private static final KnightIsValidMoveRulesEngine knightIsValidMoveRulesEngine = new KnightIsValidMoveRulesEngine();
 
@@ -39,8 +40,9 @@ public class Knight extends PieceType {
         return IntStream
                 .rangeClosed(1, NUMBER_OF_COLUMNS_AND_ROWS)
                 .filter(number -> abs(from.getCoordinates().getX() - number) >= 1 && abs(from.getCoordinates().getX() - number) <= 2)
-                .mapToObj(number -> List.of(new Coordinates(number, from.getCoordinates().getY() - 3 + abs(from.getCoordinates().getX() - number)),
-                        new Coordinates(number, from.getCoordinates().getY() + 3 - abs(from.getCoordinates().getX() - number))))
+                .mapToObj(number -> List.of(new Coordinates(number,
+                                from.getCoordinates().getY() - HORSE_JUMP_DISTANCE + abs(from.getCoordinates().getX() - number)),
+                        new Coordinates(number, from.getCoordinates().getY() + HORSE_JUMP_DISTANCE - abs(from.getCoordinates().getX() - number))))
                 .flatMap(Collection::stream)
                 .filter(withinChessboardBoundaries())
                 .toList();

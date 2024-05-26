@@ -80,7 +80,7 @@ public class MoveBuilder {
     }
 
     protected MoveBuilder enableValidMoves(@NotNull Game game) {
-        Chessboard.setValidToFields(this.move);
+        game.getChessboard().setValidToFields(this.move);
 
         LOGGER.log(Level.INFO, "MoveBuilder.enableValidMoves(): {0}", this.move);
 

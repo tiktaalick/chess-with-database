@@ -9,6 +9,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class PawnIsValidEnPassantMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return true;
@@ -16,9 +23,11 @@ public class PawnIsValidEnPassantMoveRule extends PieceTypeSharedRules implement
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return isValidEnPassantMove(getChessboard(), getFrom(), getTo());
+        return isValidEnPassantMove(this.isValidMoveParameter.getChessboard(),
+                this.isValidMoveParameter.getFrom(),
+                this.isValidMoveParameter.getTo());
     }
 
     private boolean isValidEnPassantMove(Chessboard chessboard, Field from, Field to) {

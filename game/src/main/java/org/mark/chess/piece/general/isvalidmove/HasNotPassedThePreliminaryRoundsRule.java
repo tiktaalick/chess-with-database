@@ -5,6 +5,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class HasNotPassedThePreliminaryRoundsRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return false;
@@ -12,14 +19,15 @@ public class HasNotPassedThePreliminaryRoundsRule extends PieceTypeSharedRules i
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return !getFrom()
+        return !this.isValidMoveParameter
+                .getFrom()
                 .getPieceType()
-                .createCandidateToFieldCoordinates(getFrom())
+                .createCandidateToFieldCoordinates(this.isValidMoveParameter.getFrom())
                 .stream()
                 .map(Coordinates::createId)
                 .toList()
-                .contains(Coordinates.createId(getTo().getCoordinates()));
+                .contains(Coordinates.createId(this.isValidMoveParameter.getTo().getCoordinates()));
     }
 }

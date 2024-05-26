@@ -27,13 +27,14 @@ public class GameService {
                 .entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
-                .forEach(entry -> LOGGER.info(() -> entry.getKey() + " took: " + (entry.getValue() / FROM_NANO_TO_MILLI + " milliseconds")));
+                .forEach(entry -> LOGGER.info(() -> entry.getKey() +
+                        (entry.getValue() == 0 ? "" : (" took: " + (entry.getValue() / FROM_NANO_TO_MILLI + " milliseconds")))));
     }
 
     public static void logDurationAndReset() {
         setLogLevel(Level.INFO);
         logDuration();
-        setLogLevel(DEFAULT_LOGLEVEL);
+        setDefaultLoglevel();
         durationMap = new HashMap<>();
     }
 

@@ -44,7 +44,7 @@ public class ChildrenBuilder {
 
         forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
-        log("Number of children for " + this.activePlayerColor + "=" + children.size());
+        GAME_SERVICE.storeDuration(this.parent.hashCode() + " Number of children for " + this.activePlayerColor + "=" + children.size(), 0, 0);
 
         return new HashSet<>(children);
     }

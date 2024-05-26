@@ -53,13 +53,11 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         this.createFields();
         long afterCreateFields = System.nanoTime();
         this.initialize();
-        long beforeUpdateFields = System.nanoTime();
         this.updateFields();
-        long afterUpdateFields = System.nanoTime();
+        long stop = System.nanoTime();
 
         GAME_SERVICE.storeDuration("frontendChessboard.createFields()", beforeCreateFields, afterCreateFields);
-        GAME_SERVICE.storeDuration("frontendChessboard.updateFields()", beforeUpdateFields, afterUpdateFields);
-        GAME_SERVICE.storeDuration("Application start", start, afterUpdateFields);
+        GAME_SERVICE.storeDuration("Application start", start, stop);
 
         GameService.logDurationAndReset();
     }
@@ -87,10 +85,8 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
                 FrontendField.createButtonId(this.game.getHumanPlayerColor(), ((FrontendField) event.getSource()).getId()));
         long afterCall = System.nanoTime();
         this.updateFields();
-        long afterUpdateFields = System.nanoTime();
 
         GAME_SERVICE.storeDuration("gameService.handleButtonClick()", beforeCall, afterCall);
-        GAME_SERVICE.storeDuration("frontendChessboard.updateFields()", afterCall, afterUpdateFields);
     }
 
     @Override

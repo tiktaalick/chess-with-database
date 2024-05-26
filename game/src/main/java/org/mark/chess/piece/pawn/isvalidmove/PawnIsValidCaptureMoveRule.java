@@ -6,6 +6,13 @@ import org.mark.chess.rulesengine.Rule;
 
 public class PawnIsValidCaptureMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return true;
@@ -13,10 +20,10 @@ public class PawnIsValidCaptureMoveRule extends PieceTypeSharedRules implements 
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return isCaptureMove(getFrom(), getTo()) &&
-                getAbsoluteHorizontalMove(getFrom(), getTo()) == ONE_STEP &&
-                getAbsoluteVerticalMove(getFrom(), getTo()) == ONE_STEP;
+        return isCaptureMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) &&
+                getAbsoluteHorizontalMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) == ONE_STEP &&
+                getAbsoluteVerticalMove(this.isValidMoveParameter.getFrom(), this.isValidMoveParameter.getTo()) == ONE_STEP;
     }
 }

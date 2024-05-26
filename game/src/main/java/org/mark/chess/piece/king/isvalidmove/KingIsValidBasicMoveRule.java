@@ -8,6 +8,13 @@ import java.util.Arrays;
 
 public class KingIsValidBasicMoveRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
 
+    private IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
     @Override
     public Boolean getResult() {
         return true;
@@ -15,10 +22,11 @@ public class KingIsValidBasicMoveRule extends PieceTypeSharedRules implements Ru
 
     @Override
     public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
-        setParameter(isValidMoveParameter);
+        this.isValidMoveParameter = isValidMoveParameter;
 
-        return Arrays.asList(ZERO_STEPS, ONE_STEP).contains(getAbsoluteHorizontalMove()) &&
-                Arrays.asList(ZERO_STEPS, ONE_STEP).contains(getAbsoluteVerticalMove()) &&
-                !(getAbsoluteHorizontalMove() == ZERO_STEPS && getAbsoluteVerticalMove() == ZERO_STEPS);
+        return Arrays.asList(ZERO_STEPS, ONE_STEP).contains(this.isValidMoveParameter.getAbsoluteHorizontalMove()) &&
+                Arrays.asList(ZERO_STEPS, ONE_STEP).contains(this.isValidMoveParameter.getAbsoluteVerticalMove()) &&
+                !(this.isValidMoveParameter.getAbsoluteHorizontalMove() == ZERO_STEPS &&
+                        this.isValidMoveParameter.getAbsoluteVerticalMove() == ZERO_STEPS);
     }
 }

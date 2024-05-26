@@ -35,7 +35,6 @@ public class Field implements Comparable<Field> {
     private static final Integer                    VALUE_NOT_CALCULATED       = null;
     private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
 
-    @Getter
     private int         id            = ID_UNKNOWN;
     private String      code          = CODE_UNKNOWN;
     private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
@@ -59,6 +58,20 @@ public class Field implements Comparable<Field> {
      */
     public Field(PieceType pieceType) {
         this.pieceType = pieceType;
+    }
+
+    public static Field createClone(Field old) {
+        return new Field(old.getPieceType())
+                .setCode(old.getCode())
+                .setBackgroundColor(old.getBackgroundColor())
+                .setAbsoluteValue(old.getAbsoluteValue())
+                .setRelativeValue(old.getRelativeValue())
+                .setValidFrom(old.isValidFrom())
+                .setValidTo(old.isValidTo())
+                .setAttacking(old.isAttacking())
+                .setUnderAttack(old.isUnderAttack())
+                .setCheckMate(old.isCheckMate())
+                .setStaleMate(old.isStaleMate());
     }
 
     @Override
@@ -238,20 +251,6 @@ public class Field implements Comparable<Field> {
         this.isValidTo = isValidTo;
 
         return this;
-    }
-
-    static Field createClone(Field field) {
-        return new Field(field.getPieceType())
-                .setCode(field.getCode())
-                .setBackgroundColor(field.getBackgroundColor())
-                .setAbsoluteValue(field.getAbsoluteValue())
-                .setRelativeValue(field.getRelativeValue())
-                .setValidFrom(field.isValidFrom())
-                .setValidTo(field.isValidTo())
-                .setAttacking(field.isAttacking())
-                .setUnderAttack(field.isUnderAttack())
-                .setCheckMate(field.isCheckMate())
-                .setStaleMate(field.isStaleMate());
     }
 
     @NotNull
