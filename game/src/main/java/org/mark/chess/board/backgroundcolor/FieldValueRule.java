@@ -36,7 +36,7 @@ public class FieldValueRule implements Rule<Field, Color> {
     }
 
     private static @NotNull Color getValueColor(@NotNull Field field) {
-        int relativeValue = field.getRelativeValue() == null ? 0 : field.getRelativeValue();
+        int relativeValue = field.getRelativeValue() == null ? 0 : field.getRelativeValue().intValue();
         return new Color(MAXIMUM_COLOR_VALUE - relativeValue,
                 Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue),
                 MAXIMUM_COLOR_VALUE - (Math.abs(MAXIMUM_COLOR_VALUE - DOUBLE * relativeValue)));

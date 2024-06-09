@@ -25,7 +25,6 @@ public abstract class PieceType {
     public static final String ROOK   = "rook";
 
     private PlayerColor color;
-    private boolean     hasBeenKickedOffTheBoard;
     private boolean     isBeingPromoted;
 
     /**

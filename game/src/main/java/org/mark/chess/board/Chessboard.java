@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -58,6 +59,7 @@ public final class Chessboard {
     private PlayerColor             childrenActivePlayerColor  = WHITE;
     private List<Field>             fields;
     private Move                    fromParentToChildMove;
+    private AtomicInteger           bestMoveValue              = new AtomicInteger();
     private Field                   kingField;
     private int                     numberOfMovesToLookAhead   = ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE;
     private Field                   opponentKingField;
@@ -171,6 +173,22 @@ public final class Chessboard {
                 .collect(Collectors.joining(" "));
     }
 
+    public void setBestMove(Move fromParentToChildMove, AtomicInteger bestMoveValue, boolean higherValue) {
+        Field bestFrom = this.allValidFromToCombinations
+                .keySet()
+                .stream()
+                .map(from -> fromParentToChildMove != null && from.getCode().equals(fromParentToChildMove.getFrom().getCode())
+                             ? from.setRelativeValue(bestMoveValue)
+                             : from)
+                .reduce(new Field(null), (best, from) -> getFieldWithBestRelativeValue(higherValue, best, from));
+        if (isBetterValue(higherValue, bestFrom)) {
+            this.bestMoveValue = bestFrom.getRelativeValue();
+            if (this.parent != null) {
+                this.parent.setBestMove(this.fromParentToChildMove, this.bestMoveValue, !higherValue);
+            }
+        }
+    }
+
     /**
      * Colors the field of a king that is in checkmate or stalemate and then marks the game as finished.
      *
@@ -203,7 +221,7 @@ public final class Chessboard {
                     this.hashCode() +
                     " for which children will be built. " +
                     (this.parent == null ? "No parent." : ("Parent is " + this.parent.hashCode())));
-            this.children = childrenBuilder.init(this, move, activePlayerColor).calculateFieldValues(null).buildChildren();
+            this.children = childrenBuilder.init(this, move, activePlayerColor).setBackgroundColors().buildChildren();
             this.children
                     .parallelStream()
                     .forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
@@ -214,7 +232,7 @@ public final class Chessboard {
                     this.hashCode() +
                     " for which no children will be built. Parent is " +
                     this.parent.hashCode());
-//            CHILDREN_BUILDER.init(this, move, activePlayerColor).calculateFieldValues(null);
+            childrenBuilder.init(this, move, activePlayerColor).calculateFieldValues(null);
         }
     }
 
@@ -224,7 +242,7 @@ public final class Chessboard {
      * @param move The move that the player might be performing.
      */
     public void setValidToFields(Move move) {
-        childrenBuilder.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode());
+        childrenBuilder.resetToAttributes(move.getFrom().getCode()).calculateFieldValues(move.getFrom().getCode()).setBackgroundColors();
     }
 
     private static List<Field> createFields(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
@@ -266,6 +284,14 @@ public final class Chessboard {
         return "";
     }
 
+    private static Field getFieldWithBestRelativeValue(boolean higherValue, Field fieldA, Field fieldB) {
+        if (higherValue) {
+            return fieldA.getRelativeValueInteger() > fieldB.getRelativeValueInteger() ? fieldA : fieldB;
+        } else {
+            return fieldA.getRelativeValueInteger() < fieldB.getRelativeValueInteger() ? fieldA : fieldB;
+        }
+    }
+
     private String createDiffForLogging(Chessboard that) {
         String[] theseWords = this.toString().split(" ");
         String[] thoseWords = that.toString().split(" ");
@@ -289,6 +315,12 @@ public final class Chessboard {
                 .filter(field -> field.getPieceType().getName().equals(KING))
                 .findAny()
                 .orElse(null);
+    }
+
+    private boolean isBetterValue(boolean higherValue, @NotNull Field bestFrom) {
+        return higherValue
+               ? (bestFrom.getRelativeValueInteger() > this.bestMoveValue.intValue())
+               : (bestFrom.getRelativeValueInteger() < this.bestMoveValue.intValue());
     }
 
     private void setKingFieldFlags(@NotNull Game game, @NotNull Field kingField) {
