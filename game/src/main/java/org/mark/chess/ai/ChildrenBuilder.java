@@ -6,6 +6,7 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
 import org.mark.chess.game.GameService;
+import org.mark.chess.log.Logging;
 import org.mark.chess.move.Move;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
 import org.mark.chess.piece.pawn.Pawn;
@@ -43,7 +44,7 @@ public class ChildrenBuilder {
 
         forEachValidFromToCombination((from, toList) -> toList.forEach(to -> children.add(this.parent.createOneStepBeyond(from, to))));
 
-        GAME_SERVICE.storeDuration(this.parent.hashCode() + " Number of children for " + this.activePlayerColor + "=" + children.size(), 0, 0);
+        Logging.storeDuration(this.parent.hashCode() + " Number of children for " + this.activePlayerColor + "=" + children.size(), 0, 0);
 
         return new HashSet<>(children);
     }
@@ -63,7 +64,7 @@ public class ChildrenBuilder {
 
         createRelativeFromFieldValues(fromFilter, minValue, maxValue);
 
-        this.parent.setBestMove(null, null, true);
+        this.parent.setBestMove(null, null);
 
         return this;
     }
@@ -97,7 +98,7 @@ public class ChildrenBuilder {
                 .filter(to -> withinSelection(from, fromFilter))
                 .forEach(to -> to.setValidTo(true)));
 
-        GAME_SERVICE.storeDuration("childrenBuilder.resetToAttributes()", start, System.nanoTime());
+        Logging.storeDuration("childrenBuilder.resetToAttributes()", start, System.nanoTime());
 
         return this;
     }
@@ -156,7 +157,7 @@ public class ChildrenBuilder {
         log("Number of allValidToFields=" + this.parent.getAllValidToFields().size());
         log("Number of allValidFromToCombinations=" + this.parent.getAllValidFromToCombinations().size());
 
-        GAME_SERVICE.storeDuration("childrenBuilder.collectAllValidFromToCombinations()", start, System.nanoTime());
+        Logging.storeDuration("childrenBuilder.collectAllValidFromToCombinations()", start, System.nanoTime());
     }
 
     private int createAbsoluteToFieldValue(Field from, Field to) {
@@ -196,7 +197,7 @@ public class ChildrenBuilder {
             this.parent.getAllValidFromToCombinations().put(from, validToFields);
         }
 
-        GAME_SERVICE.storeDuration("childrenBuilder.createAllValidFromToCombinations()", start, System.nanoTime());
+        Logging.storeDuration("childrenBuilder.createAllValidFromToCombinations()", start, System.nanoTime());
     }
 
     private void createRelativeFromFieldValues(String fromFilter, int minValue, int maxValue) {
@@ -237,7 +238,7 @@ public class ChildrenBuilder {
                 .filter(to -> from.getPieceType().isValidMove(new IsValidMoveParameter(this.parent, from, to, false)))
                 .toList() : new ArrayList<>();
 
-        GAME_SERVICE.storeDuration("childrenBuilder.createValidToFields()", start, System.nanoTime());
+        Logging.storeDuration("childrenBuilder.createValidToFields()", start, System.nanoTime());
 
         return validToFields;
     }

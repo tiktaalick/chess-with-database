@@ -1,6 +1,6 @@
 package org.mark.chess.application;
 
-import org.mark.chess.game.GameService;
+import org.mark.chess.log.Logging;
 import org.mark.chess.swing.FrontendChessboard;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -22,7 +22,7 @@ public class Application {
      * @param args Ignored parameter.
      */
     public static void main(String[] args) {
-        GameService.setDefaultLoglevel();
+        Logging.setDefaultLogLevel();
         new FrontendChessboard(WHITE);
     }
 }

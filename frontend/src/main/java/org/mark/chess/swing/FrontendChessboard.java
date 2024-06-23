@@ -8,6 +8,7 @@ import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.game.Game;
 import org.mark.chess.game.GameService;
+import org.mark.chess.log.Logging;
 import org.mark.chess.player.PlayerColor;
 
 import javax.swing.JFrame;
@@ -56,10 +57,10 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         this.updateFields();
         long stop = System.nanoTime();
 
-        GAME_SERVICE.storeDuration("frontendChessboard.createFields()", beforeCreateFields, afterCreateFields);
-        GAME_SERVICE.storeDuration("Application start", start, stop);
+        Logging.storeDuration("frontendChessboard.createFields()", beforeCreateFields, afterCreateFields);
+        Logging.storeDuration("Application start", start, stop);
 
-        GameService.logDurationAndReset();
+        Logging.logDurationAndReset();
     }
 
     @Override
@@ -86,7 +87,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         long afterCall = System.nanoTime();
         this.updateFields();
 
-        GAME_SERVICE.storeDuration("gameService.handleButtonClick()", beforeCall, afterCall);
+        Logging.storeDuration("gameService.handleButtonClick()", beforeCall, afterCall);
     }
 
     @Override
@@ -128,7 +129,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
         GAME_SERVICE.resetValidMoves(this.getGame());
         long afterCall = System.nanoTime();
 
-        GAME_SERVICE.storeDuration("getGameService().resetValidMoves()", beforeCall, afterCall);
+        Logging.storeDuration("getGameService().resetValidMoves()", beforeCall, afterCall);
     }
 
     private void updateFields() {

@@ -254,7 +254,6 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    @NotNull
     int getRelativeValueInteger() {
         return Optional.ofNullable(this.relativeValue).map(AtomicInteger::intValue).orElse(0);
     }
