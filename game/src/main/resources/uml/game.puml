@@ -1,0 +1,72 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Game'
+'----'
+class GameService {
+    + createGame()
+    + handleButtonClick()
+    + resetValidMoves()
+}
+
+class Game {
+    - {static} moveBuilder
+    - chessboard
+    - players
+    - move
+    + {static} create()
+    + {static} restart()
+    + changeTurn()
+    + handleButtonClick()
+}
+
+class Chessboard {
+    + {static} create()
+    + {static} createEmpty()
+    + createOneStepBeyond()
+    + getField()
+    + getKingField()
+    + setKingFieldColors()
+    + setValidMoveColors()
+    + enableValidMoves()
+    + resetValidMoves()
+}
+
+class Move {
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    + setFrom()
+    + setTo()
+}
+
+class MoveBuilder {
+    + performFromMove()
+    + performToMove()
+    + performResetMove()
+}
+
+class Player {
+    - playerColor
+    - playerType
+}
+
+'---------'
+'Relations'
+'---------'
+GameService -[#red]-> Game : updates the game
+GameService -[#red]-> Chessboard : resets valid moves
+Game *-left- Chessboard
+Game *-down- MoveBuilder
+MoveBuilder -up[#red]-> Move : performs a move
+Game *-right- Move
+Game *-up- Player
+
+@enduml

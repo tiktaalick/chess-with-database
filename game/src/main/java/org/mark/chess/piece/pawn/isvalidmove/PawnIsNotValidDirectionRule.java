@@ -1,0 +1,38 @@
+package org.mark.chess.piece.pawn.isvalidmove;
+
+import org.jetbrains.annotations.NotNull;
+import org.mark.chess.board.Field;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.general.isvalidmove.PieceTypeSharedRules;
+import org.mark.chess.rulesengine.Rule;
+
+import static org.mark.chess.player.PlayerColor.WHITE;
+
+public class PawnIsNotValidDirectionRule extends PieceTypeSharedRules implements Rule<IsValidMoveParameter, Boolean> {
+
+    private static final int                  GOING_DOWN = -1;
+    private static final int                  GOING_UP   = 1;
+    private              IsValidMoveParameter isValidMoveParameter;
+
+    @Override
+    public String getContext() {
+        return super.getContext(isValidMoveParameter);
+    }
+
+    @Override
+    public Boolean getResult() {
+        return false;
+    }
+
+    @Override
+    public boolean stopProcessingfurtherRulesAndGetResultNow(IsValidMoveParameter isValidMoveParameter) {
+        this.isValidMoveParameter = isValidMoveParameter;
+
+        return !isValidDirection(isValidMoveParameter.getFrom(), isValidMoveParameter.getTo());
+    }
+
+    private static boolean isValidDirection(@NotNull Field from, @NotNull Field to) {
+        return Integer.signum(to.getCoordinates().getY() - from.getCoordinates().getY()) ==
+                (from.getPieceType().getColor() == WHITE ? GOING_UP : GOING_DOWN);
+    }
+}

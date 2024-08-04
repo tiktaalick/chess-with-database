@@ -1,0 +1,78 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Pawn {
+    - {static} pawnIsValidMoveRulesEngine
+    - {static} pawnMayBeCapturedEnPassantRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Pawn
+
+Pawn *-down- PawnMayBeCapturedEnPassantRulesEngine
+PawnMayBeCapturedEnPassantRulesEngine -up-|> RulesEngine
+PawnMayBeCapturedEnPassantRulesEngine .left[#blue].> IsValidMoveParameter
+
+PawnIsNotValidBaselineMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+PawnHasOpponentPawnAsNeighbourRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+IsNotAValidMoveRule -up-* PawnMayBeCapturedEnPassantRulesEngine
+
+PawnIsNotValidBaselineMoveRule -down[#purple]-|> Rule
+PawnHasOpponentPawnAsNeighbourRule -down[#purple]-|> Rule
+IsNotAValidMoveRule -down[#purple]-|> Rule
+
+PawnIsNotValidBaselineMoveRule -down[#green]-|> PieceTypeSharedRules
+PawnHasOpponentPawnAsNeighbourRule -down[#green]-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down[#green]-|> PieceTypeSharedRules
+
+'-----'
+'Notes'
+'-----'
+note right of PawnMayBeCapturedEnPassantRulesEngine {
+    If the opponent just has performed a two-step
+    pawn move from the baseline, the second rank
+    that is, and the player's pawn does have an
+    opponent pawn as a neighbour it is a valid en
+    passant move. Otherwise it's not a valid en
+    passant move.
+}
+
+@enduml

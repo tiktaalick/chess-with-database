@@ -2,9 +2,11 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
-import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.pawn.Pawn;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidCaptureMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,11 +26,11 @@ class PawnIsValidCaptureMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e5");
         Field to = new Field(null).setCode("d6");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
 
-        assertFalse(pawnIsValidCaptureMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(pawnIsValidCaptureMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -36,11 +38,11 @@ class PawnIsValidCaptureMoveRuleTest {
         Field from = new Field(new Pawn(WHITE)).setCode("e5");
         Field to = new Field(new Pawn(BLACK)).setCode("d6");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(pawnIsValidCaptureMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
-        assertTrue(pawnIsValidCaptureMoveRule.create());
+        assertTrue(pawnIsValidCaptureMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidCaptureMoveRule.getResult());
     }
 }

@@ -1,0 +1,60 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'-----------'
+'Annotations'
+'-----------'
+annotation SpringBootApplication
+
+'-----------'
+'Application'
+'-----------'
+class Application {
+    + {static} main()
+}
+
+'-----'
+'Swing'
+'-----'
+interface ActionListener{
+}
+
+interface MouseListener{
+}
+
+class FrontendChessboard{
+    - game
+    - gameService
+    - frontendFields
+    + mousePressed()
+}
+
+class FrontendField {
+    + {static} createButtonId()
+    + updateGraphics()
+    + reset()
+}
+
+class GameService {
+    + createGame()
+    + handleButtonClick()
+    + resetValidMoves()
+}
+
+'---------'
+'Relations'
+'---------'
+JFrame <|-- FrontendChessboard
+JButton <|-- FrontendField
+ActionListener <|-- FrontendChessboard
+MouseListener <|-- FrontendChessboard
+FrontendChessboard *-left- FrontendField
+FrontendChessboard *-right- GameService : interacts with the backend
+FrontendChessboard <-[#red]- Application : creates a board
+Application .down[#blue].> SpringBootApplication
+
+@enduml

@@ -1,6 +1,7 @@
 package org.mark.chess.game;
 
 import org.jetbrains.annotations.NotNull;
+import org.mark.chess.log.Logging;
 import org.mark.chess.player.PlayerColor;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,15 @@ public class GameService {
      * @param game           The game.
      * @param leftRightClick An integer that indicates whether the event is a left, middle or right mouse click.
      * @param buttonId       The front-end chessboard field that was clicked.
+     * @return The continued or restarted game.
      */
     public Game handleButtonClick(@NotNull Game game, int leftRightClick, int buttonId) {
         if (!game.isInProgress()) {
             return Game.restart(game);
         } else {
-            return game.handleButtonClick(leftRightClick, buttonId);
+            var returnGame = game.handleButtonClick(leftRightClick, buttonId);
+//            Logging.logDurationAndReset();
+            return returnGame;
         }
     }
 
@@ -41,6 +45,7 @@ public class GameService {
      * @param game The game.
      */
     public void resetValidMoves(@NotNull Game game) {
-        game.resetValidMoves();
+        game.getChessboard().setValidFromFields(game.getMove(), game.getActivePlayer().getColor());
+        Logging.logDurationAndReset();
     }
 }

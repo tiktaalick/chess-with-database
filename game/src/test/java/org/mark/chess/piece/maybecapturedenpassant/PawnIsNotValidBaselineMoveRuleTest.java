@@ -2,11 +2,12 @@ package org.mark.chess.piece.maybecapturedenpassant;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
-import org.mark.chess.piece.Bishop;
-import org.mark.chess.piece.Pawn;
-import org.mark.chess.piece.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.bishop.Bishop;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.pawn.Pawn;
+import org.mark.chess.piece.pawn.maybecapturedenpassant.PawnIsNotValidBaselineMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,12 +26,12 @@ class PawnIsNotValidBaselineMoveRuleTest {
         Field from = new Field(new Bishop(WHITE)).setCode("e2");
         Field to = new Field(new Pawn(WHITE)).setCode("e3");
 
-        Grid grid = Grid.create();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
 
-        assertTrue(pawnIsNotValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
-        assertFalse(pawnIsNotValidBaselineMoveRule.create());
+        assertTrue(pawnIsNotValidBaselineMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertFalse(pawnIsNotValidBaselineMoveRule.getResult());
     }
 
     @Test
@@ -38,10 +39,10 @@ class PawnIsNotValidBaselineMoveRuleTest {
         Field from = new Field(new Bishop(WHITE)).setCode("e2");
         Field to = new Field(new Pawn(WHITE)).setCode("e4");
 
-        Grid grid = Grid.create();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
+        Chessboard chessboard = Chessboard.create();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
 
-        assertFalse(pawnIsNotValidBaselineMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(pawnIsNotValidBaselineMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 }

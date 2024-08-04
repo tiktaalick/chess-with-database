@@ -1,5 +1,7 @@
 package org.mark.chess.board.backgroundcolor;
 
+import java.util.Arrays;
+
 public enum BackgroundColor {
     LIGHT(new java.awt.Color(250, 250, 200)),
     DARK(new java.awt.Color(150, 100, 0)),
@@ -11,6 +13,10 @@ public enum BackgroundColor {
 
     BackgroundColor(java.awt.Color awtColor) {
         this.awtColor = awtColor;
+    }
+
+    public static BackgroundColor of(java.awt.Color awtColor) {
+        return Arrays.stream(BackgroundColor.values()).filter(backgroundColor -> backgroundColor.awtColor == awtColor).findAny().orElse(null);
     }
 
     public java.awt.Color getAwtColor() {

@@ -1,0 +1,86 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Bishop {
+    - {static} bishopIsValidMoveRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Bishop
+Bishop *-- BishopIsValidMoveRulesEngine
+
+BishopIsValidMoveRulesEngine -up-|> RulesEngine
+BishopIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
+HasEmptyParametersRule -up-* BishopIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* BishopIsValidMoveRulesEngine
+IsJumpingRule -up-* BishopIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* BishopIsValidMoveRulesEngine
+BishopIsValidBasicMoveRule -up-* BishopIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* BishopIsValidMoveRulesEngine
+
+HasEmptyParametersRule -down[#purple]-|> Rule
+IsFriendlyFireRule -down[#purple]-|> Rule
+IsJumpingRule -down[#purple]-|> Rule
+IsMovingIntoCheckRule -down[#purple]-|> Rule
+BishopIsValidBasicMoveRule -down[#purple]-|> Rule
+IsNotAValidMoveRule -down[#purple]-|> Rule
+
+HasEmptyParametersRule -down[#green]-|> PieceTypeSharedRules
+IsFriendlyFireRule -down[#green]-|> PieceTypeSharedRules
+IsJumpingRule -down[#green]-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down[#green]-|> PieceTypeSharedRules
+BishopIsValidBasicMoveRule -down[#green]-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down[#green]-|> PieceTypeSharedRules
+
+'-----'
+'Notes'
+'-----'
+note right of BishopIsValidMoveRulesEngine {
+    If a bishop does not perform a friendly
+    fire on one of its own pieces, if it's
+    not jumping, if it doesn't create a check
+    on its own king, but it does perform a
+    valid basic move it is a valid move. Otherwise
+    it's not a valid move.
+}
+
+@enduml

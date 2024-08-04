@@ -1,0 +1,83 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+abstract class PieceType {
+    - color
+    - hasBeenKickedOffTheBoard
+    - isBeingPromoted
+    + getName()
+    + getNextPawnPromotion()
+    + getValue()
+    + isValidMove()
+    + setPieceTypeSpecificAttributes()
+}
+
+class Knight {
+    - {static} knightIsValidMoveRulesEngine
+}
+
+class IsValidMoveParameter {
+    - chessboard
+    - from
+    - to
+    - isOpponent
+}
+
+interface RulesEngine {
+    - rules
+    + addRule()
+    + process()
+}
+
+interface Rule {
+    + isApplicable()
+    + getResult()
+}
+
+'---------'
+'Relations'
+'---------'
+PieceType <|-down- Knight
+Knight *-- KnightIsValidMoveRulesEngine
+
+KnightIsValidMoveRulesEngine -up-|> RulesEngine
+KnightIsValidMoveRulesEngine .left[#blue].> IsValidMoveParameter
+
+HasEmptyParametersRule -up-* KnightIsValidMoveRulesEngine
+IsFriendlyFireRule -up-* KnightIsValidMoveRulesEngine
+IsMovingIntoCheckRule -up-* KnightIsValidMoveRulesEngine
+KnightIsValidBasicMoveRule -up-* KnightIsValidMoveRulesEngine
+IsNotAValidMoveRule -up-* KnightIsValidMoveRulesEngine
+
+HasEmptyParametersRule -down[#purple]-|> Rule
+IsFriendlyFireRule -down[#purple]-|> Rule
+IsMovingIntoCheckRule -down[#purple]-|> Rule
+KnightIsValidBasicMoveRule -down[#purple]-|> Rule
+IsNotAValidMoveRule -down[#purple]-|> Rule
+
+HasEmptyParametersRule -down[#green]-|> PieceTypeSharedRules
+IsFriendlyFireRule -down[#green]-|> PieceTypeSharedRules
+IsMovingIntoCheckRule -down[#green]-|> PieceTypeSharedRules
+KnightIsValidBasicMoveRule -down[#green]-|> PieceTypeSharedRules
+IsNotAValidMoveRule -down[#green]-|> PieceTypeSharedRules
+
+'-----'
+'Notes'
+'-----'
+note right of KnightIsValidMoveRulesEngine {
+    If a knight does not perform a friendly
+    fire on one of its own pieces, if it
+    doesn't create a check on its own king,
+    but it does perform a valid basic move
+    it is a valid move. Otherwise it's not
+    a valid move.
+}
+
+@enduml

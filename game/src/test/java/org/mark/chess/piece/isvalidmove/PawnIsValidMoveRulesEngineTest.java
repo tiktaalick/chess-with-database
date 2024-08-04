@@ -2,38 +2,41 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.piece.isvalidmove.PawnIsValidMoveRulesEngine;
-import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.isvalidmove.IsFriendlyFireRule;
-import org.mark.chess.piece.isvalidmove.IsJumpingRule;
-import org.mark.chess.piece.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.isvalidmove.IsNotValidRule;
-import org.mark.chess.piece.isvalidmove.PawnIsNotValidDirectionRule;
-import org.mark.chess.piece.isvalidmove.PawnIsValidBaselineMoveRule;
-import org.mark.chess.piece.isvalidmove.PawnIsValidBasicMoveRule;
-import org.mark.chess.piece.isvalidmove.PawnIsValidCaptureMoveRule;
-import org.mark.chess.piece.isvalidmove.PawnIsValidEnPassantMoveRule;
+import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
+import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
+import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsNotValidDirectionRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidBaselineMoveRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidBasicMoveRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidCaptureMoveRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidEnPassantMoveRule;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidMoveRulesEngine;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ExtendWith(MockitoExtension.class)
 class PawnIsValidMoveRulesEngineTest {
+
     @InjectMocks
     private PawnIsValidMoveRulesEngine pawnIsValidMoveRulesEngine;
 
     @Test
     void testRules() {
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(0) instanceof HasEmptyParametersRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(1) instanceof IsFriendlyFireRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(2) instanceof IsJumpingRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(3) instanceof IsMovingIntoCheckRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(4) instanceof PawnIsNotValidDirectionRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(5) instanceof PawnIsValidBasicMoveRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(6) instanceof PawnIsValidBaselineMoveRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(7) instanceof PawnIsValidCaptureMoveRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(8) instanceof PawnIsValidEnPassantMoveRule);
-        assertTrue(pawnIsValidMoveRulesEngine.getRules().get(9) instanceof IsNotValidRule);
+        assertInstanceOf(HasEmptyParametersRule.class, pawnIsValidMoveRulesEngine.getRules().get(0));
+        assertInstanceOf(HasNotPassedThePreliminaryRoundsRule.class, pawnIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(IsFriendlyFireRule.class, pawnIsValidMoveRulesEngine.getRules().get(2));
+        assertInstanceOf(IsJumpingRule.class, pawnIsValidMoveRulesEngine.getRules().get(3));
+        assertInstanceOf(IsMovingIntoCheckRule.class, pawnIsValidMoveRulesEngine.getRules().get(4));
+        assertInstanceOf(PawnIsNotValidDirectionRule.class, pawnIsValidMoveRulesEngine.getRules().get(5));
+        assertInstanceOf(PawnIsValidBasicMoveRule.class, pawnIsValidMoveRulesEngine.getRules().get(6));
+        assertInstanceOf(PawnIsValidBaselineMoveRule.class, pawnIsValidMoveRulesEngine.getRules().get(7));
+        assertInstanceOf(PawnIsValidCaptureMoveRule.class, pawnIsValidMoveRulesEngine.getRules().get(8));
+        assertInstanceOf(PawnIsValidEnPassantMoveRule.class, pawnIsValidMoveRulesEngine.getRules().get(9));
+        assertInstanceOf(IsNotAValidMoveRule.class, pawnIsValidMoveRulesEngine.getRules().get(10));
     }
 }

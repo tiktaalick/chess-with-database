@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
-import org.mark.chess.piece.Queen;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.queen.Queen;
+import org.mark.chess.piece.queen.isvalidmove.QueenIsValidBasicMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -27,22 +29,23 @@ class QueenIsValidBasicMoveRuleTest {
         Field from = new Field(new Queen(WHITE)).setCode("e3");
         Field to = new Field(null).setCode("c2");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertFalse(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(queenIsValidBasicMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"e3;c1", "e3;g1", "a1;a8", "a8;a1"}, delimiter = DELIMITER)
+    @CsvSource(value = {"e3;c1", "e3;g1", "a1;a8", "a8;a1"},
+            delimiter = DELIMITER)
     void testRule_WhenValidBasicMove_ThenReturnTrue(String codeFrom, String codeTo) {
         Field from = new Field(new Queen(WHITE)).setCode(codeFrom);
         Field to = new Field(null).setCode(codeTo);
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
 
-        assertTrue(queenIsValidBasicMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
-        assertTrue(queenIsValidBasicMoveRule.create());
+        assertTrue(queenIsValidBasicMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(queenIsValidBasicMoveRule.getResult());
     }
 }

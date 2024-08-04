@@ -1,9 +1,7 @@
 package org.mark.chess.application;
 
-import org.mark.chess.game.GameService;
-import org.mark.chess.player.PlayerColor;
-import org.mark.chess.swing.Board;
-import org.mark.chess.swing.BoardBuilder;
+import org.mark.chess.log.Logging;
+import org.mark.chess.swing.FrontendChessboard;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -14,37 +12,17 @@ import static org.mark.chess.player.PlayerColor.WHITE;
 @SpringBootApplication
 public class Application {
 
-    private static BoardBuilder boardBuilder = new BoardBuilder();
-    private static GameService  gameService  = new GameService();
-
-    public static BoardBuilder getBoardBuilder() {
-        return boardBuilder;
-    }
-
-    public static void setBoardBuilder(BoardBuilder builder) {
-        boardBuilder = builder;
-    }
-
-    /**
-     * Main method for this main application class. Creates the application.
-     *
-     * @param args Ignored parameter.
-     */
-    public static void main(String[] args) {
-        ApplicationRepository.getInstance().startApplication(WHITE);
-    }
-
-    public static void setGameService(GameService gameService) {
-        Application.gameService = gameService;
+    static {
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tL %4$-7s %2$-80s %5$s %n");
     }
 
     /**
      * Starts the application.
      *
-     * @param humanPlayerColor The piece-type color with which the human plays.
-     * @return The just created chessboard.
+     * @param args Ignored parameter.
      */
-    public Board startApplication(PlayerColor humanPlayerColor) {
-        return boardBuilder.setBoard(gameService, humanPlayerColor).createButtons().initialize().updateButtons().build();
+    public static void main(String[] args) {
+        Logging.setDefaultLogLevel();
+        new FrontendChessboard(WHITE);
     }
 }

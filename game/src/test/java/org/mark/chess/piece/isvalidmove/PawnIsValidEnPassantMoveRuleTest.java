@@ -2,9 +2,11 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
-import org.mark.chess.board.Grid;
-import org.mark.chess.piece.Pawn;
+import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
+import org.mark.chess.piece.pawn.Pawn;
+import org.mark.chess.piece.pawn.isvalidmove.PawnIsValidEnPassantMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,12 +27,12 @@ class PawnIsValidEnPassantMoveRuleTest {
         Field to = new Field(null).setCode("d6");
         Field opponentField = new Field(new Pawn(BLACK)).setCode("d5");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertFalse(pawnIsValidEnPassantMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
+        assertFalse(pawnIsValidEnPassantMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
     }
 
     @Test
@@ -39,12 +41,12 @@ class PawnIsValidEnPassantMoveRuleTest {
         Field to = new Field(null).setCode("d6");
         Field opponentField = new Field(((Pawn) new Pawn(BLACK)).setMayBeCapturedEnPassant(true)).setCode("d5");
 
-        Grid grid = Grid.createEmpty();
-        grid.getFields().set(from.getId(), from);
-        grid.getFields().set(to.getId(), to);
-        grid.getFields().set(opponentField.getId(), opponentField);
+        Chessboard chessboard = Chessboard.createEmpty();
+        chessboard.getFields().set(from.getId(), from);
+        chessboard.getFields().set(to.getId(), to);
+        chessboard.getFields().set(opponentField.getId(), opponentField);
 
-        assertTrue(pawnIsValidEnPassantMoveRule.isApplicable(new IsValidMoveParameter(grid, from, to, false)));
-        assertTrue(pawnIsValidEnPassantMoveRule.create());
+        assertTrue(pawnIsValidEnPassantMoveRule.stopProcessingfurtherRulesAndGetResultNow(new IsValidMoveParameter(chessboard, from, to, false)));
+        assertTrue(pawnIsValidEnPassantMoveRule.getResult());
     }
 }

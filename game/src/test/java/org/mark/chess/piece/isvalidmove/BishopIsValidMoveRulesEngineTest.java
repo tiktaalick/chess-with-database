@@ -2,30 +2,33 @@ package org.mark.chess.piece.isvalidmove;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mark.chess.piece.isvalidmove.BishopIsValidMoveRulesEngine;
-import org.mark.chess.piece.isvalidmove.BishopIsValidBasicMoveRule;
-import org.mark.chess.piece.isvalidmove.HasEmptyParametersRule;
-import org.mark.chess.piece.isvalidmove.IsFriendlyFireRule;
-import org.mark.chess.piece.isvalidmove.IsJumpingRule;
-import org.mark.chess.piece.isvalidmove.IsMovingIntoCheckRule;
-import org.mark.chess.piece.isvalidmove.IsNotValidRule;
+import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidBasicMoveRule;
+import org.mark.chess.piece.bishop.isvalidmove.BishopIsValidMoveRulesEngine;
+import org.mark.chess.piece.general.isvalidmove.HasEmptyParametersRule;
+import org.mark.chess.piece.general.isvalidmove.HasNotPassedThePreliminaryRoundsRule;
+import org.mark.chess.piece.general.isvalidmove.IsFriendlyFireRule;
+import org.mark.chess.piece.general.isvalidmove.IsJumpingRule;
+import org.mark.chess.piece.general.isvalidmove.IsMovingIntoCheckRule;
+import org.mark.chess.piece.general.isvalidmove.IsNotAValidMoveRule;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ExtendWith(MockitoExtension.class)
 class BishopIsValidMoveRulesEngineTest {
+
     @InjectMocks
     private BishopIsValidMoveRulesEngine bishopIsValidMoveRulesEngine;
 
     @Test
     void testRules() {
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(0) instanceof HasEmptyParametersRule);
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(1) instanceof IsFriendlyFireRule);
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(2) instanceof IsJumpingRule);
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(3) instanceof IsMovingIntoCheckRule);
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(4) instanceof BishopIsValidBasicMoveRule);
-        assertTrue(bishopIsValidMoveRulesEngine.getRules().get(5) instanceof IsNotValidRule);
+        assertInstanceOf(HasEmptyParametersRule.class, bishopIsValidMoveRulesEngine.getRules().get(0));
+        assertInstanceOf(HasNotPassedThePreliminaryRoundsRule.class, bishopIsValidMoveRulesEngine.getRules().get(1));
+        assertInstanceOf(IsFriendlyFireRule.class, bishopIsValidMoveRulesEngine.getRules().get(2));
+        assertInstanceOf(IsJumpingRule.class, bishopIsValidMoveRulesEngine.getRules().get(3));
+        assertInstanceOf(IsMovingIntoCheckRule.class, bishopIsValidMoveRulesEngine.getRules().get(4));
+        assertInstanceOf(BishopIsValidBasicMoveRule.class, bishopIsValidMoveRulesEngine.getRules().get(5));
+        assertInstanceOf(IsNotAValidMoveRule.class, bishopIsValidMoveRulesEngine.getRules().get(6));
     }
 }

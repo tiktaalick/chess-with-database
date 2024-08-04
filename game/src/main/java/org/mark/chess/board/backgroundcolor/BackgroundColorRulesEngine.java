@@ -7,11 +7,14 @@ import java.awt.Color;
 
 public final class BackgroundColorRulesEngine extends RulesEngine<Field, Color> {
 
+    /**
+     * Initializes the rules for this engine.
+     */
     public BackgroundColorRulesEngine() {
-        getRules().add(new CheckmateRule());
-        getRules().add(new StalemateRule());
-        getRules().add(new AttackingRule());
-        getRules().add(new FieldValueRule());
-        getRules().add(new HardwoodRule());
+        addRule(new CheckmateRule());
+        addRule(new StalemateRule());
+        addRule(new AttackingRule());
+        addRule(new FieldValueRule());
+        addRule(new HardwoodRule());
     }
 }

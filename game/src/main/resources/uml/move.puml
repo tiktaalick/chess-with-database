@@ -1,0 +1,84 @@
+@startuml
+
+'--------------'
+'Hidden members'
+'--------------'
+hide empty members
+
+'----'
+'Move'
+'----'
+class MoveBuilder {
+    - {static} aiMoveBuilder
+    - {static} rookMoveBuilder
+    + performFromMove()
+    + performToMove()
+    + performResetMove()
+    # performAiMove()
+    # moveRookIfCastling()
+}
+
+class Move {
+    - from
+    - to
+    + isDuringAMove()
+    + isFrom()
+    + isValid()
+    + setFrom()
+    + setTo()
+}
+
+class Game {
+    - {static} moveBuilder
+    - chessboard
+    - players
+    - move
+    + {static} create()
+    + {static} restart()
+    + changeTurn()
+    + handleButtonClick()
+}
+
+class KingIsValidCastlingRule {
+    + {static} isValidCastling()
+}
+
+class AiMoveBuilder {
+    + performAiMove()
+}
+
+class Field {
+    - BackgroundColorRulesEngine
+    - id
+    - code
+    - coordinates
+    - pieceType
+    - backgroundColor
+    - value
+    - relativeValue
+    - isValidFrom
+    - hasValidTo
+    - isAttacking
+    - isUnderAttack
+    - isCheckMate
+    - isStaleMate
+    + isActivePlayerField()
+    + isInCheckNow()
+    + isMovingIntoCheck()
+    + isNotAbleToMove()
+    + isValid()
+    + setAttackingColors()
+}
+
+'---------'
+'Relations'
+'---------'
+Game *-- Move
+Game *-right- MoveBuilder
+MoveBuilder .[#blue].> KingIsValidCastlingRule
+MoveBuilder --* MoveBuilder
+MoveBuilder *-down- AiMoveBuilder
+MoveBuilder -[#red]-> Move : performs move
+Move *-- Field
+
+@enduml
