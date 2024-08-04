@@ -1,5 +1,6 @@
 package org.mark.chess.board;
 
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,7 +13,6 @@ import org.mark.chess.move.Move;
 import org.mark.chess.piece.general.InitialPieceFactory;
 import org.mark.chess.player.PlayerColor;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,14 +23,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.lang.Math.min;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mark.chess.piece.general.PieceType.KING;
 import static org.mark.chess.player.PlayerColor.BLACK;
 import static org.mark.chess.player.PlayerColor.WHITE;
@@ -58,10 +57,10 @@ public final class Chessboard {
     private Map<Field, List<Field>> allValidFromToCombinations = new HashMap<>();
     private List<Field>             allValidToFields           = new ArrayList<>();
     private Set<Chessboard>         children                   = new HashSet<>();
-    private PlayerColor             childrenActivePlayerColor  = WHITE;
+    private PlayerColor             childrenPlayerColor        = WHITE;
     private List<Field>             fields;
     private Move                    fromParentToChildMove;
-    private AtomicInteger           bestMoveValue              = new AtomicInteger();
+    private Integer                 bestMoveValue;
     private Field                   kingField;
     private int                     numberOfMovesToLookAhead   = ONE_WHITE_MOVE_AND_ONE_BLACK_MOVE;
     private Field                   opponentKingField;
@@ -77,7 +76,7 @@ public final class Chessboard {
 
     private Chessboard(@NotNull Chessboard chessboardBeforeTheMove, @NotNull Field from, Field to) {
         this.fields = createFields(chessboardBeforeTheMove, from, to);
-        this.childrenActivePlayerColor = chessboardBeforeTheMove.getChildrenActivePlayerColor().getOpposite();
+        this.childrenPlayerColor = chessboardBeforeTheMove.getChildrenPlayerColor().getOpposite();
         this.numberOfMovesToLookAhead = chessboardBeforeTheMove.getNumberOfMovesToLookAhead() - 1;
         this.kingField = getKingField(from.getPieceType().getColor());
         this.opponentKingField = getKingField(from.getPieceType().getColor().getOpposite());
@@ -115,6 +114,70 @@ public final class Chessboard {
      */
     public @NotNull Chessboard createOneStepBeyond(Field from, Field to) {
         return new Chessboard(this, from, to);
+    }
+
+    public Set<Pair<Field, Field>> evaluateMoves(Move move, PlayerColor maximizingPlayerColor) {
+        var log = logBestMove("",
+                "move=" +
+                        move +
+                        "; maximizingPlayerColor=" +
+                        maximizingPlayerColor +
+                        "; fromParentToChildMove=" +
+                        this.fromParentToChildMove +
+                        "; bestMoveValue=" +
+                        this.bestMoveValue);
+
+        Set<Pair<Field, Field>> bestMoves = new HashSet<>();
+
+        if (this.numberOfMovesToLookAhead == 1) {
+            this.childrenBuilder.init(this, move, maximizingPlayerColor).calculateFieldValues(null).setBackgroundColors();
+
+            bestMoves = getBestMoves(maximizingPlayerColor);
+
+            logBestMove(log, "this.numberOfMovesToLookAhead=" + this.numberOfMovesToLookAhead + "; bestMoves=" + bestMoves.toString());
+
+            return bestMoves;
+        } else {
+            for (Chessboard child : this.children) {
+                bestMoves.addAll(child.evaluateMoves(move, maximizingPlayerColor.getOpposite()));
+            }
+        }
+
+        bestMoves.forEach(bestMove -> this.fields
+                .stream()
+                .filter(field -> bestMove.getKey().getCode().equals(field.getCode()))
+                .filter(field -> bestMove.getKey().hasABetterValueThan(field, maximizingPlayerColor, childrenPlayerColor))
+                .forEach(field -> {
+                    field.setAbsoluteValue(bestMove.getKey().getAbsoluteValue());
+                    field.setRelativeValue(bestMove.getKey().getRelativeValue());
+                }));
+
+//        bestMoves.forEach((bestMove) -> this.allValidFromToCombinations.forEach((validFrom, validToList) -> {
+//            if (bestMove.getKey().getCode().equals(validFrom.getCode()) &&
+//                    bestMove.getKey().hasABetterValueThan(validFrom, maximizingPlayerColor, childrenPlayerColor)) {
+//                validFrom.setAbsoluteValue(bestMove.getKey().getAbsoluteValue());
+//                validFrom.setRelativeValue(bestMove.getKey().getRelativeValue());
+//                validToList.stream().filter(validTo -> validTo.getCode().equals(bestMove.getValue().getCode())).forEach(validTo -> {
+//                    validTo.setAbsoluteValue(bestMove.getValue().getAbsoluteValue());
+//                    validTo.setRelativeValue(bestMove.getValue().getRelativeValue());
+//                });
+//            }
+//        }));
+
+//        bestMoves.forEach((bestMove) -> this.allValidFromToCombinations.forEach((validFrom, validToList) -> {
+//            if (bestMove.getKey().getCode().equals(validFrom.getCode()) &&
+//                    bestMove.getKey().hasABetterValueThan(validFrom, maximizingPlayerColor, childrenPlayerColor)) {
+//                validFrom.setAbsoluteValue(bestMove.getKey().getAbsoluteValue());
+//                validFrom.setRelativeValue(bestMove.getKey().getRelativeValue());
+//                validToList.stream().filter(validTo -> validTo.getCode().equals(bestMove.getValue().getCode())).forEach(validTo -> {
+//                    validTo.setAbsoluteValue(bestMove.getValue().getAbsoluteValue());
+//                    validTo.setRelativeValue(bestMove.getValue().getRelativeValue());
+//                });
+//            }
+
+        this.childrenBuilder.setBackgroundColors();
+
+        return bestMoves;
     }
 
     /**
@@ -175,76 +238,6 @@ public final class Chessboard {
                 .collect(Collectors.joining(" "));
     }
 
-    public synchronized void setBestMove(Move fromParentToChildMove, AtomicInteger bestMoveValue) {
-        var log = "fromParentToChildMove=" + fromParentToChildMove + "; bestMoveValue=" + bestMoveValue;
-        logBestMove(log, "this.getFromParentToChildMove()=" + this.getFromParentToChildMove());
-//        logBestMove(log, "parent.getFromParentToChildMove()=" + parent.getFromParentToChildMove());
-
-        List<AbstractMap.SimpleEntry<Field, Field>> fromToWithMaxValues = this.allValidFromToCombinations
-                .entrySet()
-                .stream()
-                .reduce((max, fromTo) -> fromTo.getKey().getRelativeValueInteger() > max.getKey().getRelativeValueInteger() ? fromTo : max)
-                .stream()
-                .map(entrySet -> {
-                    Field toField = entrySet
-                            .getValue()
-                            .stream()
-                            .reduce((max, to) -> to.getRelativeValueInteger() > max.getRelativeValueInteger() ? to : max)
-                            .orElse(new Field(null));
-                    return new AbstractMap.SimpleEntry<>(entrySet.getKey(), toField);
-                })
-                .toList();
-
-        logBestMove(log, fromToWithMaxValues.toString());
-
-//        this.allValidFromToCombinations.forEach((key, value) -> {
-//            if (fromParentToChildMove != null &&
-//                    key.getCode().equals(fromParentToChildMove.getFrom().getCode()) &&
-//                    isBetterValue(key, bestMoveValue.intValue())) {
-//                key.setRelativeValue(isBetterValue()bestMoveValue);
-//            }
-//        });
-//
-////        Pair<Field, Field> bestFromToCombination = ;
-//        this.allValidFromToCombinations.entrySet().stream().peek(entry -> {
-//            if (fromParentToChildMove != null && entry.getKey().getCode().equals(fromParentToChildMove.getFrom().getCode())) {
-//                entry.getKey().setRelativeValue(bestMoveValue);
-//            }
-//        }).filter(entry -> entry.getKey().getRelativeValue() != null).reduce(new Field(null), entry -> getFieldWithBestRelativeValue());
-//
-//        Field bestFrom = this.allValidFromToCombinations
-//                .keySet()
-//                .stream()
-//                .map(from -> fromParentToChildMove != null && from.getCode().equals(fromParentToChildMove.getFrom().getCode())
-//                             ? from.setRelativeValue(bestMoveValue)
-//                             : from)
-//                .filter(from -> from.getRelativeValue() != null)
-//                .reduce(new Field(null), Chessboard::getFieldWithBestRelativeValue);
-//        Field bestTo = this.allValidFromToCombinations
-//                .entrySet()
-//                .stream()
-//                .filter(entry -> entry.getKey().getCode().equals(bestFrom.getCode()))
-//                .flatMap(entry -> entry.getValue().stream())
-//                .filter(to -> to.getRelativeValue() != null)
-//                .reduce(new Field(null), Chessboard::getFieldWithBestRelativeValue);
-//        logBestMove(log, "bestFrom=" + bestFrom + " -> bestTo=" + bestTo);
-//        if (bestFrom.getRelativeValue() != null && isBetterValue(bestFrom, this.bestMoveValue.intValue())) {
-//            logBestMove(log, "isBetterValue=true");
-//            var bestMoveValueOld = this.bestMoveValue;
-//            this.bestMoveValue = bestFrom.getRelativeValue();
-//            logBestMove(log, "this.bestMoveValue=" + bestMoveValueOld + " -> " + this.bestMoveValue);
-//            if (this.parent != null) {
-//                logBestMove(log,
-//                        "this.parent.getFromParentToChildMove()=" +
-//                                this.parent.getFromParentToChildMove() +
-//                                "; this.parent" +
-//                                ".bestMoveValue=" +
-//                                this.parent.bestMoveValue);
-//                this.parent.setBestMove(this.fromParentToChildMove, this.bestMoveValue);
-//            }
-//        }
-    }
-
     /**
      * Colors the field of a king that is in checkmate or stalemate and then marks the game as finished.
      *
@@ -277,18 +270,8 @@ public final class Chessboard {
                     this.hashCode() +
                     " for which children will be built. " +
                     (this.parent == null ? "No parent." : ("Parent is " + this.parent.hashCode())));
-            this.children = childrenBuilder.init(this, move, activePlayerColor).setBackgroundColors().buildChildren();
-            this.children
-//                    .parallelStream()
-.forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenActivePlayerColor()));
-        } else {
-            LOGGER.info(() -> "numberOfMovesToLookAhead=" +
-                    numberOfMovesToLookAhead +
-                    "; Chessboard " +
-                    this.hashCode() +
-                    " for which no children will be built. Parent is " +
-                    this.parent.hashCode());
-            childrenBuilder.init(this, move, activePlayerColor).calculateFieldValues(null);
+            this.children = childrenBuilder.init(this, move, activePlayerColor).buildChildren();
+            this.children.parallelStream().forEach(child -> child.setValidFromFields(new Move(new Field(null)), child.getChildrenPlayerColor()));
         }
     }
 
@@ -340,31 +323,10 @@ public final class Chessboard {
         return "";
     }
 
-    private static Field getFieldWithBestRelativeValue(Field fieldA, Field fieldB) {
-//        var log = "fieldA=" + fieldA + "; fieldB=" + fieldB;
-//        logBestMove(log, "");
-        var fieldWithPieceType = Stream.of(fieldA, fieldB).filter(field -> Optional.ofNullable(field).map(Field::getPieceType).isPresent()).findAny();
-
-        if (fieldWithPieceType.isEmpty()) {
-//            logBestMove(log, "fieldWithPieceType.isEmpty()");
-            return fieldA;
-        }
-
-//        logBestMove(log, "doReturnMaxValue(fieldWithPieceType.get())=" + doReturnMaxValue(fieldWithPieceType.get()));
-        if (isMaxValueBetter(fieldWithPieceType.get())) {
-            return fieldA.getRelativeValueInteger() > fieldB.getRelativeValueInteger() ? fieldA : fieldB;
-        } else {
-            return fieldA.getRelativeValueInteger() < fieldB.getRelativeValueInteger() ? fieldA : fieldB;
-        }
-    }
-
-    private static boolean isMaxValueBetter(Field field) {
-        return field.getPieceType().getColor() == WHITE;
-    }
-
-    private static synchronized void logBestMove(String log, String newLog) {
-        log = log + "; " + newLog;
+    private static synchronized String logBestMove(String log, String newLog) {
+        log = isBlank(log) ? newLog : (log + "; " + newLog);
         LOGGER.info(log);
+        return log;
     }
 
     private String createDiffForLogging(Chessboard that) {
@@ -381,6 +343,25 @@ public final class Chessboard {
                 .collect(Collectors.joining(" "));
     }
 
+    private Set<Pair<Field, Field>> getBestMoves(PlayerColor maximizingPlayerColor) {
+        return this.allValidFromToCombinations
+                .entrySet()
+                .stream()
+                .reduce((minOrMax, fromTo) -> fromTo.getKey().hasABetterValueThan(minOrMax.getKey(), maximizingPlayerColor, this.childrenPlayerColor)
+                                              ? fromTo
+                                              : minOrMax)
+                .stream()
+                .map(entrySet -> new Pair<>(entrySet.getKey(),
+                        entrySet
+                                .getValue()
+                                .stream()
+                                .reduce((minOrMax, to) -> to.hasABetterValueThan(minOrMax, maximizingPlayerColor, this.childrenPlayerColor)
+                                                          ? to
+                                                          : minOrMax)
+                                .orElse(new Field(null))))
+                .collect(Collectors.toSet());
+    }
+
     private Field getKingField(PlayerColor color) {
         return this
                 .getFields()
@@ -390,10 +371,6 @@ public final class Chessboard {
                 .filter(field -> field.getPieceType().getName().equals(KING))
                 .findAny()
                 .orElse(null);
-    }
-
-    private boolean isBetterValue(@NotNull Field bestFrom, int value) {
-        return isMaxValueBetter(bestFrom) ? (bestFrom.getRelativeValueInteger() > value) : (bestFrom.getRelativeValueInteger() < value);
     }
 
     private void setKingFieldFlags(@NotNull Game game, @NotNull Field kingField) {

@@ -94,6 +94,12 @@
             <artifactId>guava</artifactId>
             <version>33.1.0-jre</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>23-ea+22</version>
+        </dependency>
+
 
     </dependencies>
 

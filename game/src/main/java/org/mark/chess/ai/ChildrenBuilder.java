@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.mark.chess.board.Chessboard;
 import org.mark.chess.board.Field;
 import org.mark.chess.board.backgroundcolor.BackgroundColorRulesEngine;
-import org.mark.chess.game.GameService;
 import org.mark.chess.log.Logging;
 import org.mark.chess.move.Move;
 import org.mark.chess.piece.general.isvalidmove.IsValidMoveParameter;
@@ -19,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -33,7 +31,6 @@ public class ChildrenBuilder {
 
     private static final BackgroundColorRulesEngine BACKGROUND_COLOR_RULES_ENGINE = new BackgroundColorRulesEngine();
     private static final ChessboardValueRulesEngine CHESSBOARD_VALUE_RULES_ENGINE = new ChessboardValueRulesEngine();
-    private static final GameService                GAME_SERVICE                  = new GameService();
     private static final Logger                     LOGGER                        = Logger.getLogger(ChildrenBuilder.class.getName());
 
     private PlayerColor activePlayerColor;
@@ -64,7 +61,7 @@ public class ChildrenBuilder {
 
         createRelativeFromFieldValues(fromFilter, minValue, maxValue);
 
-        this.parent.setBestMove(null, null);
+        setBackgroundColors();
 
         return this;
     }
@@ -103,10 +100,8 @@ public class ChildrenBuilder {
         return this;
     }
 
-    public ChildrenBuilder setBackgroundColors() {
+    public void setBackgroundColors() {
         this.parent.getFields().forEach(gridField -> gridField.setBackgroundColor(BACKGROUND_COLOR_RULES_ENGINE.process(gridField)));
-
-        return this;
     }
 
     private static double calculateRelativeFieldValue(int minValue, int maxValue, int fieldValue) {
@@ -122,21 +117,11 @@ public class ChildrenBuilder {
     }
 
     private static int getMaxValue(Collection<Field> validToFields) {
-        return validToFields
-                .stream()
-                .filter(field -> field.getAbsoluteValue() != null)
-                .mapToInt(field -> field.getAbsoluteValue().intValue())
-                .max()
-                .orElse(0);
+        return validToFields.stream().filter(field -> field.getAbsoluteValue() != null).mapToInt(Field::getAbsoluteValue).max().orElse(0);
     }
 
     private static int getMinValue(Collection<Field> validToFields) {
-        return validToFields
-                .stream()
-                .filter(field -> field.getAbsoluteValue() != null)
-                .mapToInt(field -> field.getAbsoluteValue().intValue())
-                .min()
-                .orElse(0);
+        return validToFields.stream().filter(field -> field.getAbsoluteValue() != null).mapToInt(Field::getAbsoluteValue).min().orElse(0);
     }
 
     private static void resetEnPassant(Move move, Field from) {
@@ -174,7 +159,7 @@ public class ChildrenBuilder {
 
     private void createAbsoluteToFieldValues(String fromFilter) {
         forEachValidFromToCombination((from, validToFields) -> validToFields.forEach(to -> {
-            to.setAbsoluteValue(new AtomicInteger(this.createAbsoluteToFieldValue(from.setValidFrom(withinSelection(from, fromFilter)), to)));
+            to.setAbsoluteValue(this.createAbsoluteToFieldValue(from.setValidFrom(withinSelection(from, fromFilter)), to));
 
             log(from.getCode() + " -> " + to.getCode() + ": to.value=" + to.getAbsoluteValue());
         }));
@@ -203,15 +188,11 @@ public class ChildrenBuilder {
     private void createRelativeFromFieldValues(String fromFilter, int minValue, int maxValue) {
         forEachValidFromToCombination((from, validToFields) -> {
             if (withinSelection(from, fromFilter)) {
-                from.setRelativeValue(new AtomicInteger(maxValue - minValue == 0
-                                                        ? 0
-                                                        : (int) calculateRelativeFieldValue(minValue,
-                                                                maxValue,
-                                                                validToFields
-                                                                        .stream()
-                                                                        .mapToInt(field -> field.getAbsoluteValue().intValue())
-                                                                        .max()
-                                                                        .orElse(0))));
+                from.setRelativeValue(maxValue - minValue == 0
+                                      ? 0
+                                      : (int) calculateRelativeFieldValue(minValue,
+                                              maxValue,
+                                              validToFields.stream().mapToInt(Field::getAbsoluteValue).max().orElse(0)));
 
                 log(from.getCode() + ": from.relativeValue=" + from.getRelativeValue());
             }
@@ -220,9 +201,7 @@ public class ChildrenBuilder {
 
     private void createRelativeToFieldValues(String fromFilter, int minValue, int maxValue) {
         forEachValidFromToCombination((from, validToFields) -> validToFields.stream().filter(to -> withinSelection(from, fromFilter)).forEach(to -> {
-            to.setRelativeValue(new AtomicInteger(to.getAbsoluteValue().intValue() == 0
-                                                  ? 0
-                                                  : (int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue().intValue())));
+            to.setRelativeValue(to.getAbsoluteValue() == 0 ? 0 : (int) calculateRelativeFieldValue(minValue, maxValue, to.getAbsoluteValue()));
 
             log(from.getCode() + " -> " + to.getCode() + ": to.relativeValue=" + to.getRelativeValue());
         }));

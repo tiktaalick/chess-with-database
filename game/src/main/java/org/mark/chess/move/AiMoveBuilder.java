@@ -56,7 +56,7 @@ public class AiMoveBuilder extends MoveBuilder {
                 .filter(field -> field.getAbsoluteValue() != null)
                 .filter(field -> field.getPieceType() != null)
                 .filter(field -> field.getPieceType().getColor() == game.getActivePlayer().getColor())
-                .max(Comparator.comparing(field -> field.getAbsoluteValue().intValue()))
+                .max(Comparator.comparing(Field::getAbsoluteValue))
                 .orElse(new Field(null))));
 
         LOGGER.log(Level.INFO, "AiMoveBuilder.createAiFrom(): {0}", this.move);

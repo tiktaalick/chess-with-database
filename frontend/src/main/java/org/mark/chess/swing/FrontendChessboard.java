@@ -135,7 +135,7 @@ public final class FrontendChessboard extends JFrame implements ActionListener, 
     private void updateFields() {
         LOGGER.info(() -> "Main chessboard=" + this.game.getChessboard().hashCode());
         LOGGER.info(() -> "Main activePlayerColor=" + this.game.getActivePlayer().getColor().getName());
-        LOGGER.info(() -> "Main childrenActivePlayerColor=" + this.game.getChessboard().getChildrenActivePlayerColor().getName());
+        LOGGER.info(() -> "Main childrenActivePlayerColor=" + this.game.getChessboard().getChildrenPlayerColor().getName());
         LOGGER.info(() -> "Main fromParentToChildMove=" + this.game.getChessboard().getFromParentToChildMove());
         LOGGER.info(() -> "Main kingField=" + this.game.getChessboard().getKingField());
         LOGGER.info(() -> "Main opponentKingField=" + this.game.getChessboard().getOpponentKingField());

@@ -34,7 +34,7 @@ public class GameService {
             return Game.restart(game);
         } else {
             var returnGame = game.handleButtonClick(leftRightClick, buttonId);
-            Logging.logDurationAndReset();
+//            Logging.logDurationAndReset();
             return returnGame;
         }
     }

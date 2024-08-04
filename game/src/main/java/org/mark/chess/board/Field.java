@@ -16,7 +16,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -33,17 +32,17 @@ public class Field implements Comparable<Field> {
     private static final String                     CODE_UNKNOWN               = "xx";
     private static final int                        ID_UNKNOWN                 = -1;
     private static final Logger                     LOGGER                     = Logger.getLogger(Field.class.getName());
-    private static final AtomicInteger              VALUE_NOT_CALCULATED       = null;
+    private static final Integer                    VALUE_NOT_CALCULATED       = null;
     private static final BackgroundColorRulesEngine backgroundColorRulesEngine = new BackgroundColorRulesEngine();
 
-    private int           id            = ID_UNKNOWN;
-    private String        code          = CODE_UNKNOWN;
-    private Coordinates   coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
-    private PieceType     pieceType;
-    private Color         backgroundColor;
-    private AtomicInteger absoluteValue = VALUE_NOT_CALCULATED;
-    private AtomicInteger relativeValue = VALUE_NOT_CALCULATED;
-    private boolean       isValidFrom;
+    private int         id            = ID_UNKNOWN;
+    private String      code          = CODE_UNKNOWN;
+    private Coordinates coordinates   = new Coordinates(ID_UNKNOWN, ID_UNKNOWN);
+    private PieceType   pieceType;
+    private Color       backgroundColor;
+    private Integer     absoluteValue = VALUE_NOT_CALCULATED;
+    private Integer     relativeValue = VALUE_NOT_CALCULATED;
+    private boolean     isValidFrom;
 
     @Accessors(fluent = true)
     private boolean isValidTo;
@@ -254,8 +253,12 @@ public class Field implements Comparable<Field> {
         return this;
     }
 
-    int getRelativeValueInteger() {
-        return Optional.ofNullable(this.relativeValue).map(AtomicInteger::intValue).orElse(0);
+    boolean hasABetterValueThan(Field minOrMax, PlayerColor maximizingPlayerColor, PlayerColor childrenPlayerColor) {
+        return childrenPlayerColor == maximizingPlayerColor
+               ? (Optional.ofNullable(this.relativeValue).orElse(Integer.MIN_VALUE) >=
+                Optional.ofNullable(minOrMax.getRelativeValue()).orElse(Integer.MIN_VALUE))
+               : (Optional.ofNullable(this.relativeValue).orElse(Integer.MAX_VALUE) <=
+                       Optional.ofNullable(minOrMax.getRelativeValue()).orElse(Integer.MAX_VALUE));
     }
 
     @NotNull
